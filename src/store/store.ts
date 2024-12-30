@@ -8,9 +8,8 @@ import {
   OnConnect,
   Edge,
 } from "@xyflow/react";
-import { initialNodes, nodeTypeKeys } from "../nodes";
+import { AppNode, initialNodes, NodeTypeKeys } from "../nodes";
 import { initialEdges } from "../edges";
-import { AppNode } from "../nodes/types";
 
 export type AppState = {
   nodes: AppNode[];
@@ -23,8 +22,8 @@ export type AppState = {
 
   selectedNodeId: string | null;
   setSelectedNodeId: (id: string | null) => void;
-  nodeToAdd: nodeTypeKeys | null;
-  setNodeToAdd: (nodeToAdd: nodeTypeKeys | null) => void;
+  nodeToAdd: NodeTypeKeys | null;
+  setNodeToAdd: (nodeToAdd: NodeTypeKeys | null) => void;
 };
 
 const useAppStore = create<AppState>((set, get) => ({

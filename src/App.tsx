@@ -2,12 +2,11 @@ import { useCallback } from "react";
 import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";
 import { useShallow } from "zustand/react/shallow";
 import "@xyflow/react/dist/style.css";
-import { nodeTypes } from "./nodes";
+import { AppNode, nodeTypes } from "./nodes";
 import { edgeTypes } from "./edges";
-import { AppNode } from "./nodes/types";
-import Toolbar from "./Toolbar";
 import useAppStore, { appselector } from "./store/store";
-import ToolSidePanel from "./ToolSidePanel";
+import Toolbar from "./components/Toolbar";
+import ToolSidePanel from "./components/ToolSidePanel";
 
 export default function App() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNodeId } = useAppStore(

@@ -1,6 +1,6 @@
-import { Handle, NodeProps, Position } from '@xyflow/react';
-import { ChangeEvent } from 'react';
-import { QuizNode } from '../types';
+import { Handle, NodeProps, Position } from "@xyflow/react";
+import { ChangeEvent, FC, memo } from "react";
+import { QuizNodeType } from "./type";
 
 // interface QuizNodeData {
 //   question: string;
@@ -11,7 +11,7 @@ import { QuizNode } from '../types';
 //   onSelectOption: (optionId: string) => void;
 // }
 
-export default ({ data }: NodeProps<QuizNode>) => {
+const Node: FC<NodeProps<QuizNodeType>> = ({ data }) => {
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     // data.onQuestionChange(e.target.value);
   };
@@ -27,37 +27,37 @@ export default ({ data }: NodeProps<QuizNode>) => {
   return (
     <div
       style={{
-        padding: '10px',
-        border: '1px solid black',
-        borderRadius: '5px',
-        backgroundColor: '#f9f9f9',
-        textAlign: 'center',
-        width: '200px',
+        padding: "10px",
+        border: "1px solid black",
+        borderRadius: "5px",
+        backgroundColor: "#f9f9f9",
+        textAlign: "center",
+        width: "200px",
       }}
     >
       <strong>Quiz Node</strong>
-      <div style={{ margin: '10px 0' }}>
+      <div style={{ margin: "10px 0" }}>
         <input
           type="text"
           placeholder="Enter question"
           value={data.question}
           onChange={handleQuestionChange}
-          style={{ width: '100%', marginBottom: '10px' }}
+          style={{ width: "100%", marginBottom: "10px" }}
         />
         {data.options.map((option) => (
-          <div key={option.id} style={{ marginBottom: '5px' }}>
+          <div key={option} style={{ marginBottom: "5px" }}>
             <input
               type="text"
-              placeholder={`Option ${option.id}`}
-              value={option.text}
-              onChange={handleOptionChange(option.id)}
-              style={{ width: '70%' }}
+              placeholder={`Option ${option}`}
+              value={option}
+              onChange={handleOptionChange(option)}
+              style={{ width: "70%" }}
             />
             <input
               type="radio"
               name="quiz-option"
-              checked={data.selectedOption === option.id}
-              onChange={handleOptionSelect(option.id)}
+              checked={data.rightAnswer === option}
+              onChange={handleOptionSelect(option)}
             />
           </div>
         ))}
@@ -67,10 +67,10 @@ export default ({ data }: NodeProps<QuizNode>) => {
       {/* Output handles */}
       {data.options.map((option, index) => (
         <Handle
-          key={option.id}
+          key={option}
           type="source"
           position={Position.Bottom}
-          id={option.id}
+          id={option}
           style={{ left: `${(index + 1) * (100 / (data.options.length + 1))}%` }}
         />
       ))}
@@ -78,3 +78,4 @@ export default ({ data }: NodeProps<QuizNode>) => {
   );
 };
 
+export default memo(Node);

@@ -1,4 +1,3 @@
-import { nodeTypeKeys } from "./nodes";
 import { FaCode, FaYoutube } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { LuMessageSquareMore } from "react-icons/lu";
@@ -7,11 +6,12 @@ import { FaListCheck } from "react-icons/fa6";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { GiArrowCursor } from "react-icons/gi";
 import { Panel } from "@xyflow/react";
-import useAppStore from "./store/store";
+import { NodeTypeKeys } from "../nodes";
+import useAppStore from "../store/store";
 
 interface ToolbarProps {}
 
-type keys = nodeTypeKeys | "";
+type keys = NodeTypeKeys | "";
 const ICONS_MAP: { [key in keys]: IconType } = {
   "": GiArrowCursor,
   "if-else": FaCode,

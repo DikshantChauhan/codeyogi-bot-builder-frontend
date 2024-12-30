@@ -1,8 +1,17 @@
-import { useState } from "react";
-import { type PromptNode } from "../types";
 import { Handle, NodeProps, Position } from "@xyflow/react";
+import { FC, memo, useState } from "react";
+import { PromptNodeType } from "./type";
 
-export default ({}: NodeProps<PromptNode>) => {
+// interface QuizNodeData {
+//   question: string;
+//   options: { id: string; text: string }[];
+//   selectedOption?: string;
+//   onQuestionChange: (question: string) => void;
+//   onOptionChange: (optionId: string, text: string) => void;
+//   onSelectOption: (optionId: string) => void;
+// }
+
+const Node: FC<NodeProps<PromptNodeType>> = ({}) => {
   const [input, setInput] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,3 +32,5 @@ export default ({}: NodeProps<PromptNode>) => {
     </div>
   );
 };
+
+export default memo(Node);

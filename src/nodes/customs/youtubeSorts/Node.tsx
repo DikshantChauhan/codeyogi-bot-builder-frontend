@@ -1,6 +1,6 @@
-import { Handle, NodeProps, Position } from '@xyflow/react';
-import React, { ChangeEvent } from 'react';
-import { YoutubeSortsNode } from '../types';
+import { Handle, NodeProps, Position } from "@xyflow/react";
+import { ChangeEvent, FC, memo } from "react";
+import { YoutubeSortsNodeType } from "./type";
 
 // interface YouTubeShortsNodeData {
 //   title: string;
@@ -11,7 +11,7 @@ import { YoutubeSortsNode } from '../types';
 //   onDurationChange: (duration: number) => void;
 // }
 
-export default ({ data }:NodeProps<YoutubeSortsNode>) => {
+const Node: FC<NodeProps<YoutubeSortsNodeType>> = ({}) => {
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     // data.onTitleChange(e.target.value);
   };
@@ -23,43 +23,43 @@ export default ({ data }:NodeProps<YoutubeSortsNode>) => {
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value)) {
-    //   data.onDurationChange(value);
+      //   data.onDurationChange(value);
     }
   };
 
   return (
     <div
       style={{
-        padding: '10px',
-        border: '1px solid black',
-        borderRadius: '5px',
-        backgroundColor: '#f9f9f9',
-        textAlign: 'center',
-        width: '250px',
+        padding: "10px",
+        border: "1px solid black",
+        borderRadius: "5px",
+        backgroundColor: "#f9f9f9",
+        textAlign: "center",
+        width: "250px",
       }}
     >
       <strong>YouTube Shorts Node</strong>
-      <div style={{ margin: '10px 0' }}>
+      <div style={{ margin: "10px 0" }}>
         <input
           type="text"
           placeholder="Title"
-        //   value={data.title}
+          //   value={data.title}
           onChange={handleTitleChange}
-          style={{ width: '100%', marginBottom: '5px' }}
+          style={{ width: "100%", marginBottom: "5px" }}
         />
         <input
           type="text"
           placeholder="URL"
-        //   value={data.url}
+          //   value={data.url}
           onChange={handleUrlChange}
-          style={{ width: '100%', marginBottom: '5px' }}
+          style={{ width: "100%", marginBottom: "5px" }}
         />
         <input
           type="number"
           placeholder="Duration (secs)"
-        //   value={data.duration}
+          //   value={data.duration}
           onChange={handleDurationChange}
-          style={{ width: '100%', marginBottom: '5px' }}
+          style={{ width: "100%", marginBottom: "5px" }}
         />
       </div>
       {/* Input handle */}
@@ -70,3 +70,4 @@ export default ({ data }:NodeProps<YoutubeSortsNode>) => {
   );
 };
 
+export default memo(Node);
