@@ -1,9 +1,9 @@
 import { FC, memo, useCallback, useState } from 'react'
 import NodeFormContiner from '../../../components/NodeFormContiner'
 import Input from '../../../components/Input'
-import { FaPlus } from 'react-icons/fa'
 import { MdDeleteForever } from 'react-icons/md'
 import { IfElseNodeData } from './type'
+import PlusButton from '../../../components/PlusButton'
 
 const IfElseForm: FC = () => {
   const [inputs, setInputs] = useState<string[]>([])
@@ -44,13 +44,7 @@ const IfElseForm: FC = () => {
         <Input type="text" name="if" placeholder="Enter if condition" />
       </div>
 
-      <button
-        type="button"
-        onClick={handleAddInput}
-        className="bg-blue-500 flex items-center justify-center text-white p-2 w-full rounded-full shadow-lg hover:bg-blue-600 focus:outline-none"
-      >
-        <FaPlus />
-      </button>
+      <PlusButton type="button" onClick={handleAddInput} />
 
       {inputs.map((inputId, index) => (
         <div key={inputId} className="flex items-center space-x-2 mb-2">
