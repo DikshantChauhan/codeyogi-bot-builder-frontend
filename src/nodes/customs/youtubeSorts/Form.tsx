@@ -1,9 +1,9 @@
 import { FC, memo } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
 
-const MessageForm: FC = () => {
+const Form: FC = () => {
   return (
-    <NodeFormContiner>
+    <NodeFormContiner type="youtube-sorts">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Youtube sort link</label>
         <input
@@ -26,4 +26,4 @@ const MessageForm: FC = () => {
   );
 };
 
-export default memo(MessageForm);
+export default memo(Form);

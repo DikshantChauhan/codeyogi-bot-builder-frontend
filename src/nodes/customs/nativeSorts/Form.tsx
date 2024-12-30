@@ -3,7 +3,7 @@ import NodeFormContiner from "../../../components/NodeFormContiner";
 
 const Form: FC = () => {
   return (
-    <NodeFormContiner>
+    <NodeFormContiner type="native-sorts">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Native sort link</label>
         <input

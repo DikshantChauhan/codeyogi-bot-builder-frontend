@@ -4,14 +4,15 @@ import { useReactFlow } from "@xyflow/react";
 import { NodeTypeKeys } from "../nodes";
 
 interface FormProps {
+  type: NodeTypeKeys;
   children: React.ReactNode;
 }
 
-const FormContainer: FC<FormProps> = ({ children }) => {
+const FormContainer: FC<FormProps> = ({ children, type }) => {
   const setNode = useAppStore((state) => state.setNodes);
   const { getViewport } = useReactFlow();
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>, type: NodeTypeKeys) => {
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formObject = Object.fromEntries(formData);
@@ -25,7 +26,7 @@ const FormContainer: FC<FormProps> = ({ children }) => {
   }, []);
 
   return (
-    <form onSubmit={(e) => handleSubmit(e, "message")} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {children}
       <button type="submit" className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
         Add

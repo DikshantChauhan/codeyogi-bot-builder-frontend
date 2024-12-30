@@ -3,7 +3,7 @@ import NodeFormContiner from "../../../components/NodeFormContiner";
 
 const IfElseForm: FC = () => {
   return (
-    <NodeFormContiner>
+    <NodeFormContiner type="if-else">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="if">
           If Condition
@@ -19,6 +19,7 @@ const IfElseForm: FC = () => {
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="else">
           Else Statement
         </label>
+        
         <input
           type="text"
           name="else"

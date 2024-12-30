@@ -1,9 +1,9 @@
 import { FC, memo } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
 
-const MessageForm: FC = () => {
+const Form: FC = () => {
   return (
-    <NodeFormContiner>
+    <NodeFormContiner type="quiz">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Question</label>
         <input
@@ -36,4 +36,4 @@ const MessageForm: FC = () => {
   );
 };
 
-export default memo(MessageForm);
+export default memo(Form);
