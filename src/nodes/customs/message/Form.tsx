@@ -1,9 +1,14 @@
-import { FC, memo } from "react";
+import { FC, memo, useCallback } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
+import { MessageNodeData } from "./type";
 
 const MessageForm: FC = () => {
-  return (
-    <NodeFormContiner type="message">
+  const handleTransform = useCallback((_: { [k: string]: FormDataEntryValue }) => {
+      return {} as MessageNodeData;
+    }, []);
+  
+    return (
+      <NodeFormContiner type="message" transformData={handleTransform}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
         <textarea

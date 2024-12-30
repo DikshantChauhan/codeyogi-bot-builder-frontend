@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export const QUIZ_NODE_KEY = "quiz";
 
-type QuizNodeData = {
+export type QuizNodeData = {
     question: string;
     options: string[];
     rightAnswer: string;

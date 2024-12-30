@@ -36,8 +36,8 @@ export default function App() {
         >
           <Toolbar />
           <ToolSidePanel />
-          <Background />
-          <MiniMap />
+          <Background color="white" />
+          <MiniMap className="border border-gray-400" />
           <Controls />
         </ReactFlow>
       </div>

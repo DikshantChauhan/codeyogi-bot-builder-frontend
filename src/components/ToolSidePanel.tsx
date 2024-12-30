@@ -34,7 +34,7 @@ const ToolSidePanel: React.FC = () => {
   }, [pickedTool]);
 
   return pickedTool ? (
-    <Panel position="top-left" className="w-[300px] p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2">
+    <Panel position="top-right" className="w-[300px] h-screen p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border">
       {ToolForm}
     </Panel>
   ) : (

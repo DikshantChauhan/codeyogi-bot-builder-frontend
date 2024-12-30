@@ -1,9 +1,14 @@
-import { FC, memo } from "react";
+import { FC, memo, useCallback } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
+import { YoutubeSortsNodeData } from "./type";
 
 const Form: FC = () => {
+  const handleTransform = useCallback((_: { [k: string]: FormDataEntryValue }) => {
+    return {} as YoutubeSortsNodeData;
+  }, []);
+
   return (
-    <NodeFormContiner type="youtube-sorts">
+    <NodeFormContiner type="youtube-sorts" transformData={handleTransform}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Youtube sort link</label>
         <input

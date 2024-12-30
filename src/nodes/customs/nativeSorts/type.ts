@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export const NATIVE_SORTS_NODE_KEY = "native-sorts";
 
-type NativeSortsNodeData = {
+export type NativeSortsNodeData = {
     links: string[];
 };
 

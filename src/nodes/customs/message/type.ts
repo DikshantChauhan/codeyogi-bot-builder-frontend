@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export const MESSAGE_NODE_KEY = "message";
 
-type MessageNodeData = {
+export type MessageNodeData = {
     text: string;
 };
 

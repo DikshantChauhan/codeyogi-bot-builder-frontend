@@ -1,9 +1,14 @@
-import { FC, memo } from "react";
+import { FC, memo, useCallback } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
+import { IfElseNodeData } from "./type";
 
 const IfElseForm: FC = () => {
+  const handleTransform = useCallback((_: { [k: string]: FormDataEntryValue }) => {
+    return {} as IfElseNodeData;
+  }, []);
+
   return (
-    <NodeFormContiner type="if-else">
+    <NodeFormContiner type="if-else" transformData={handleTransform}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="if">
           If Condition
@@ -19,7 +24,7 @@ const IfElseForm: FC = () => {
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="else">
           Else Statement
         </label>
-        
+
         <input
           type="text"
           name="else"

@@ -1,9 +1,14 @@
-import { FC, memo } from "react";
+import { FC, memo, useCallback } from "react";
 import NodeFormContiner from "../../../components/NodeFormContiner";
+import { QuizNodeData } from "./type";
 
 const Form: FC = () => {
+  const handleTransform = useCallback((_: { [k: string]: FormDataEntryValue }) => {
+    return {} as QuizNodeData;
+  }, []);
+
   return (
-    <NodeFormContiner type="quiz">
+    <NodeFormContiner type="quiz" transformData={handleTransform}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Question</label>
         <input

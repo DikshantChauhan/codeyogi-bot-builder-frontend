@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export const PROMPT_NODE_KEY = "prompt";
 
-type PromptNodeData = {
+export type PromptNodeData = {
     text: string;
 }
 

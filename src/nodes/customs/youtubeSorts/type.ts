@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export const YOUTUBE_SORTS_NODE_KEY = "youtube-sorts";
 
-type YoutubeSortsNodeData = {
+export type YoutubeSortsNodeData = {
   links: string[];
 };
 

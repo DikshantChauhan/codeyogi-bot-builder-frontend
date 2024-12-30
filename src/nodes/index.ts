@@ -24,6 +24,8 @@ export type AppNode =
   | PromptNodeType
   | MessageNodeType;
 
+export type AppNodeData = Pick<Exclude<AppNode, BuiltInNode>, "data">["data"];
+
 export const nodeTypes = {
   [PROMPT_NODE_KEY]: PromptNode,
   [MESSAGE_NODE_KEY]: MessageNode,
