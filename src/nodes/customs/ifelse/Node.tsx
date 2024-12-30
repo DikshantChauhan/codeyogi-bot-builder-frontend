@@ -16,4 +16,4 @@ const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
   return <NodeCard Icon={IoIosGitNetwork} title="If/Else" iconBg="bg-orange-600" options={options} />;
 };
 
-export default memo(IfElseNode);
+export default memo(IfElseNode)

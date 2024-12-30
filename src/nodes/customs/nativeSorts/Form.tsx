@@ -1,34 +1,45 @@
-import { FC, memo, useCallback } from "react";
-import NodeFormContiner from "../../../components/NodeFormContiner";
-import { NativeSortsNodeData } from "./type";
+import { FC, memo, useCallback, useState } from 'react'
+import NodeFormContiner from '../../../components/NodeFormContiner'
+import Input from '../../../components/Input'
+import { MdDeleteForever } from 'react-icons/md'
+import PlusButton from '../../../components/PlusButton'
 
-const Form: FC = () => {
-  const handleTransform = useCallback((_: { [k: string]: FormDataEntryValue }) => {
-      return {} as NativeSortsNodeData;
-    }, []);
-  
-    return (
-      <NodeFormContiner type="native-sorts" transformData={handleTransform}>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Native sort link</label>
-        <input
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter link"
-        />
-        <input
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter link"
-        />
-        <input
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter link"
-        />
+const NativeSortsForm: FC = () => {
+  const [links, setLinks] = useState<string[]>(['link'])
+
+  const handleTransform = useCallback((data: { [k: string]: FormDataEntryValue }) => {
+    return {
+      links: Object.values(data).filter((val) => typeof val === 'string'),
+    }
+  }, [])
+
+  const handleAddLink = () => {
+    const newLinkId = `link-${links.length}`
+    setLinks((prev) => [...prev, newLinkId])
+  }
+
+  const handleRemoveLink = (id: string) => {
+    setLinks((prev) => prev.filter((linkId) => linkId !== id))
+  }
+
+  return (
+    <NodeFormContiner type="native-sorts" transformData={handleTransform}>
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="links">
+          Native Sort Links
+        </label>
+
+        <PlusButton type="button" onClick={handleAddLink}></PlusButton>
+
+        {links.map((linkId, index) => (
+          <div key={linkId} className="flex items-center space-x-2 mb-2">
+            <Input type="text" name={linkId} placeholder={`Enter link ${index + 1}`} />
+            <MdDeleteForever className="text-red-500 cursor-pointer" onClick={() => handleRemoveLink(linkId)} />
+          </div>
+        ))}
       </div>
     </NodeFormContiner>
-  );
-};
+  )
+}
 
-export default memo(Form);
+export default memo(NativeSortsForm)
