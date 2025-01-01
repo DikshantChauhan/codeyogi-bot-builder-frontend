@@ -1,49 +1,28 @@
-import { FC, memo, useCallback, useState } from 'react'
-import NodeFormContiner, { NodeFormOnSubmit } from '../../../components/NodeFormContiner'
-import Input from '../../../components/Input'
-import { MdDeleteForever } from 'react-icons/md'
-import PlusButton from '../../../components/PlusButton'
+import { FC, memo } from 'react'
+import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
 import { getRandomId } from '../../../utils'
+import { YoutubeSortsNodeData, YoutubeSortsNodeType } from './type'
+import ListField from '../../../components/ListField'
 
-const Form: FC = () => {
-  const [linksCount, setLinksCount] = useState(1)
+interface Props {
+  node?: YoutubeSortsNodeType
+}
 
-  const handleSubmit: NodeFormOnSubmit = useCallback((data) => {
-    const res = { links: Object.values(data).filter((val) => typeof val === 'string') }
+const Form: FC<Props> = ({ node }) => {
+  const data = node?.data
 
+  const transFormToNode: TransFormToNode<YoutubeSortsNodeData> = (value) => {
     return {
-      data: res,
-      id: getRandomId(),
-      position: { x: 0, y: 0 },
+      data: value,
+      id: node?.id || getRandomId(),
       type: 'youtube-sorts',
-      links: Object.values(data).filter((val) => typeof val === 'string'),
+      position: { x: 0, y: 0 },
     }
-  }, [])
-
-  const handleAddLink = () => {
-    setLinksCount((prev) => prev + 1)
-  }
-
-  const handleRemoveLink = () => {
-    setLinksCount((prev) => prev - 1)
   }
 
   return (
-    <NodeFormContiner onSubmit={handleSubmit}>
-      <div className="space-y-3">
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="links">
-          Youtube Sort Links
-        </label>
-
-        {Array.from({ length: linksCount }).map((_, index) => (
-          <div key={index} className="flex items-center space-x-2 mb-2">
-            <Input type="text" name={index.toString()} placeholder={`Enter link ${index + 1}`} />
-            <MdDeleteForever className="text-red-500 cursor-pointer" onClick={() => handleRemoveLink()} />
-          </div>
-        ))}
-
-        <PlusButton type="button" onClick={handleAddLink}></PlusButton>
-      </div>
+    <NodeFormContiner data={data || { links: [""] }} transformToNode={transFormToNode} title="Youtube sorts" updating={!!node}>
+      <ListField name="links" labelGenerator={(index) => `Link ${index + 1}`} placeholderGenerator={(index) => `Enter youtube link ${index + 1}`} />
     </NodeFormContiner>
   )
 }

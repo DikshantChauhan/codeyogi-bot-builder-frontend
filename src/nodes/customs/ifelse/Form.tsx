@@ -1,72 +1,43 @@
-import { FC, memo, useCallback, useState } from 'react'
-import NodeFormContiner, { NodeFormOnSubmit } from '../../../components/NodeFormContiner'
-import Input from '../../../components/Input'
-import { MdDeleteForever } from 'react-icons/md'
-import { IfElseNodeData } from './type'
-import PlusButton from '../../../components/PlusButton'
+import { memo } from 'react'
+import ListField from '../../../components/ListField'
+import { IfElseNodeData, IfElseNodeType } from './type'
+import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
 import { getRandomId } from '../../../utils'
 
-const IfElseForm: FC = () => {
-  const [inputs, setInputs] = useState<string[]>([])
+interface Props {
+  node?: IfElseNodeType
+}
 
-  const handleSbmit: NodeFormOnSubmit = useCallback(
-    (data) => {
-      const res: IfElseNodeData = {
-        if: '',
-        elseIf: [],
-        else: '',
-      }
+const Form: React.FC<Props> = ({ node }) => {
+  const data = node?.data
+  const transformedConditions = data?.conditions.filter((_, i) => i < data.conditions.length - 1)
 
-      res.elseIf = inputs.map((inputId) => data[inputId] as string)
+  const handleTransformNode: TransFormToNode<IfElseNodeData> = (value) => {
+    const conditions = [...value.conditions, 'Else']
+    const data = { ...value, conditions }
 
-      res.if = data['if'] as string
-      res.else = data['else'] as string
-
-      return {
-        data: res,
-        id: getRandomId(),
-        position: { x: 0, y: 0 },
-        type: 'if-else',
-      }
-    },
-    [inputs]
-  )
-
-  const handleAddInput = () => {
-    const newInputId = `if-else-${inputs.length}`
-    setInputs((prev) => [...prev, newInputId])
-  }
-
-  const handleRemoveInput = (id: string) => {
-    setInputs((prev) => prev.filter((inputId) => inputId !== id))
+    return {
+      data,
+      id: node?.id || getRandomId(),
+      type: 'if-else',
+      position: { x: 0, y: 0 },
+    }
   }
 
   return (
-    <NodeFormContiner onSubmit={handleSbmit}>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="if">
-          If Condition
-        </label>
-        <Input type="text" name="if" placeholder="Enter if condition" />
-      </div>
-
-      <PlusButton type="button" onClick={handleAddInput} />
-
-      {inputs.map((inputId, index) => (
-        <div key={inputId} className="flex items-center space-x-2 mb-2">
-          <Input type="text" name={inputId} placeholder={`Enter else if ${index + 1}`} />
-          <MdDeleteForever className="text-red-500 cursor-pointer" onClick={() => handleRemoveInput(inputId)} />
-        </div>
-      ))}
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="else">
-          Else Statement
-        </label>
-        <Input type="text" name="else" placeholder="Enter else condition" />
-      </div>
+    <NodeFormContiner
+      data={(data && { ...data, conditions: transformedConditions! }) || { conditions: [''] }}
+      transformToNode={handleTransformNode}
+      title="If-Else"
+      updating={!!node}
+    >
+      <ListField
+        name="conditions"
+        labelGenerator={(index) => (index === 0 ? 'If' : `Else-If`)}
+        placeholderGenerator={(index) => (index === 0 ? 'Enter condition for If' : 'Enter condition for Else-If')}
+      />
     </NodeFormContiner>
   )
 }
 
-export default memo(IfElseForm)
+export default memo(Form)

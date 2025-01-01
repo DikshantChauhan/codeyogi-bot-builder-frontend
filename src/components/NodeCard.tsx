@@ -28,8 +28,8 @@ const NodeCard: FC<Props> = ({ Icon, title, iconBg, options, children }) => {
 
       {options ? (
         <div className="flex flex-col space-y-1.5">
-          {options.map(([label, value]) => (
-            <div key={value} className="flex items-center relative text-[0.5rem]">
+          {options.map(([label, value], i) => (
+            <div key={i + value} className="flex items-center relative text-[0.5rem]">
               <div className="bg-gray-50 flex-1 rounded-sm flex ml-2 mr-1 px-1 space-x-1">
                 {label && <p className="text-gray-600">{label}:</p>}
                 <p>{value}</p>

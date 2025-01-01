@@ -13,38 +13,7 @@ import QuizNode from './customs/quiz/Node'
 import YoutubeSortsNode from './customs/youtubeSorts/Node'
 import NativeSortsNode from './customs/nativeSorts/Node'
 
-export const initialNodes: AppNode[] = [
-  {
-    type: 'if-else',
-    data: {
-      if: 'true',
-      elseIf: ['in b/w', 'in b/w $$'],
-      else: 'false',
-    },
-    id: '1',
-    position: { x: 0, y: 0 },
-  },
-  {
-    type: 'if-else',
-    data: {
-      if: 'true',
-      elseIf: ['in b/w'],
-      else: 'false',
-    },
-    id: '2',
-    position: { x: 200, y: 0 },
-  },
-  {
-    type: 'if-else',
-    data: {
-      if: 'true',
-      elseIf: ['in b/w'],
-      else: 'false',
-    },
-    id: '3',
-    position: { x: 400, y: 0 },
-  },
-]
+export const initialNodes: AppNode[] = []
 
 export type AppNode = BuiltInNode | IfElseNodeType | QuizNodeType | YoutubeSortsNodeType | NativeSortsNodeType | PromptNodeType | MessageNodeType
 

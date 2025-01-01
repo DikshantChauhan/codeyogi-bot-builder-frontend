@@ -1,35 +1,45 @@
-import { FC, memo, useCallback } from 'react'
-import useAppStore from '../store/store'
-import { useReactFlow, Viewport } from '@xyflow/react'
+import { memo, useCallback } from 'react'
+import { Formik, Form, FormikValues, FormikHelpers, FormikProps } from 'formik'
 import { AppNode } from '../nodes'
+import useNodeChange from '../hooks/useAddNode'
+import Button from './Button'
 
-export type NodeFormOnSubmit = (data: { [k: string]: FormDataEntryValue }, viewPort: Viewport) => AppNode
-interface FormProps {
-  children: React.ReactNode
-  onSubmit: NodeFormOnSubmit
+export type TransFormToNode<S> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode
+interface FormProps<T extends FormikValues> {
+  data: T
+  transformToNode: TransFormToNode<T>
+  title: string
+  children: React.ReactNode | ((props: FormikProps<T>) => React.ReactNode)
+  updating: boolean
 }
 
-const FormContainer: FC<FormProps> = ({ children, onSubmit }) => {
-  const setNode = useAppStore((state) => state.setNodes)
-  const { getViewport } = useReactFlow()
+const FormContainer = <T extends FormikValues>({ data, transformToNode, title, children, updating }: FormProps<T>) => {
+  const { changeNode } = useNodeChange()
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const formObject = Object.fromEntries(formData)
-    const viewPort = getViewport()
-
-    setNode({ ...onSubmit(formObject, viewPort), dragHandle: '.drag-handle__custom' })
-  }, [])
-
+  const handleSubmit = useCallback(
+    (values: T, formikHelpers: FormikHelpers<T>) => {
+      const node = transformToNode(values, formikHelpers)
+      changeNode(node, updating ? 'edit' : 'add', true)
+    },
+    [updating, transformToNode, changeNode]
+  )
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {children}
-      <button type="submit" className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
-        Add
-      </button>
-    </form>
+    <Formik<T> initialValues={data} onSubmit={handleSubmit} enableReinitialize>
+      {(formikProps) => (
+        <Form className="space-y-4">
+          <h2 className="text-xl font-bold">{title}</h2>
+
+          {typeof children === 'function' ? children(formikProps) : children}
+
+          <div>
+            <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
+              {updating ? 'Update' : 'Add'}
+            </Button>
+          </div>
+        </Form>
+      )}
+    </Formik>
   )
 }
 
-export default memo(FormContainer)
+export default memo(FormContainer) as typeof FormContainer

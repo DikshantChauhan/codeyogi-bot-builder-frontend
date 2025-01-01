@@ -1,60 +1,60 @@
-import { FC, memo, useCallback } from 'react'
-import NodeFormContiner, { NodeFormOnSubmit } from '../../../components/NodeFormContiner'
-import { QuizNodeData } from './type'
+import { memo, useCallback } from 'react'
+import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
 import { getRandomId } from '../../../utils'
+import { Field } from 'formik'
+import { QuizNodeData, QuizNodeType } from '../quiz/type'
+import ListField from '../../../components/ListField'
 
-const Form: FC = () => {
-  const handleSubmit: NodeFormOnSubmit = useCallback((data) => {
-    const res: QuizNodeData = {
-      options: [data['option1'] as string, data['option2'] as string, data['option3'] as string, data['option4'] as string],
-      question: data['question'] as string,
-      rightAnswer: data['option1'] as string,
-    }
+interface Props {
+  node?: QuizNodeType
+}
+
+const Form: React.FC<Props> = ({ node }) => {
+  const data = node?.data
+
+  const handleTransformNode: TransFormToNode<QuizNodeData> = useCallback((value) => {
     return {
-      data: res,
-      id: getRandomId(),
-      position: { x: 0, y: 0 },
+      data: value,
+      id: node?.id || getRandomId(),
       type: 'quiz',
+      position: { x: 0, y: 0 },
     }
   }, [])
 
   return (
-    <NodeFormContiner onSubmit={handleSubmit}>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="question">
-          Question
-        </label>
-        <input
-          type="text"
-          name="question"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter question"
-        />
-        <input
-          type="text"
-          name="option1"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="option 1"
-        />
-        <input
-          type="text"
-          name="option2"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="option 2"
-        />
-        <input
-          type="text"
-          name="option3"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="option 2"
-        />
-        <input
-          type="text"
-          name="option4"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="option 2"
-        />
-      </div>
+    <NodeFormContiner
+      data={data || { question: '', options: ['', ''], rightIndex: -1 }}
+      transformToNode={handleTransformNode}
+      title="Quiz"
+      updating={!!node}
+    >
+      {({ values }) => (
+        <>
+          <Field
+            name="question"
+            placeholder="Enter question"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <ListField name="options" labelGenerator={(index) => `Option ${index + 1}`} placeholderGenerator={(index) => `Enter option ${index + 1}`} />
+
+          <p className="text-sm text-gray-600">Select correct answer:</p>
+          <div className="flex flex-wrap space-x-2 space-y-1">
+            {values?.options.map((_, index) => (
+              <label key={index} className="min-w-max max-w-max">
+                <Field type="radio" name="rightIndex" value={index} className="appearance-none absolute" />
+                <span
+                  className={`block text-center border px-2 py-1 rounded w-full cursor-pointer ${
+                    index === +values.rightIndex ? 'bg-green-600 text-white ' : ''
+                  }`}
+                >
+                  Option {index + 1}
+                </span>
+              </label>
+            ))}
+          </div>
+        </>
+      )}
     </NodeFormContiner>
   )
 }
