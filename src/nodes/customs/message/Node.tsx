@@ -1,14 +1,15 @@
-import { Handle, NodeProps, Position } from "@xyflow/react";
-import { MessageNodeType } from "./type";
-import { FC, memo } from "react";
+import { NodeProps } from '@xyflow/react'
+import { MessageNodeType } from './type'
+import { FC, memo } from 'react'
+import NodeCard from '../../../components/NodeCard'
+import { MdOutlineMessage } from 'react-icons/md'
 
 const Node: FC<NodeProps<MessageNodeType>> = ({ data }) => {
   return (
-    <div style={{ padding: 10, border: "1px solid #ddd", borderRadius: 5 }}>
-      <strong>Result: </strong> {data.text}
-      <Handle type="target" position={Position.Top} />
-    </div>
-  );
-};
+    <NodeCard Icon={MdOutlineMessage} iconBg="bg-blue-300" title="Message">
+      {data.text}
+    </NodeCard>
+  )
+}
 
-export default memo(Node);
+export default memo(Node)

@@ -1,32 +1,26 @@
-import { FC, memo, useCallback } from "react";
-import useAppStore from "../store/store";
-import { useReactFlow } from "@xyflow/react";
-import { AppNodeData, NodeTypeKeys } from "../nodes";
+import { FC, memo, useCallback } from 'react'
+import useAppStore from '../store/store'
+import { useReactFlow, Viewport } from '@xyflow/react'
+import { AppNode } from '../nodes'
 
+export type NodeFormOnSubmit = (data: { [k: string]: FormDataEntryValue }, viewPort: Viewport) => AppNode
 interface FormProps {
-  type: NodeTypeKeys;
-  children: React.ReactNode;
-  transformData: (data: { [k: string]: FormDataEntryValue }) => AppNodeData;
+  children: React.ReactNode
+  onSubmit: NodeFormOnSubmit
 }
 
-const FormContainer: FC<FormProps> = ({ children, type, transformData }) => {
-  const setNode = useAppStore((state) => state.setNodes);
-  const { getViewport } = useReactFlow();
+const FormContainer: FC<FormProps> = ({ children, onSubmit }) => {
+  const setNode = useAppStore((state) => state.setNodes)
+  const { getViewport } = useReactFlow()
 
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const formObject = Object.fromEntries(formData);
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const formObject = Object.fromEntries(formData)
+    const viewPort = getViewport()
 
-    const transformedData = transformData(formObject);
-
-    setNode({
-      type: type,
-      id: Math.random().toString(36).substring(7),
-      position: getViewport(),
-      data: transformedData as any,
-    });
-  }, []);
+    setNode({ ...onSubmit(formObject, viewPort), dragHandle: '.drag-handle__custom' })
+  }, [])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -35,7 +29,7 @@ const FormContainer: FC<FormProps> = ({ children, type, transformData }) => {
         Add
       </button>
     </form>
-  );
-};
+  )
+}
 
-export default memo(FormContainer);
+export default memo(FormContainer)

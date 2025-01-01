@@ -1,35 +1,37 @@
-import { FC, memo } from "react";
-import { IconType } from "react-icons";
-import Handle from "./Handle";
-import { Position } from "@xyflow/react";
+import { FC, memo } from 'react'
+import { IconType } from 'react-icons'
+import Handle from './Handle'
+import { Position } from '@xyflow/react'
+import { FiMove } from 'react-icons/fi'
 
 interface Props {
-  title: string;
-  Icon: IconType;
-  iconBg: string;
-  options?: [string, string][];
-  children?: React.ReactNode;
+  title: string
+  Icon: IconType
+  iconBg: string
+  options?: [string, string][]
+  children?: React.ReactNode
 }
 
 const NodeCard: FC<Props> = ({ Icon, title, iconBg, options, children }) => {
   return (
-    <div className="bg-gray-200 rounded text-xs pb-2 min-w-40">
-      <div className="flex items-center mb-1 p-2 relative">
-        <Icon className={`p-1 w-5 h-5 text-white rounded ${iconBg}`} />
-        <p className="text-center ml-2">{title}</p>
+    <div className="bg-gray-200 rounded text-xs py-2 min-w-40 cursor-auto">
+      <div className="flex items-center mb-1 px-2 relative justify-between">
         <Handle type="target" position={Position.Left} />
+        <div className="flex items-center">
+          <Icon className={`p-1 w-5 h-5 text-white rounded ${iconBg}`} />
+          <p className="text-center ml-2">{title}</p>
+        </div>
+        <FiMove className="drag-handle__custom text-blue-700 " />
       </div>
 
-      {children}
+      <div className="px-2 mt-2 text-[0.5rem]">{children}</div>
 
       {options ? (
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-1.5">
           {options.map(([label, value]) => (
-            <div key={value} className="flex items-center relative">
-              <div className="bg-gray-50 flex-1 p-1 pl-2 rounded-sm mx-2 relative">
-                <p className="text-gray-600 absolute top-0 left-0 -translate-y-1/2" style={{ fontSize: "0.5rem" }}>
-                  {label}
-                </p>
+            <div key={value} className="flex items-center relative text-[0.5rem]">
+              <div className="bg-gray-50 flex-1 rounded-sm flex ml-2 mr-1 px-1 space-x-1">
+                {label && <p className="text-gray-600">{label}:</p>}
                 <p>{value}</p>
               </div>
 
@@ -41,7 +43,7 @@ const NodeCard: FC<Props> = ({ Icon, title, iconBg, options, children }) => {
         <Handle type="source" position={Position.Right} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default memo(NodeCard);
+export default memo(NodeCard)

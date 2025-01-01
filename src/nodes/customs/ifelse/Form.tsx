@@ -1,15 +1,16 @@
 import { FC, memo, useCallback, useState } from 'react'
-import NodeFormContiner from '../../../components/NodeFormContiner'
+import NodeFormContiner, { NodeFormOnSubmit } from '../../../components/NodeFormContiner'
 import Input from '../../../components/Input'
 import { MdDeleteForever } from 'react-icons/md'
 import { IfElseNodeData } from './type'
 import PlusButton from '../../../components/PlusButton'
+import { getRandomId } from '../../../utils'
 
 const IfElseForm: FC = () => {
   const [inputs, setInputs] = useState<string[]>([])
 
-  const handleTransform = useCallback(
-    (data: { [k: string]: FormDataEntryValue }) => {
+  const handleSbmit: NodeFormOnSubmit = useCallback(
+    (data) => {
       const res: IfElseNodeData = {
         if: '',
         elseIf: [],
@@ -21,7 +22,12 @@ const IfElseForm: FC = () => {
       res.if = data['if'] as string
       res.else = data['else'] as string
 
-      return res
+      return {
+        data: res,
+        id: getRandomId(),
+        position: { x: 0, y: 0 },
+        type: 'if-else',
+      }
     },
     [inputs]
   )
@@ -36,7 +42,7 @@ const IfElseForm: FC = () => {
   }
 
   return (
-    <NodeFormContiner type="if-else" transformData={handleTransform}>
+    <NodeFormContiner onSubmit={handleSbmit}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="if">
           If Condition

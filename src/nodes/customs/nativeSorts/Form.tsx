@@ -1,15 +1,23 @@
 import { FC, memo, useCallback, useState } from 'react'
-import NodeFormContiner from '../../../components/NodeFormContiner'
+import NodeFormContiner, { NodeFormOnSubmit } from '../../../components/NodeFormContiner'
 import Input from '../../../components/Input'
 import { MdDeleteForever } from 'react-icons/md'
 import PlusButton from '../../../components/PlusButton'
+import { getRandomId } from '../../../utils'
 
 const NativeSortsForm: FC = () => {
   const [links, setLinks] = useState<string[]>(['link'])
 
-  const handleTransform = useCallback((data: { [k: string]: FormDataEntryValue }) => {
-    return {
+  const handleSubmit: NodeFormOnSubmit = useCallback((data) => {
+    const res = {
       links: Object.values(data).filter((val) => typeof val === 'string'),
+    }
+
+    return {
+      data: res,
+      id: getRandomId(),
+      position: { x: 0, y: 0 },
+      type: 'native-sorts',
     }
   }, [])
 
@@ -23,7 +31,7 @@ const NativeSortsForm: FC = () => {
   }
 
   return (
-    <NodeFormContiner type="native-sorts" transformData={handleTransform}>
+    <NodeFormContiner onSubmit={handleSubmit}>
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="links">
           Native Sort Links
