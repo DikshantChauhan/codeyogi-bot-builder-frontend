@@ -1,27 +1,26 @@
-import { useCallback } from "react";
-import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";
-import { useShallow } from "zustand/react/shallow";
-import "@xyflow/react/dist/style.css";
-import { AppNode, nodeTypes } from "./nodes";
-import { edgeTypes } from "./edges";
-import useAppStore, { appselector } from "./store/store";
-import Toolbar from "./components/Toolbar";
-import ToolSidePanel from "./components/ToolSidePanel";
+import { useCallback } from 'react'
+import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react'
+import { useShallow } from 'zustand/react/shallow'
+import '@xyflow/react/dist/style.css'
+import { AppNode, nodeTypes } from './nodes'
+import { edgeTypes } from './edges'
+import useAppStore, { appselector } from './store/store'
+import Toolbar from './components/Toolbar'
+import ToolSidePanel from './components/ToolSidePanel'
+import MenuBar from './components/MenuBar'
 
 export default function App() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNodeId } = useAppStore(
-    useShallow(appselector)
-  );
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNodeId } = useAppStore(useShallow(appselector))
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent<Element, MouseEvent>, node: AppNode) => {
-      setSelectedNodeId(node.id);
+      setSelectedNodeId(node.id)
     },
     [setSelectedNodeId]
-  );
+  )
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1 }}>
         <ReactFlow
           nodes={nodes}
@@ -34,6 +33,7 @@ export default function App() {
           fitView
           onNodeClick={onNodeClick}
         >
+          <MenuBar />
           <Toolbar />
           <ToolSidePanel />
           <Background color="white" />
@@ -42,5 +42,5 @@ export default function App() {
         </ReactFlow>
       </div>
     </div>
-  );
+  )
 }

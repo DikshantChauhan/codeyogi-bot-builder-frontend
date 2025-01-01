@@ -12,8 +12,9 @@ import MessageNode from './customs/message/Node'
 import QuizNode from './customs/quiz/Node'
 import YoutubeSortsNode from './customs/youtubeSorts/Node'
 import NativeSortsNode from './customs/nativeSorts/Node'
+import { getFlowFromLocalStorage } from '../utils'
 
-export const initialNodes: AppNode[] = []
+export const initialNodes: AppNode[] = getFlowFromLocalStorage()?.nodes || []
 
 export type AppNode = BuiltInNode | IfElseNodeType | QuizNodeType | YoutubeSortsNodeType | NativeSortsNodeType | PromptNodeType | MessageNodeType
 
