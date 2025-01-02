@@ -25,7 +25,7 @@ const Form: React.FC<Props> = ({ node }) => {
     <NodeFormContiner
       data={data || { question: '', options: ['', ''], rightIndex: -1 }}
       transformToNode={handleTransformNode}
-      title={"Quiz " + node?.id}
+      title={"Quiz"}
       updating={!!node}
     >
       {({ values }) => (

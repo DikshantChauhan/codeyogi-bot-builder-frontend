@@ -4,9 +4,9 @@ import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 import { MdOutlineMessage } from 'react-icons/md'
 
-const Node: FC<NodeProps<MessageNodeType>> = ({ data, id }) => {
+const Node: FC<NodeProps<MessageNodeType>> = ({ data }) => {
   return (
-    <NodeCard<MessageNodeData> nodeId={id} Icon={MdOutlineMessage} iconBg="bg-blue-300" title="Message">
+    <NodeCard<MessageNodeData> Icon={MdOutlineMessage} iconBg="bg-blue-300" title="Message">
       {data.text}
     </NodeCard>
   )

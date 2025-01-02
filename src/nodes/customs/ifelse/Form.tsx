@@ -28,7 +28,7 @@ const Form: React.FC<Props> = ({ node }) => {
     <NodeFormContiner
       data={(data && { ...data, conditions: transformedConditions! }) || { conditions: [''] }}
       transformToNode={handleTransformNode}
-      title={"If-Else " + node?.id}
+      title={"If-Else"}
       updating={!!node}
     >
       <ListField

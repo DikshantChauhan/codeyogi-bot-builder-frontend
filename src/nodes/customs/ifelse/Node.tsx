@@ -4,7 +4,7 @@ import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 import { IoIosGitNetwork } from 'react-icons/io'
 
-const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data, id }) => {
+const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
   const optionsList = useMemo(
     () =>
       data.conditions.map((conndition, index) => {
@@ -16,7 +16,6 @@ const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data, id }) => {
 
   return (
     <NodeCard<IfElseNodeData>
-      nodeId={id}
       Icon={IoIosGitNetwork}
       title="If/Else"
       iconBg="bg-orange-600"

@@ -3,7 +3,7 @@ import { IconType } from 'react-icons'
 import Handle from './Handle'
 import { Position } from '@xyflow/react'
 import { FiMove } from 'react-icons/fi'
-import { getEdgeId } from '../utils'
+import { getHandleName } from '../utils'
 import { AppNodeData } from '../nodes'
 
 interface Props<T extends AppNodeData> {
@@ -12,14 +12,13 @@ interface Props<T extends AppNodeData> {
   iconBg: string
   options?: { dataKey: keyof T; list: [string, string][] }
   children?: React.ReactNode
-  nodeId: string
 }
 
-const NodeCard = <S extends AppNodeData>({ Icon, title, iconBg, options, children, nodeId }: Props<S>) => {
+const NodeCard = <S extends AppNodeData>({ Icon, title, iconBg, options, children }: Props<S>) => {
   return (
     <div className="bg-gray-200 rounded text-xs py-2 min-w-40 cursor-auto">
       <div className="flex items-center mb-1 px-2 relative justify-between">
-        <Handle type="target" position={Position.Left} id={getEdgeId(nodeId, 'target')} />
+        <Handle type="target" position={Position.Left} />
         <div className="flex items-center">
           <Icon className={`p-1 w-5 h-5 text-white rounded ${iconBg}`} />
           <p className="text-center ml-2">{title}</p>
@@ -38,12 +37,12 @@ const NodeCard = <S extends AppNodeData>({ Icon, title, iconBg, options, childre
                 <p>{value}</p>
               </div>
 
-              <Handle id={getEdgeId(nodeId, 'source', { dataKey: options.dataKey as string, index: i })} type="source" position={Position.Right} />
+              <Handle id={getHandleName(options.dataKey as string, i)} type="source" position={Position.Right} />
             </div>
           ))}
         </div>
       ) : (
-        <Handle id={getEdgeId(nodeId, 'source')} type="source" position={Position.Right} />
+        <Handle type="source" position={Position.Right} />
       )}
     </div>
   )

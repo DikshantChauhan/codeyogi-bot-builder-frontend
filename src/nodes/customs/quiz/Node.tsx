@@ -4,13 +4,12 @@ import { QuizNodeData, QuizNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 import { FaListCheck } from 'react-icons/fa6'
 
-const Node: FC<NodeProps<QuizNodeType>> = ({ data, id }) => {
+const Node: FC<NodeProps<QuizNodeType>> = ({ data }) => {
   const optionsList = useMemo(() => {
     return data.options.map((option) => ['', option] as [string, string])
   }, [data.options])
   return (
     <NodeCard<QuizNodeData>
-      nodeId={id}
       Icon={FaListCheck}
       iconBg="bg-cyan-400"
       title="Quiz"

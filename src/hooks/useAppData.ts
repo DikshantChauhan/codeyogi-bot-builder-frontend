@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow'
 import useAppStore from '../store/store'
 import { Connection, Edge } from '@xyflow/react'
 import { useCallback } from 'react'
+import { getSourceHandleConnection } from '../utils'
 
 const useAppData = () => {
   const storeData = useAppStore(
@@ -17,7 +18,7 @@ const useAppData = () => {
     }))
   )
 
-  const { setSelectedNodeId } = storeData
+  const { setSelectedNodeId, edges } = storeData
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent<Element, MouseEvent>, node: AppNode) => {
@@ -26,15 +27,22 @@ const useAppData = () => {
     [setSelectedNodeId]
   )
 
-  const isConnnectionValid = useCallback((connection: Edge | Connection) => {
-    // const targetId = connection.target
-    // const sourceId = connection.source
+  const isConnnectionValid = useCallback(
+    (connection: Edge | Connection) => {
+      const { source: sourceId, sourceHandle: sourceHandleName } = connection
 
-    //no self connections
-    if (connection.source === connection.target) return false
+      //no self connections
+      if (connection.source === connection.target) return false
 
-    return true
-  }, [])
+      //no multiple connections to the source handle
+      const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, edges).length
+      console.log(handleConnections)
+      if (handleConnections >= 1) return false
+
+      return true
+    },
+    [edges]
+  )
 
   return {
     onNodeClick,
