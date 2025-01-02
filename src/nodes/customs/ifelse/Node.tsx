@@ -1,11 +1,11 @@
 import { NodeProps } from '@xyflow/react'
-import { IfElseNodeType } from './type'
+import { IfElseNodeData, IfElseNodeType } from './type'
 import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 import { IoIosGitNetwork } from 'react-icons/io'
 
-const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
-  const options = useMemo(
+const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data, id }) => {
+  const optionsList = useMemo(
     () =>
       data.conditions.map((conndition, index) => {
         const label = index === 0 ? 'If' : index === data.conditions.length - 1 ? 'Else' : `Else If`
@@ -14,7 +14,15 @@ const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
     [data]
   )
 
-  return <NodeCard Icon={IoIosGitNetwork} title="If/Else" iconBg="bg-orange-600" options={options} />
+  return (
+    <NodeCard<IfElseNodeData>
+      nodeId={id}
+      Icon={IoIosGitNetwork}
+      title="If/Else"
+      iconBg="bg-orange-600"
+      options={{ list: optionsList, dataKey: 'conditions' }}
+    />
+  )
 }
 
 export default memo(IfElseNode)

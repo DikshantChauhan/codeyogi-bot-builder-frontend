@@ -57,15 +57,4 @@ const useAppStore = create<AppState>((set, get) => ({
   },
 }))
 
-export const appselector = (state: AppState) => ({
-  nodes: state.nodes,
-  edges: state.edges,
-  onNodesChange: state.onNodesChange,
-  onEdgesChange: state.onEdgesChange,
-  onConnect: state.onConnect,
-  setNodes: state.setNodes,
-  // setEdges: state.setEdges,
-  setSelectedNodeId: state.setSelectedNodeId,
-})
-
 export default useAppStore

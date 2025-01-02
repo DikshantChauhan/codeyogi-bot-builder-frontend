@@ -1,23 +1,14 @@
-import { useCallback } from 'react'
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react'
-import { useShallow } from 'zustand/react/shallow'
 import '@xyflow/react/dist/style.css'
-import { AppNode, nodeTypes } from './nodes'
+import { nodeTypes } from './nodes'
 import { edgeTypes } from './edges'
-import useAppStore, { appselector } from './store/store'
 import Toolbar from './components/Toolbar'
 import ToolSidePanel from './components/ToolSidePanel'
 import MenuBar from './components/MenuBar'
+import useAppData from './hooks/useAppData'
 
 export default function App() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNodeId } = useAppStore(useShallow(appselector))
-
-  const onNodeClick = useCallback(
-    (_: React.MouseEvent<Element, MouseEvent>, node: AppNode) => {
-      setSelectedNodeId(node.id)
-    },
-    [setSelectedNodeId]
-  )
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid } = useAppData()
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -32,6 +23,9 @@ export default function App() {
           onConnect={onConnect}
           fitView
           onNodeClick={onNodeClick}
+          selectNodesOnDrag={false}
+          deleteKeyCode={['Delete', 'Backspace']}
+          isValidConnection={isConnnectionValid}
         >
           <MenuBar />
           <Toolbar />

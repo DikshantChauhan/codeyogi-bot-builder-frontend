@@ -21,7 +21,7 @@ const MessageForm: FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={data || { text: '' }} transformToNode={transFormToNode} title="Message" updating={!!node}>
+    <NodeFormContiner data={data || { text: '' }} transformToNode={transFormToNode} title={"Message " + node?.id} updating={!!node}>
       <div>
         <Field
           as="textarea"

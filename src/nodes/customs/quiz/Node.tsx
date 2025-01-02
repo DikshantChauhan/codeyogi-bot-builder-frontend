@@ -1,14 +1,23 @@
 import { NodeProps } from '@xyflow/react'
 import { FC, memo, useMemo } from 'react'
-import { QuizNodeType } from './type'
+import { QuizNodeData, QuizNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 import { FaListCheck } from 'react-icons/fa6'
 
-const Node: FC<NodeProps<QuizNodeType>> = ({ data }) => {
-  const options = useMemo(() => {
+const Node: FC<NodeProps<QuizNodeType>> = ({ data, id }) => {
+  const optionsList = useMemo(() => {
     return data.options.map((option) => ['', option] as [string, string])
   }, [data.options])
-  return <NodeCard Icon={FaListCheck} iconBg="bg-cyan-400" title="Quiz" children={data.question} options={options} />
+  return (
+    <NodeCard<QuizNodeData>
+      nodeId={id}
+      Icon={FaListCheck}
+      iconBg="bg-cyan-400"
+      title="Quiz"
+      children={data.question}
+      options={{ dataKey: 'options', list: optionsList }}
+    />
+  )
 }
 
 export default memo(Node)

@@ -1,12 +1,12 @@
 import { NodeProps } from '@xyflow/react'
 import { FC, memo } from 'react'
-import { PromptNodeType } from './type'
+import { PromptNodeData, PromptNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 import { RxInput } from 'react-icons/rx'
 
-const Node: FC<NodeProps<PromptNodeType>> = ({ data }) => {
+const Node: FC<NodeProps<PromptNodeType>> = ({ data, id }) => {
   return (
-    <NodeCard Icon={RxInput} iconBg="bg-green-700" title="Prompt">
+    <NodeCard<PromptNodeData> Icon={RxInput} iconBg="bg-green-700" title="Prompt" nodeId={id}>
       {data.text}
     </NodeCard>
   )
