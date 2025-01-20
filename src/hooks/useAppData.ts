@@ -15,10 +15,14 @@ const useAppData = () => {
       onEdgesChange: state.onEdgesChange,
       onConnect: state.onConnect,
       setSelectedNodeId: state.setSelectedNodeId,
+      onReconnect: state.onReconnect,
+      onReconnectStart: state.onReconnectStart,
+      onReconnectEnd: state.onReconnectEnd,
+      reconnectingEdge: state.reconnectingEdge,
     }))
   )
 
-  const { setSelectedNodeId, edges } = storeData
+  const { setSelectedNodeId, edges, reconnectingEdge } = storeData
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent<Element, MouseEvent>, node: AppNode) => {
@@ -30,18 +34,18 @@ const useAppData = () => {
   const isConnnectionValid = useCallback(
     (connection: Edge | Connection) => {
       const { source: sourceId, sourceHandle: sourceHandleName } = connection
+      console.log(reconnectingEdge)
 
       //no self connections
       if (connection.source === connection.target) return false
 
       //no multiple connections to the source handle
-      const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, edges).length
-      console.log(handleConnections)
-      if (handleConnections >= 1) return false
+      const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, edges)
+      if (handleConnections.length !== 0) return false
 
       return true
     },
-    [edges]
+    [edges, reconnectingEdge]
   )
 
   return {

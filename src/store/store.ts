@@ -1,5 +1,16 @@
 import { create } from 'zustand'
-import { addEdge, applyNodeChanges, applyEdgeChanges, OnNodesChange, OnEdgesChange, OnConnect, Edge } from '@xyflow/react'
+import {
+  addEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
+  OnNodesChange,
+  OnEdgesChange,
+  OnConnect,
+  Edge,
+  Connection,
+  reconnectEdge,
+  HandleType,
+} from '@xyflow/react'
 import { AppNode, initialNodes, NodeTypeKeys } from '../nodes'
 import { initialEdges } from '../edges'
 
@@ -17,6 +28,10 @@ export type AppState = {
   nodeToAdd: NodeTypeKeys | null
   setNodeToAdd: (nodeToAdd: NodeTypeKeys | null) => void
   editNodeData: (nodeId: string, nodeData: AppNode['data']) => void
+  onReconnect: (edge: Edge, connection: Connection) => void
+  onReconnectStart: (event: React.MouseEvent, edge: Edge, handleType: HandleType) => void
+  onReconnectEnd: (event: MouseEvent | TouchEvent, edge: Edge, handleType: HandleType) => void
+  reconnectingEdge: Edge | null
 }
 
 const useAppStore = create<AppState>((set, get) => ({
@@ -55,6 +70,17 @@ const useAppStore = create<AppState>((set, get) => ({
     const updated = get().nodes.map((node) => (node.id === nodeId ? { ...node, data: nodeData } : node)) as AppNode[]
     set({ nodes: updated })
   },
+  onReconnect: (oldEdge, newConnection) => {
+    const newEdges = reconnectEdge(oldEdge, newConnection, get().edges)
+    set({ edges: newEdges })
+  },
+  onReconnectStart: (_, edge) => {
+    set({ reconnectingEdge: edge })
+  },
+  onReconnectEnd: () => {
+    set({ reconnectingEdge: null })
+  },
+  reconnectingEdge: null,
 }))
 
 export default useAppStore

@@ -8,7 +8,8 @@ import MenuBar from './components/MenuBar'
 import useAppData from './hooks/useAppData'
 
 export default function App() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid } = useAppData()
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid, onReconnect, onReconnectEnd, onReconnectStart } =
+    useAppData()
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -26,6 +27,9 @@ export default function App() {
           selectNodesOnDrag={false}
           deleteKeyCode={['Delete', 'Backspace']}
           isValidConnection={isConnnectionValid}
+          onReconnectStart={onReconnectStart}
+          onReconnectEnd={onReconnectEnd}
+          onReconnect={onReconnect}
         >
           <MenuBar />
           <Toolbar />
