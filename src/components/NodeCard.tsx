@@ -16,7 +16,7 @@ interface Props<T extends AppNodeData> {
 
 const NodeCard = <S extends AppNodeData>({ Icon, title, iconBg, options, children }: Props<S>) => {
   return (
-    <div className="bg-gray-200 rounded text-xs py-2 min-w-40 cursor-auto">
+    <div className="bg-gray-200 rounded text-xs py-2 min-w-40 max-w-40 cursor-auto">
       <div className="flex items-center mb-1 px-2 relative justify-between">
         <Handle type="target" position={Position.Left} />
         <div className="flex items-center">

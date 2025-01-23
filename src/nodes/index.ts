@@ -13,10 +13,19 @@ import QuizNode from './customs/quiz/Node'
 import YoutubeSortsNode from './customs/youtubeSorts/Node'
 import NativeSortsNode from './customs/nativeSorts/Node'
 import { getFlowFromLocalStorage } from '../utils'
+import { START_NODE_KEY, StartNodeType } from './customs/start/type'
+import StartNode from './customs/start/Node'
 
-export const initialNodes: AppNode[] = getFlowFromLocalStorage()?.nodes || []
+export const initialNodes: AppNode[] = getFlowFromLocalStorage()?.nodes || [
+  {
+    id: '1',
+    type: 'start',
+    position: { x: 0, y: 0 },
+    data: {},
+  },
+]
 
-export type AppNode = BuiltInNode | IfElseNodeType | QuizNodeType | YoutubeSortsNodeType | NativeSortsNodeType | PromptNodeType | MessageNodeType
+export type AppNode = BuiltInNode | IfElseNodeType | QuizNodeType | YoutubeSortsNodeType | NativeSortsNodeType | PromptNodeType | MessageNodeType | StartNodeType
 
 export type AppNodeData = Pick<Exclude<AppNode, BuiltInNode>, 'data'>['data']
 
@@ -27,6 +36,7 @@ export const nodeTypes = {
   [QUIZ_NODE_KEY]: QuizNode,
   [YOUTUBE_SORTS_NODE_KEY]: YoutubeSortsNode,
   [NATIVE_SORTS_NODE_KEY]: NativeSortsNode,
+  [START_NODE_KEY]: StartNode,
 } satisfies NodeTypes
 
 export type NodeTypeKeys = keyof typeof nodeTypes
