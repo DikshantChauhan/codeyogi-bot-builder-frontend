@@ -2,9 +2,10 @@ import { AppNode } from '../nodes'
 
 import { useShallow } from 'zustand/react/shallow'
 import useAppStore from '../store/store'
-import { Connection, Edge } from '@xyflow/react'
+import { Connection } from '@xyflow/react'
 import { useCallback } from 'react'
 import { getSourceHandleConnection } from '../utils'
+import { AppEdge } from '../edges'
 
 const useAppData = () => {
   const storeData = useAppStore(
@@ -32,7 +33,7 @@ const useAppData = () => {
   )
 
   const isConnnectionValid = useCallback(
-    (connection: Edge | Connection) => {
+    (connection: AppEdge | Connection) => {
       const { source: sourceId, sourceHandle: sourceHandleName } = connection
       console.log(reconnectingEdge)
 

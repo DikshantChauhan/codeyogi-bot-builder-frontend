@@ -6,6 +6,7 @@ import Toolbar from './components/Toolbar'
 import ToolSidePanel from './components/ToolSidePanel'
 import MenuBar from './components/MenuBar'
 import useAppData from './hooks/useAppData'
+import { DIRECTIONAL_EDGE_KEY } from './edges/custom/directional/type'
 
 export default function App() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid, onReconnect, onReconnectEnd, onReconnectStart } =
@@ -30,6 +31,7 @@ export default function App() {
           onReconnectStart={onReconnectStart}
           onReconnectEnd={onReconnectEnd}
           onReconnect={onReconnect}
+          defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
         >
           <MenuBar />
           <Toolbar />

@@ -25,6 +25,12 @@ export const initialNodes: AppNode[] = getFlowFromLocalStorage()?.nodes || [
     position: { x: 0, y: 0 },
     data: {},
   },
+  {
+    id: '2',
+    type: 'prompt',
+    position: { x: 300, y: 0 },
+    data: { text: '' },
+  },
 ]
 
 export type AppNode =
