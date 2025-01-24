@@ -1,5 +1,5 @@
 import { NodeProps } from '@xyflow/react'
-import { IfElseNodeData, IfElseNodeType } from './type'
+import { IfElseNodeType } from './type'
 import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 import { IoIosGitNetwork } from 'react-icons/io'
@@ -15,11 +15,11 @@ const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
   )
 
   return (
-    <NodeCard<IfElseNodeData>
+    <NodeCard
       Icon={IoIosGitNetwork}
       title="If/Else"
       iconBg="bg-orange-600"
-      options={{ list: optionsList, dataKey: 'conditions' }}
+      options={optionsList}
     />
   )
 }
