@@ -1,9 +1,10 @@
 import { Node } from '@xyflow/react'
 
-export const IF_ELSE_NODE_KEY = 'if-else'
+export const WHATSAPP_AUDIO_NODE_KEY = 'whatsapp-audio'
 
-export type IfElseNodeData = {
-  conditions: string[]
+export type WhatsappAudioNodeData = {
+  id?: string
+  url?: string
 }
 
-export type IfElseNodeType = Node<IfElseNodeData, typeof IF_ELSE_NODE_KEY>
+export type WhatsappAudioNodeType = Node<WhatsappAudioNodeData, typeof WHATSAPP_AUDIO_NODE_KEY>

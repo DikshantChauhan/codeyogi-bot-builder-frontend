@@ -3,8 +3,10 @@ import { Formik, Form, FormikValues, FormikHelpers, FormikProps } from 'formik'
 import { AppNode } from '../nodes'
 import useNodeChange from '../hooks/useAddNode'
 import Button from './Button'
+import { toast } from 'react-toastify'
 
-export type TransFormToNode<S> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode
+export type TransFormToNode<S> = (values: S, formikHelpers: FormikHelpers<S>) => Omit<AppNode, 'position' | 'dragHandle'> | string
+
 interface FormProps<T extends FormikValues> {
   data: T
   transformToNode: TransFormToNode<T>
@@ -19,7 +21,11 @@ const FormContainer = <T extends FormikValues>({ data, transformToNode, title, c
   const handleSubmit = useCallback(
     (values: T, formikHelpers: FormikHelpers<T>) => {
       const node = transformToNode(values, formikHelpers)
-      changeNode(node, updating ? 'edit' : 'add', true)
+      if (typeof node === 'string') {
+        toast.error(node)
+      } else {
+        changeNode(node, updating ? 'edit' : 'add', true)
+      }
     },
     [updating, transformToNode, changeNode]
   )

@@ -13,10 +13,10 @@ interface Props {
 const NodeCard = ({ nodeType, options, children }: Props) => {
   const { color, Icon, title } = nodesUIMeta[nodeType]
   return (
-    <div className="bg-gray-200 rounded text-xs py-2 min-w-40 max-w-40 cursor-auto">
+    <div className="bg-gray-200 rounded text-xs py-2 min-w-40 max-w-64 cursor-auto">
       <div className="flex items-center mb-1 px-2 relative justify-between">
         <Handle type="target" position={Position.Left} />
-        <div className="flex items-center">
+        <div className="flex items-center mr-2">
           <Icon className={`p-1 w-5 h-5 text-white rounded ${color}`} />
           <p className="text-center ml-2">{title}</p>
         </div>

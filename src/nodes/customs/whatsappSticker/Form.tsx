@@ -1,10 +1,10 @@
 import { memo, useState } from 'react'
-import { WhatsappAudioNodeData, WhatsappAudioNodeType } from './type'
+import { WhatsappStickerNodeData, WhatsappStickerNodeType } from './type'
 import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
 import { getRandomId } from '../../../utils'
 
 interface Props {
-  node?: WhatsappAudioNodeType
+  node?: WhatsappStickerNodeType
 }
 
 const Form: React.FC<Props> = ({ node }) => {
@@ -14,14 +14,14 @@ const Form: React.FC<Props> = ({ node }) => {
     url: data?.url || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappAudioNodeData> = (value) => {
+  const handleTransformNode: TransFormToNode<WhatsappStickerNodeData> = (value) => {
     if (!value.id && !value.url) {
-      return 'Either Audio ID or URL is required'
+      return 'Either Sticker ID or URL is required'
     }
     return {
       data: value,
       id: node?.id || getRandomId(),
-      type: 'whatsapp-audio',
+      type: 'whatsapp-sticker',
     }
   }
 
@@ -34,26 +34,26 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Audio" updating={!!node}>
+    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Sticker" updating={!!node}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Audio ID (recommended)</label>
+          <label className="text-sm font-medium">Sticker ID (recommended)</label>
           <input
             name="id"
             value={formData.id}
             onChange={handleInputChange}
-            placeholder="Enter WhatsApp audio ID"
+            placeholder="Enter WhatsApp sticker ID"
             className="w-full rounded-md border px-3 py-2"
           />
         </div>
         <div className="text-center text-sm text-gray-500">OR</div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Audio URL</label>
+          <label className="text-sm font-medium">Sticker URL</label>
           <input
             name="url"
             value={formData.url}
             onChange={handleInputChange}
-            placeholder="Enter WhatsApp audio URL"
+            placeholder="Enter WhatsApp sticker URL"
             className="w-full rounded-md border px-3 py-2"
           />
         </div>

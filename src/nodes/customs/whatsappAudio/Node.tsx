@@ -1,22 +1,19 @@
 import { NodeProps } from '@xyflow/react'
-import { IfElseNodeType } from './type'
-import { FC, memo, useMemo } from 'react'
+import { WhatsappAudioNodeType } from './type'
+import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
-import { IoIosGitNetwork } from 'react-icons/io'
 
-const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ data }) => {
-  const optionsList = useMemo(
-    () =>
-      data.conditions.map((conndition, index) => {
-        const label = index === 0 ? 'If' : index === data.conditions.length - 1 ? 'Else' : `Else If`
-        return [label, conndition] as [string, string]
-      }),
-    [data]
-  )
-
+const WhatsappAudioNode: FC<NodeProps<WhatsappAudioNodeType>> = ({ data }) => {
   return (
-    <NodeCard nodeType="whatsapp-audio" options={optionsList} />
+    <NodeCard nodeType="whatsapp-audio">
+      {data.url && (
+        <audio className="w-full h-6" controls>
+          <source src={data.url} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      )}
+    </NodeCard>
   )
 }
 
-export default memo(IfElseNode)
+export default memo(WhatsappAudioNode)
