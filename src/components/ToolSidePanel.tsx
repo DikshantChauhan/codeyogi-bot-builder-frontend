@@ -1,18 +1,14 @@
 import { Panel } from '@xyflow/react'
 import useAppStore from '../store/store'
-import IfElseForm from '../nodes/customs/ifelse/Form'
-import MessageForm from '../nodes/customs/message/Form'
-import NativeSortsForm from '../nodes/customs/nativeSorts/Form'
-import PromptForm from '../nodes/customs/prompt/Form'
-import QuizForm from '../nodes/customs/quiz/Form'
-import YoutubeSortsForm from '../nodes/customs/youtubeSorts/Form'
 import { useMemo } from 'react'
-import { IfElseNodeType } from '../nodes/customs/ifelse/type'
-import { MessageNodeType } from '../nodes/customs/message/type'
-import { NativeSortsNodeType } from '../nodes/customs/nativeSorts/type'
-import { PromptNodeType } from '../nodes/customs/prompt/type'
-import { QuizNodeType } from '../nodes/customs/quiz/type'
-import { YoutubeSortsNodeType } from '../nodes/customs/youtubeSorts/type'
+import { nodesUIMeta } from '../nodes'
+import { camelCase } from 'lodash'
+import React from 'react'
+import type { AppNode } from '../nodes'
+
+interface FormProps {
+  node: AppNode | undefined
+}
 
 const ToolSidePanel: React.FC = () => {
   const nodeToAdd = useAppStore((state) => state.nodeToAdd)
@@ -27,25 +23,23 @@ const ToolSidePanel: React.FC = () => {
   const pickedTool = nodeToAdd || selectedNode?.type
 
   const ToolForm = useMemo(() => {
-    switch (pickedTool) {
-      case 'if-else':
-        return <IfElseForm node={selectedNode as IfElseNodeType} />
+    if (!pickedTool || !(pickedTool in nodesUIMeta)) return null
 
-      case 'message':
-        return <MessageForm node={selectedNode as MessageNodeType} />
+    // Convert kebab-case to camelCase for folder name
+    const folderName = camelCase(pickedTool)
 
-      case 'native-sorts':
-        return <NativeSortsForm node={selectedNode as NativeSortsNodeType} />
+    // Dynamic import of the Form component
+    const FormComponent = React.lazy(() =>
+      import(`../nodes/customs/${folderName}/Form`).then((module) => ({
+        default: module.default as React.ComponentType<FormProps>,
+      }))
+    )
 
-      case 'prompt':
-        return <PromptForm node={selectedNode as PromptNodeType} />
-
-      case 'quiz':
-        return <QuizForm node={selectedNode as QuizNodeType} />
-
-      case 'youtube-sorts':
-        return <YoutubeSortsForm node={selectedNode as YoutubeSortsNodeType} />
-    }
+    return (
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <FormComponent node={selectedNode} />
+      </React.Suspense>
+    )
   }, [pickedTool, selectedNode])
 
   return pickedTool ? (

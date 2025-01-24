@@ -1,24 +1,23 @@
 import { memo } from 'react'
-import { IconType } from 'react-icons'
 import Handle from './Handle'
 import { Position } from '@xyflow/react'
 import { FiMove } from 'react-icons/fi'
+import { nodesUIMeta, NodeTypeKeys } from '../nodes'
 
 interface Props {
-  title: string
-  Icon: IconType
-  iconBg: string
+  nodeType: NodeTypeKeys
   options?: [string, string][]
   children?: React.ReactNode
 }
 
-const NodeCard = ({ Icon, title, iconBg, options, children }: Props) => {
+const NodeCard = ({ nodeType, options, children }: Props) => {
+  const { color, Icon, title } = nodesUIMeta[nodeType]
   return (
     <div className="bg-gray-200 rounded text-xs py-2 min-w-40 max-w-40 cursor-auto">
       <div className="flex items-center mb-1 px-2 relative justify-between">
         <Handle type="target" position={Position.Left} />
         <div className="flex items-center">
-          <Icon className={`p-1 w-5 h-5 text-white rounded ${iconBg}`} />
+          <Icon className={`p-1 w-5 h-5 text-white rounded ${color}`} />
           <p className="text-center ml-2">{title}</p>
         </div>
         <FiMove className="drag-handle__custom text-blue-700" />
