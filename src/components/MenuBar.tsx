@@ -3,6 +3,8 @@ import { IoMenu } from 'react-icons/io5'
 import { CiExport, CiSaveDown2 } from 'react-icons/ci'
 import { Panel, useReactFlow } from '@xyflow/react'
 import { FLOW_LOCAL_STORAGE_KEY } from '../constants'
+import { Link } from 'react-router-dom'
+import { BiHome } from 'react-icons/bi'
 
 const MenuBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -35,6 +37,10 @@ const MenuBar: FC = () => {
 
         {isOpen && (
           <div className="absolute bottom-0-0 left-0 mt-2 bg-white rounded-md shadow-lg z-10 border">
+            <Link to="/" className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 min-w-max">
+              <BiHome className="w-5 h-5 mr-3" />
+              <span className="flex-grow">Home</span>
+            </Link>
             <button onClick={handleSave} className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               <CiSaveDown2 className="w-5 h-5 mr-3" />
               <span className="flex-grow">Save</span>
