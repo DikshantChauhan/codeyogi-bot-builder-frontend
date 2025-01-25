@@ -1,14 +1,17 @@
 import { AppNode } from '../nodes'
-
 import { useShallow } from 'zustand/react/shallow'
-import useAppStore from '../store/store'
+import useReactFlowStore from '../store/reactFlow.store'
 import { Connection } from '@xyflow/react'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { getSourceHandleConnection } from '../utils'
 import { AppEdge } from '../edges'
+import useFlowStore from '../store/flow.store'
+import { useParams } from 'react-router-dom'
+import { ROUTE_FLOW_EDITOR } from '../constants'
+import { toast } from 'react-toastify'
 
-const useAppData = () => {
-  const storeData = useAppStore(
+const useFlowEditorData = () => {
+  const reactFlowStoreData = useReactFlowStore(
     useShallow((state) => ({
       nodes: state.nodes,
       edges: state.edges,
@@ -22,8 +25,17 @@ const useAppData = () => {
       reconnectingEdge: state.reconnectingEdge,
     }))
   )
+  const { setSelectedFlow } = useFlowStore()
+  const { [ROUTE_FLOW_EDITOR.dynamicKey]: flowName } = useParams<{ [ROUTE_FLOW_EDITOR.dynamicKey]: string }>()
 
-  const { setSelectedNodeId, edges, reconnectingEdge } = storeData
+  useEffect(() => {
+    if (!flowName) {
+      toast.error('Flow name not found in the URL')
+    }
+    flowName && setSelectedFlow(flowName)
+  }, [flowName, setSelectedFlow])
+
+  const { setSelectedNodeId, edges, reconnectingEdge } = reactFlowStoreData
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent<Element, MouseEvent>, node: AppNode) => {
@@ -52,8 +64,8 @@ const useAppData = () => {
   return {
     onNodeClick,
     isConnnectionValid,
-    ...storeData,
+    ...reactFlowStoreData,
   }
 }
 
-export default useAppData
+export default useFlowEditorData

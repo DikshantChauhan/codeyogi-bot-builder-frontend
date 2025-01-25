@@ -1,13 +1,13 @@
 import { useReactFlow } from '@xyflow/react'
-import useAppStore from '../store/store'
+import useReactFlowStore from '../store/reactFlow.store'
 import { useCallback, useMemo } from 'react'
 import { AppNode } from '../nodes'
 
-const useNodeChange = () => {
-  const setNode = useAppStore((state) => state.setNodes)
-  const setNodeToAdd = useAppStore((state) => state.setNodeToAdd)
-  const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId)
-  const editNodeData = useAppStore((state) => state.editNodeData)
+const useUpdateOrAddNode = () => {
+  const setNode = useReactFlowStore((state) => state.setNode)
+  const setNodeToAdd = useReactFlowStore((state) => state.setNodeToAdd)
+  const setSelectedNodeId = useReactFlowStore((state) => state.setSelectedNodeId)
+  const editNodeData = useReactFlowStore((state) => state.editNodeData)
   const { getViewport } = useReactFlow()
 
   const handleCloseSideBar = useCallback(() => {
@@ -23,7 +23,7 @@ const useNodeChange = () => {
     }
   }, [getViewport])
 
-  const changeNode = useCallback(
+  const updateOrAddNode = useCallback(
     (node: Omit<AppNode, 'position' | 'dragHandle'>, change: 'add' | 'edit', closeSideBar: boolean = false) => {
       if (change === 'add') {
         setNode({
@@ -40,8 +40,8 @@ const useNodeChange = () => {
   )
 
   return {
-    changeNode,
+    updateOrAddNode,
   }
 }
 
-export default useNodeChange
+export default useUpdateOrAddNode

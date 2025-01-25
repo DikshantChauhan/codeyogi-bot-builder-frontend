@@ -12,7 +12,6 @@ import MessageNode from './customs/message/Node'
 import QuizNode from './customs/quiz/Node'
 import YoutubeSortsNode from './customs/youtubeSorts/Node'
 import NativeSortsNode from './customs/nativeSorts/Node'
-import { getFlowFromLocalStorage } from '../utils'
 import { START_NODE_KEY, StartNodeType } from './customs/start/type'
 import StartNode from './customs/start/Node'
 import { IconType } from 'react-icons'
@@ -48,20 +47,7 @@ import { WHATSAPP_STICKER_NODE_KEY, WhatsappStickerNodeType } from './customs/wh
 import WhatsappStickerNode from './customs/whatsappSticker/Node'
 import { IoIosImages } from 'react-icons/io'
 
-export const initialNodes: AppNode[] = getFlowFromLocalStorage()?.nodes || [
-  {
-    id: '1',
-    type: 'start',
-    position: { x: 0, y: 0 },
-    data: {},
-  },
-  {
-    id: '2',
-    type: 'prompt',
-    position: { x: 300, y: 0 },
-    data: { text: '' },
-  },
-]
+export const initialNodes: AppNode[] = []
 
 export type AppNode =
   | BuiltInNode

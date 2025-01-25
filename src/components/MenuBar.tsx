@@ -1,31 +1,30 @@
 import { FC, memo, useCallback, useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
 import { CiExport, CiSaveDown2 } from 'react-icons/ci'
-import { Panel, useReactFlow } from '@xyflow/react'
-import { FLOW_LOCAL_STORAGE_KEY } from '../constants'
+import { Panel } from '@xyflow/react'
 import { Link } from 'react-router-dom'
 import { BiHome } from 'react-icons/bi'
+import useFlowStore from '../store/flow.store'
 
 const MenuBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { toObject } = useReactFlow()
+  const { updateFlow } = useFlowStore()
 
-  const handleSave = useCallback(() => {
-    const data = toObject()
-    localStorage.setItem(FLOW_LOCAL_STORAGE_KEY, JSON.stringify(data))
+  const handleSave = useCallback(async () => {
+    await updateFlow()
     setIsOpen(false)
   }, [])
 
   const handleExport = useCallback(() => {
-    const data = toObject()
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'flow.json'
-    a.click()
-    URL.revokeObjectURL(url)
-    setIsOpen(false)
+    // const data = toObject()
+    // const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    // const url = URL.createObjectURL(blob)
+    // const a = document.createElement('a')
+    // a.href = url
+    // a.download = 'flow.json'
+    // a.click()
+    // URL.revokeObjectURL(url)
+    // setIsOpen(false)
   }, [])
 
   return (

@@ -5,14 +5,17 @@ import { edgeTypes } from '../edges'
 import Toolbar from '../components/Toolbar'
 import ToolSidePanel from '../components/ToolSidePanel'
 import MenuBar from '../components/MenuBar'
-import useAppData from '../hooks/useAppData'
+import useFlowEditorData from '../hooks/useFlowEditorData'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 export default function FlowEditor() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid, onReconnect, onReconnectEnd, onReconnectStart } =
-    useAppData()
+    useFlowEditorData()
+
+  console.log('nodes: ', nodes)
+  console.log('edges: ', edges)
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>

@@ -1,5 +1,5 @@
 import { Panel } from '@xyflow/react'
-import useAppStore from '../store/store'
+import useAppStore from '../store/reactFlow.store'
 import { useMemo } from 'react'
 import { nodesUIMeta } from '../nodes'
 import { camelCase } from 'lodash'

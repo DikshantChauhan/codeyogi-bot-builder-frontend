@@ -1,6 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { memo, useState } from 'react'
+import { getRandomId } from '../utils'
 
 interface VideoCardStackProps {
   videoLinks: string[]
@@ -31,11 +32,11 @@ const VideoCardStack: React.FC<VideoCardStackProps> = ({ videoLinks, className =
       className={className}
     >
       {videoLinks.map((link) => {
-        const sortsLeft = videoLinks.length - videoLinks.indexOf(link) - 1
+        // const sortsLeft = videoLinks.length - videoLinks.indexOf(link) - 1
         return (
-          <SwiperSlide className="w-full h-full cursor-pointer">
+          <SwiperSlide key={getRandomId()} className="w-full h-full cursor-pointer">
             <video
-              src={link}
+              src={link}  
               controls={false}
               style={{
                 width: '100%',

@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react'
 import { Formik, Form, FormikValues, FormikHelpers, FormikProps } from 'formik'
 import { AppNode } from '../nodes'
-import useNodeChange from '../hooks/useAddNode'
+import useNodeChange from '../hooks/useUpdateOrAddNode'
 import Button from './Button'
 import { toast } from 'react-toastify'
 
@@ -16,7 +16,7 @@ interface FormProps<T extends FormikValues> {
 }
 
 const FormContainer = <T extends FormikValues>({ data, transformToNode, title, children, updating }: FormProps<T>) => {
-  const { changeNode } = useNodeChange()
+  const { updateOrAddNode } = useNodeChange()
 
   const handleSubmit = useCallback(
     (values: T, formikHelpers: FormikHelpers<T>) => {
@@ -24,10 +24,10 @@ const FormContainer = <T extends FormikValues>({ data, transformToNode, title, c
       if (typeof node === 'string') {
         toast.error(node)
       } else {
-        changeNode(node, updating ? 'edit' : 'add', true)
+        updateOrAddNode(node, updating ? 'edit' : 'add', true)
       }
     },
-    [updating, transformToNode, changeNode]
+    [updating, transformToNode, updateOrAddNode]
   )
   return (
     <Formik<T> initialValues={data} onSubmit={handleSubmit} enableReinitialize>

@@ -1,11 +1,11 @@
 import { memo, useState } from "react"
-import { FlowMeta } from "../models/FlowMeta"
 import { nodesUIMeta, NodeTypeKeys } from "../nodes"
+import { Flow } from "../store/flow.store"
 
 interface AddFlowFormProps {
   isOpen: boolean
   onClose: () => void
-  onAdd: (flow: Omit<FlowMeta, 'createdAt'>) => void
+  onAdd: (flow: Omit<Flow, 'createdAt'>) => void
 }
 
 function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
@@ -19,6 +19,10 @@ function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
       name,
       type,
       nodes: selectedNodes,
+      data: {
+        nodes: [],
+        edges: [],
+      },
     })
     setName('')
     setType('campaign')

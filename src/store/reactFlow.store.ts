@@ -13,14 +13,13 @@ import {
 import { AppNode, initialNodes, NodeTypeKeys } from '../nodes'
 import { AppEdge, initialEdges } from '../edges'
 
-export type AppState = {
+export type ReactFlowState = {
   nodes: AppNode[]
   edges: AppEdge[]
   onNodesChange: OnNodesChange<AppNode>
   onEdgesChange: OnEdgesChange<AppEdge>
   onConnect: OnConnect
-  setNodes: (nodes: AppNode[] | AppNode) => void
-  setEdges: (edges: AppEdge[]) => void
+  setNode: (nodes: AppNode) => void
 
   selectedNodeId: string | null
   setSelectedNodeId: (id: string | null) => void
@@ -33,7 +32,7 @@ export type AppState = {
   reconnectingEdge: AppEdge | null
 }
 
-const useAppStore = create<AppState>((set, get) => ({
+const useReactFlowStore = create<ReactFlowState>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   onNodesChange: (changes) => {
@@ -51,18 +50,15 @@ const useAppStore = create<AppState>((set, get) => ({
       edges: addEdge(connection, get().edges),
     })
   },
-  setNodes: (nodes) => {
-    set({ nodes: [...get().nodes, ...(Array.isArray(nodes) ? nodes : [nodes])] })
-  },
-  setEdges: (edges) => {
-    set({ edges })
+  setNode: (node) => {
+    set({ nodes: [...get().nodes, node] })
   },
   selectedNodeId: null,
   setSelectedNodeId: (selectedNodeId) => {
     set({ selectedNodeId, nodeToAdd: null })
   },
   nodeToAdd: null,
-  setNodeToAdd: (nodeToAdd: AppState['nodeToAdd']) => {
+  setNodeToAdd: (nodeToAdd: ReactFlowState['nodeToAdd']) => {
     set({ nodeToAdd, selectedNodeId: null })
   },
   editNodeData: (nodeId, nodeData) => {
@@ -82,4 +78,4 @@ const useAppStore = create<AppState>((set, get) => ({
   reconnectingEdge: null,
 }))
 
-export default useAppStore
+export default useReactFlowStore

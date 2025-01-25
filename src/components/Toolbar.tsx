@@ -1,7 +1,7 @@
 import { GiArrowCursor } from 'react-icons/gi'
 import { Panel } from '@xyflow/react'
 import { NodeTypeKeys, nodesUIMeta } from '../nodes'
-import useAppStore from '../store/store'
+import useAppStore from '../store/reactFlow.store'
 import Button from './Button'
 
 interface ToolbarProps {}
