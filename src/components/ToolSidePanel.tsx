@@ -1,19 +1,23 @@
 import { Panel } from '@xyflow/react'
-import useAppStore from '../store/reactFlow.store'
+import useReactFlowStore from '../store/reactFlow.store'
 import { useMemo } from 'react'
 import { nodesUIMeta } from '../nodes'
 import { camelCase } from 'lodash'
 import React from 'react'
-import type { AppNode } from '../nodes'
+import type { AppNode, NodeTypeKeys } from '../nodes'
+import useFlowStore from '../store/flow.store'
 
 interface FormProps {
   node: AppNode | undefined
 }
 
 const ToolSidePanel: React.FC = () => {
-  const nodeToAdd = useAppStore((state) => state.nodeToAdd)
-  const selectedNodeId = useAppStore((state) => state.selectedNodeId)
-  const nodes = useAppStore((state) => state.nodes)
+  const nodeToAdd = useReactFlowStore((state) => state.nodeToAdd)
+  const selectedNodeId = useReactFlowStore((state) => state.selectedNodeId)
+  const nodes = useReactFlowStore((state) => state.nodes)
+
+  const { getSelectedFlowAllowedNodes } = useFlowStore()
+  const allowedNodesKey = getSelectedFlowAllowedNodes()
 
   const selectedNode = useMemo(() => {
     const node = selectedNodeId && nodes.find((node) => node.id === selectedNodeId)
@@ -23,7 +27,7 @@ const ToolSidePanel: React.FC = () => {
   const pickedTool = nodeToAdd || selectedNode?.type
 
   const ToolForm = useMemo(() => {
-    if (!pickedTool || !(pickedTool in nodesUIMeta)) return null
+    if (!pickedTool || !(pickedTool in nodesUIMeta) || !allowedNodesKey.includes(pickedTool as NodeTypeKeys)) return null
 
     // Convert kebab-case to camelCase for folder name
     const folderName = camelCase(pickedTool)
@@ -40,9 +44,9 @@ const ToolSidePanel: React.FC = () => {
         <FormComponent node={selectedNode} />
       </React.Suspense>
     )
-  }, [pickedTool, selectedNode])
+  }, [pickedTool, selectedNode, allowedNodesKey])
 
-  return pickedTool ? (
+  return pickedTool && ToolForm ? (
     <Panel position="top-right" className="w-[300px] h-screen p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border">
       {ToolForm}
     </Panel>

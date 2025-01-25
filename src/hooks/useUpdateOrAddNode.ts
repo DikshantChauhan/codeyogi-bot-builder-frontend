@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { AppNode } from '../nodes'
 
 const useUpdateOrAddNode = () => {
-  const setNode = useReactFlowStore((state) => state.setNode)
+  const addNode = useReactFlowStore((state) => state.addNode)
   const setNodeToAdd = useReactFlowStore((state) => state.setNodeToAdd)
   const setSelectedNodeId = useReactFlowStore((state) => state.setSelectedNodeId)
   const editNodeData = useReactFlowStore((state) => state.editNodeData)
@@ -26,7 +26,7 @@ const useUpdateOrAddNode = () => {
   const updateOrAddNode = useCallback(
     (node: Omit<AppNode, 'position' | 'dragHandle'>, change: 'add' | 'edit', closeSideBar: boolean = false) => {
       if (change === 'add') {
-        setNode({
+        addNode({
           ...node,
           dragHandle: '.drag-handle__custom',
           position: centerPosition,

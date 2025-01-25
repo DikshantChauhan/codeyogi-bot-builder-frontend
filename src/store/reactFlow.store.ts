@@ -19,7 +19,7 @@ export type ReactFlowState = {
   onNodesChange: OnNodesChange<AppNode>
   onEdgesChange: OnEdgesChange<AppEdge>
   onConnect: OnConnect
-  setNode: (nodes: AppNode) => void
+  addNode: (nodes: AppNode) => void
 
   selectedNodeId: string | null
   setSelectedNodeId: (id: string | null) => void
@@ -50,7 +50,7 @@ const useReactFlowStore = create<ReactFlowState>((set, get) => ({
       edges: addEdge(connection, get().edges),
     })
   },
-  setNode: (node) => {
+  addNode: (node) => {
     set({ nodes: [...get().nodes, node] })
   },
   selectedNodeId: null,

@@ -21,9 +21,11 @@ type FlowState = {
   addFlow: (flowData: Omit<Flow, 'createdAt'>) => Promise<Flow>
   deleteFlow: (name: string) => Promise<void>
   initFlows: () => Promise<void>
-  selectedFlow: string | null
-  setSelectedFlow: (flowName: string) => void
+  selectedFlowName: string | null
+  setSelectedFlowName: (flowName: string) => void
   updateFlow: () => Promise<void>
+  getSelectedFlow: () => Flow | null
+  getSelectedFlowAllowedNodes: () => NodeTypeKeys[]
 }
 
 const useFlowStore = create<FlowState>((set, get) => ({
@@ -63,9 +65,9 @@ const useFlowStore = create<FlowState>((set, get) => ({
     }
   },
 
-  selectedFlow: null,
+  selectedFlowName: null,
 
-  setSelectedFlow: (flowName: string) => {
+  setSelectedFlowName: (flowName: string) => {
     const selectedFlow = get().flows.find((flow) => flow.name === flowName)
     if (!selectedFlow) {
       toast.error(`Selected flow ${flowName} not found`)
@@ -73,11 +75,11 @@ const useFlowStore = create<FlowState>((set, get) => ({
     }
     useReactFlowStore.getState().nodes = selectedFlow.data.nodes
     useReactFlowStore.getState().edges = selectedFlow.data.edges
-    set({ selectedFlow: flowName })
+    set({ selectedFlowName: flowName })
   },
 
   updateFlow: async () => {
-    const selectedFlow = get().flows.find((flow) => flow.name === get().selectedFlow)
+    const selectedFlow = get().getSelectedFlow()
     if (!selectedFlow) {
       toast.error('No flow selected')
       return
@@ -90,6 +92,16 @@ const useFlowStore = create<FlowState>((set, get) => ({
     set((state) => ({
       flows: state.flows.map((f) => (f.name === selectedFlow.name ? updatedFlow : f)),
     }))
+  },
+
+  getSelectedFlow: () => {
+    const selectedFlow = get().flows.find((flow) => flow.name === get().selectedFlowName)
+    return selectedFlow || null
+  },
+
+  getSelectedFlowAllowedNodes: () => {
+    const selectedFlow = get().getSelectedFlow()
+    return selectedFlow?.nodes || []
   },
 }))
 

@@ -11,11 +11,21 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 export default function FlowEditor() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, isConnnectionValid, onReconnect, onReconnectEnd, onReconnectStart } =
-    useFlowEditorData()
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    onNodeClick,
+    isConnnectionValid,
+    onReconnect,
+    onReconnectEnd,
+    onReconnectStart,
+    selectedFlowName,
+  } = useFlowEditorData()
 
-  console.log('nodes: ', nodes)
-  console.log('edges: ', edges)
+  if (!selectedFlowName) return <div>Loading... setting up flow</div>
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>

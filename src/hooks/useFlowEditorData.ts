@@ -25,15 +25,15 @@ const useFlowEditorData = () => {
       reconnectingEdge: state.reconnectingEdge,
     }))
   )
-  const { setSelectedFlow } = useFlowStore()
+  const { setSelectedFlowName, selectedFlowName } = useFlowStore()
   const { [ROUTE_FLOW_EDITOR.dynamicKey]: flowName } = useParams<{ [ROUTE_FLOW_EDITOR.dynamicKey]: string }>()
 
   useEffect(() => {
     if (!flowName) {
       toast.error('Flow name not found in the URL')
     }
-    flowName && setSelectedFlow(flowName)
-  }, [flowName, setSelectedFlow])
+    flowName && setSelectedFlowName(flowName)
+  }, [flowName, setSelectedFlowName])
 
   const { setSelectedNodeId, edges, reconnectingEdge } = reactFlowStoreData
 
@@ -64,6 +64,7 @@ const useFlowEditorData = () => {
   return {
     onNodeClick,
     isConnnectionValid,
+    selectedFlowName,
     ...reactFlowStoreData,
   }
 }
