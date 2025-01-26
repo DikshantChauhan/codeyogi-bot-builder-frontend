@@ -1,6 +1,7 @@
-import { memo, useState } from "react"
-import { nodesUIMeta, NodeTypeKeys } from "../nodes"
-import { Flow } from "../store/flow.store"
+import { memo, useState } from 'react'
+import { nodesUIMeta, NodeTypeKeys } from '../nodes'
+import useFlowStore, { Flow } from '../store/flow.store'
+import { toast } from 'react-toastify'
 
 interface AddFlowFormProps {
   isOpen: boolean
@@ -12,9 +13,16 @@ function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
   const [name, setName] = useState('')
   const [type, setType] = useState<'campaign' | 'nudge'>('campaign')
   const [selectedNodes, setSelectedNodes] = useState<NodeTypeKeys[]>([])
+  const { flows } = useFlowStore()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (flows.some((flow) => flow.name === name)) {
+      toast.error('Flow name must be unique')
+      return
+    }
+
     onAdd({
       name,
       type,
@@ -22,6 +30,10 @@ function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
       data: {
         nodes: [],
         edges: [],
+      },
+      subFlowsMap: {
+        nudges: {},
+        validators: {},
       },
     })
     setName('')

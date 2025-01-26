@@ -13,16 +13,10 @@ interface FormProps {
 
 const ToolSidePanel: React.FC = () => {
   const nodeToAdd = useReactFlowStore((state) => state.nodeToAdd)
-  const selectedNodeId = useReactFlowStore((state) => state.selectedNodeId)
-  const nodes = useReactFlowStore((state) => state.nodes)
+  const selectedNode = useReactFlowStore((state) => state.getSelectedNode())
 
-  const { getSelectedFlowAllowedNodes } = useFlowStore()
+  const getSelectedFlowAllowedNodes = useFlowStore((state) => state.getSelectedFlowAllowedNodes)
   const allowedNodesKey = getSelectedFlowAllowedNodes()
-
-  const selectedNode = useMemo(() => {
-    const node = selectedNodeId && nodes.find((node) => node.id === selectedNodeId)
-    return node || undefined
-  }, [selectedNodeId, nodes])
 
   const pickedTool = nodeToAdd || selectedNode?.type
 

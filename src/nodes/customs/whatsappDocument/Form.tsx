@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappDocumentNodeData, WhatsappDocumentNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappDocumentNodeType
@@ -14,15 +13,11 @@ const Form: React.FC<Props> = ({ node }) => {
     url: data?.url || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappDocumentNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappDocumentNodeData> = (value) => {
     if (!value.id && !value.url) {
-      return 'Either Document ID or URL is required'
+      throw new Error('Either Document ID or URL is required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-document',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +29,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Document" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Document ID (recommended)</label>
@@ -58,7 +53,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

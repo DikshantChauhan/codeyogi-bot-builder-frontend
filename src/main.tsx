@@ -5,11 +5,14 @@ import App from './App'
 
 import './index.css'
 import { ReactFlowProvider } from '@xyflow/react'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ReactFlowProvider>
       <App />
+      <ToastContainer />
     </ReactFlowProvider>
   </React.StrictMode>
 )

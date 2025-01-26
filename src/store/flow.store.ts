@@ -5,13 +5,16 @@ import { AppNode } from '../nodes'
 import { NodeTypeKeys } from '../nodes'
 import { ReactFlowJsonObject } from '@xyflow/react'
 import { AppEdge } from '../edges'
-import useReactFlowStore from './reactFlow.store'
+import { reactFlowStore } from './reactFlow.store'
+import { createStrictStore } from './util'
 
 export interface Flow {
   name: string
   nodes: NodeTypeKeys[]
-  type: 'campaign' | 'nudge'
+  type: 'campaign' | 'nudge' | 'validator'
   data: Omit<ReactFlowJsonObject<AppNode, AppEdge>, 'viewport'>
+  //{ nudges: { nudge1: nodeId }; validators: { validator1: nodeId } }
+  subFlowsMap: { nudges: { [nudgeFlowName: string]: string | null }; validators: { [validatorFlowName: string]: string | null } }
   createdAt: string
 }
 
@@ -73,8 +76,7 @@ const useFlowStore = create<FlowState>((set, get) => ({
       toast.error(`Selected flow ${flowName} not found`)
       return
     }
-    useReactFlowStore.getState().nodes = selectedFlow.data.nodes
-    useReactFlowStore.getState().edges = selectedFlow.data.edges
+    reactFlowStore.setState({ nodes: selectedFlow.data.nodes, edges: selectedFlow.data.edges })
     set({ selectedFlowName: flowName })
   },
 
@@ -84,8 +86,8 @@ const useFlowStore = create<FlowState>((set, get) => ({
       toast.error('No flow selected')
       return
     }
-    const nodes = useReactFlowStore.getState().nodes
-    const edges = useReactFlowStore.getState().edges
+    const nodes = reactFlowStore.getState().nodes
+    const edges = reactFlowStore.getState().edges
     const updatedFlow = { ...selectedFlow, data: { nodes, edges } }
 
     await flowsApi.updateFlow(updatedFlow)
@@ -105,4 +107,6 @@ const useFlowStore = create<FlowState>((set, get) => ({
   },
 }))
 
-export default useFlowStore
+export const flowStore = useFlowStore
+
+export default createStrictStore(useFlowStore)

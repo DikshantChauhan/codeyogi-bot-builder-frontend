@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappStickerNodeData, WhatsappStickerNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappStickerNodeType
@@ -14,15 +13,11 @@ const Form: React.FC<Props> = ({ node }) => {
     url: data?.url || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappStickerNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappStickerNodeData> = (value) => {
     if (!value.id && !value.url) {
-      return 'Either Sticker ID or URL is required'
+      throw new Error('Either Sticker ID or URL is required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-sticker',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +29,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Sticker" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Sticker ID (recommended)</label>
@@ -58,7 +53,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

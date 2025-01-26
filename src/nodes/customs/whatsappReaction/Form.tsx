@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappReactionNodeData, WhatsappReactionNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappReactionNodeType
@@ -16,15 +15,11 @@ const Form: React.FC<Props> = ({ node }) => {
     messageId: data?.messageId || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappReactionNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappReactionNodeData> = (value) => {
     if (!value.emoji) {
-      return 'Emoji is required'
+      throw new Error('Emoji is required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-reaction',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +38,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Reaction" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Emoji</label>
@@ -78,7 +73,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

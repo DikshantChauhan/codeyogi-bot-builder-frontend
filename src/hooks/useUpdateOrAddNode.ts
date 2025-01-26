@@ -1,6 +1,5 @@
-import { useReactFlow } from '@xyflow/react'
 import useReactFlowStore from '../store/reactFlow.store'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { AppNode } from '../nodes'
 
 const useUpdateOrAddNode = () => {
@@ -8,35 +7,22 @@ const useUpdateOrAddNode = () => {
   const setNodeToAdd = useReactFlowStore((state) => state.setNodeToAdd)
   const setSelectedNodeId = useReactFlowStore((state) => state.setSelectedNodeId)
   const editNodeData = useReactFlowStore((state) => state.editNodeData)
-  const { getViewport } = useReactFlow()
 
   const handleCloseSideBar = useCallback(() => {
     setSelectedNodeId(null)
     setNodeToAdd(null)
   }, [])
 
-  const centerPosition = useMemo(() => {
-    const viewport = getViewport()
-    return {
-      x: (viewport.x * -1 + window.innerWidth / 2 - 150) / viewport.zoom,
-      y: (viewport.y * -1 + window.innerHeight / 2 - 50) / viewport.zoom,
-    }
-  }, [getViewport])
-
   const updateOrAddNode = useCallback(
-    (node: Omit<AppNode, 'position' | 'dragHandle'>, change: 'add' | 'edit', closeSideBar: boolean = false) => {
+    (node: AppNode, change: 'add' | 'edit', closeSideBar: boolean = false) => {
       if (change === 'add') {
-        addNode({
-          ...node,
-          dragHandle: '.drag-handle__custom',
-          position: centerPosition,
-        } as AppNode)
+        addNode(node)
       } else {
         editNodeData(node.id, node.data)
       }
       closeSideBar && handleCloseSideBar()
     },
-    [centerPosition, handleCloseSideBar]
+    [handleCloseSideBar]
   )
 
   return {

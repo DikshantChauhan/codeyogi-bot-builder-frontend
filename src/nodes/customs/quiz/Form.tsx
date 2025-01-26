@@ -1,6 +1,5 @@
-import { memo, useCallback } from 'react'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import { memo } from 'react'
+import NodeFormContainer,  { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { Field } from 'formik'
 import { QuizNodeData, QuizNodeType } from '../quiz/type'
 import ListField from '../../../components/ListField'
@@ -12,22 +11,13 @@ interface Props {
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
 
-  const handleTransformNode: TransFormToNode<QuizNodeData> = useCallback((value) => {
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'quiz',
-      position: { x: 0, y: 0 },
-    }
-  }, [])
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<QuizNodeData> = (value) => {
+    // TODO: validate question, options, rightIndex
+    return value
+4  }
 
   return (
-    <NodeFormContiner
-      data={data || { question: '', options: ['', ''], rightIndex: -1 }}
-      transformToNode={handleTransformNode}
-      title={"Quiz"}
-      updating={!!node}
-    >
+    <NodeFormContainer initialValues={data || { question: '', options: ['', ''], rightIndex: -1 }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       {({ values }) => (
         <>
           <Field
@@ -55,7 +45,7 @@ const Form: React.FC<Props> = ({ node }) => {
           </div>
         </>
       )}
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

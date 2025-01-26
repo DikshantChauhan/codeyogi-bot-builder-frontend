@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappVideoNodeData, WhatsappVideoNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappVideoNodeType
@@ -15,15 +14,11 @@ const Form: React.FC<Props> = ({ node }) => {
     caption: data?.caption || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappVideoNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappVideoNodeData> = (value) => {
     if (!value.id && !value.url) {
-      return 'Either Video ID or URL is required'
+      throw new Error('Either Video ID or URL is required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-video',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,7 +30,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Video" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Video ID (recommended)</label>
@@ -69,7 +64,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

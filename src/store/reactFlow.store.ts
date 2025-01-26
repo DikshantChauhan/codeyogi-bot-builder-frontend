@@ -12,6 +12,7 @@ import {
 } from '@xyflow/react'
 import { AppNode, initialNodes, NodeTypeKeys } from '../nodes'
 import { AppEdge, initialEdges } from '../edges'
+import { createStrictStore } from './util'
 
 export type ReactFlowState = {
   nodes: AppNode[]
@@ -30,6 +31,7 @@ export type ReactFlowState = {
   onReconnectStart: (event: React.MouseEvent, edge: AppEdge, handleType: HandleType) => void
   onReconnectEnd: (event: MouseEvent | TouchEvent, edge: AppEdge, handleType: HandleType) => void
   reconnectingEdge: AppEdge | null
+  getSelectedNode: () => AppNode | undefined
 }
 
 const useReactFlowStore = create<ReactFlowState>((set, get) => ({
@@ -76,6 +78,11 @@ const useReactFlowStore = create<ReactFlowState>((set, get) => ({
     set({ reconnectingEdge: null })
   },
   reconnectingEdge: null,
+  getSelectedNode: () => {
+    return get().nodes.find((node) => node.id === get().selectedNodeId)
+  },
 }))
 
-export default useReactFlowStore
+export const reactFlowStore = useReactFlowStore
+
+export default createStrictStore(useReactFlowStore)

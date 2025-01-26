@@ -25,7 +25,9 @@ const useFlowEditorData = () => {
       reconnectingEdge: state.reconnectingEdge,
     }))
   )
-  const { setSelectedFlowName, selectedFlowName } = useFlowStore()
+  const { setSelectedFlowName, selectedFlowName } = useFlowStore(
+    useShallow((state) => ({ setSelectedFlowName: state.setSelectedFlowName, selectedFlowName: state.selectedFlowName }))
+  )
   const { [ROUTE_FLOW_EDITOR.dynamicKey]: flowName } = useParams<{ [ROUTE_FLOW_EDITOR.dynamicKey]: string }>()
 
   useEffect(() => {
@@ -44,6 +46,7 @@ const useFlowEditorData = () => {
     [setSelectedNodeId]
   )
 
+  //TODO: fix this, check with three nodes and try to reconnect them
   const isConnnectionValid = useCallback(
     (connection: AppEdge | Connection) => {
       const { source: sourceId, sourceHandle: sourceHandleName } = connection

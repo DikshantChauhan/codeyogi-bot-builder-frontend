@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { FormField, WhatsappFormNodeData, WhatsappFormNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappFormNodeType
@@ -17,18 +16,14 @@ const Form: React.FC<Props> = ({ node }) => {
     fields: data?.fields || [{ label: '', type: 'text', required: false }],
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappFormNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappFormNodeData> = (value) => {
     if (!value.title || !value.description || value.fields.length === 0) {
-      return 'Title, description and at least one field are required'
+      throw new Error('Title, description and at least one field are required')
     }
     if (value.fields.some((field) => !field.label)) {
-      return 'All fields must have a label'
+      throw new Error('All fields must have a label')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-form',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,7 +56,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Form" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Form Title</label>
@@ -129,7 +124,7 @@ const Form: React.FC<Props> = ({ node }) => {
           ))}
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

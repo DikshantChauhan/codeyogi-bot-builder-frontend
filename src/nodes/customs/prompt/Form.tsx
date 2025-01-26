@@ -1,6 +1,5 @@
-import { FC, memo, useCallback } from 'react'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import { FC, memo } from 'react'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { PromptNodeData, PromptNodeType } from './type'
 import { Field } from 'formik'
 
@@ -11,17 +10,13 @@ interface Props {
 const Form: FC<Props> = ({ node }) => {
   const data = node?.data
 
-  const transFormToNode: TransFormToNode<PromptNodeData> = useCallback((value) => {
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'prompt',
-      position: { x: 0, y: 0 },
-    }
-  }, [])
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<PromptNodeData> = (value) => {
+    // TODO: validate text
+    return value
+  }
 
   return (
-    <NodeFormContiner data={data || { text: '' }} transformToNode={transFormToNode} title="Prompt" updating={!!node}>
+    <NodeFormContainer initialValues={data || { text: '' }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <Field
         as="textarea"
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -29,7 +24,7 @@ const Form: FC<Props> = ({ node }) => {
         placeholder="Enter prompt..."
         name="text"
       />
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

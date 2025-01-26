@@ -7,8 +7,6 @@ import ToolSidePanel from '../components/ToolSidePanel'
 import MenuBar from '../components/MenuBar'
 import useFlowEditorData from '../hooks/useFlowEditorData'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 export default function FlowEditor() {
   const {
@@ -56,7 +54,7 @@ export default function FlowEditor() {
           <Controls />
         </ReactFlow>
       </div>
-      <ToastContainer position="bottom-right" theme="dark" />
+      
     </div>
   )
 }

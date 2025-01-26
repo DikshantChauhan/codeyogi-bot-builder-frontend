@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappImageNodeData, WhatsappImageNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappImageNodeType
@@ -15,15 +14,11 @@ const Form: React.FC<Props> = ({ node }) => {
     caption: data?.caption || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappImageNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappImageNodeData> = (value) => {
     if (!value.id && !value.link) {
-      return 'Either Image ID or URL is required'
+      throw new Error('Either Image ID or URL is required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-image',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,7 +30,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Image" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Image ID (recommended)</label>
@@ -69,7 +64,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

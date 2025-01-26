@@ -1,6 +1,5 @@
 import { FC, memo } from 'react'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { MessageNodeData, MessageNodeType } from './type'
 import { Field } from 'formik'
 
@@ -11,17 +10,13 @@ interface Props {
 const MessageForm: FC<Props> = ({ node }) => {
   const data = node?.data
 
-  const transFormToNode: TransFormToNode<MessageNodeData> = (value) => {
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'message',
-      position: { x: 0, y: 0 },
-    }
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<MessageNodeData> = (value) => {
+    // TODO: validate text
+    return value
   }
 
   return (
-    <NodeFormContiner data={data || { text: '' }} transformToNode={transFormToNode} title={"Message"} updating={!!node}>
+    <NodeFormContainer initialValues={data || { text: '' }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div>
         <Field
           as="textarea"
@@ -31,7 +26,7 @@ const MessageForm: FC<Props> = ({ node }) => {
           placeholder="Enter message..."
         />
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 

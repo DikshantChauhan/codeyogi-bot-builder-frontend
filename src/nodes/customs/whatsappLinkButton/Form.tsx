@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { WhatsappLinkButtonNodeData, WhatsappLinkButtonNodeType } from './type'
-import NodeFormContiner, { TransFormToNode } from '../../../components/NodeFormContiner'
-import { getRandomId } from '../../../utils'
+import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
   node?: WhatsappLinkButtonNodeType
@@ -15,15 +14,11 @@ const Form: React.FC<Props> = ({ node }) => {
     url: data?.url || '',
   })
 
-  const handleTransformNode: TransFormToNode<WhatsappLinkButtonNodeData> = (value) => {
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappLinkButtonNodeData> = (value) => {
     if (!value.text || !value.label || !value.url) {
-      return 'All fields are required'
+      throw new Error('All fields are required')
     }
-    return {
-      data: value,
-      id: node?.id || getRandomId(),
-      type: 'whatsapp-link-button',
-    }
+    return value
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,7 +30,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContiner data={formData} transformToNode={handleTransformNode} title="WhatsApp Link Button" updating={!!node}>
+    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Text</label>
@@ -68,7 +63,7 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
       </div>
-    </NodeFormContiner>
+    </NodeFormContainer>
   )
 }
 
