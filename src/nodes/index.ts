@@ -46,6 +46,9 @@ import { IoIosHappy } from 'react-icons/io'
 import { WHATSAPP_STICKER_NODE_KEY, WhatsappStickerNodeType } from './customs/whatsappSticker/type'
 import WhatsappStickerNode from './customs/whatsappSticker/Node'
 import { IoIosImages } from 'react-icons/io'
+import { DELAY_NODE_KEY, DelayNodeType } from './customs/delay/type'
+import DelayNode from './customs/delay/Node'
+import { IoMdTime } from 'react-icons/io'
 
 export const initialNodes: AppNode[] = []
 
@@ -68,6 +71,7 @@ export type AppNode =
   | WhatsappVideoNodeType
   | WhatsappReactionNodeType
   | WhatsappStickerNodeType
+  | DelayNodeType
 
 export type AppNodeData = Pick<Exclude<AppNode, BuiltInNode>, 'data'>['data']
 
@@ -89,6 +93,7 @@ export const nodeTypes = {
   [WHATSAPP_VIDEO_NODE_KEY]: WhatsappVideoNode,
   [WHATSAPP_REACTION_NODE_KEY]: WhatsappReactionNode,
   [WHATSAPP_STICKER_NODE_KEY]: WhatsappStickerNode,
+  [DELAY_NODE_KEY]: DelayNode,
 } satisfies NodeTypes
 
 export const nodesUIMeta: Record<NodeTypeKeys, { color: `bg-${string}-${number}`; Icon: IconType; title: string }> = {
@@ -109,6 +114,7 @@ export const nodesUIMeta: Record<NodeTypeKeys, { color: `bg-${string}-${number}`
   'whatsapp-video': { color: 'bg-red-500', Icon: IoIosVideocam, title: 'WhatsApp Video' },
   'whatsapp-reaction': { color: 'bg-yellow-500', Icon: IoIosHappy, title: 'WhatsApp Reaction' },
   'whatsapp-sticker': { color: 'bg-cyan-500', Icon: IoIosImages, title: 'WhatsApp Sticker' },
+  'delay': { color: 'bg-gray-500', Icon: IoMdTime, title: 'Delay' },
 }
 
 export type NodeTypeKeys = keyof typeof nodeTypes
