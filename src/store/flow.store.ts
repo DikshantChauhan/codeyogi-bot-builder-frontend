@@ -8,13 +8,15 @@ import { AppEdge } from '../edges'
 import { reactFlowStore } from './reactFlow.store'
 import { createStrictStore } from './util'
 
+export type SubFlowsMapValue = 'inherit' | 'none' | (string & {})
+export type SubFlowsMap = { [nodeId: string]: { nudge: SubFlowsMapValue; validator: SubFlowsMapValue } }
+
 export interface Flow {
   name: string
   nodes: NodeTypeKeys[]
   type: 'campaign' | 'nudge' | 'validator'
   data: Omit<ReactFlowJsonObject<AppNode, AppEdge>, 'viewport'>
-  //{ nudges: { nudge1: nodeId }; validators: { validator1: nodeId } }
-  subFlowsMap: { nudges: { [nudgeFlowName: string]: string | null }; validators: { [validatorFlowName: string]: string | null } }
+  subFlowsMap: SubFlowsMap
   createdAt: string
 }
 
@@ -26,9 +28,9 @@ type FlowState = {
   initFlows: () => Promise<void>
   selectedFlowName: string | null
   setSelectedFlowName: (flowName: string) => void
-  updateFlow: () => Promise<void>
   getSelectedFlow: () => Flow | null
   getSelectedFlowAllowedNodes: () => NodeTypeKeys[]
+  saveFlow: () => Promise<void>
 }
 
 const useFlowStore = create<FlowState>((set, get) => ({
@@ -76,24 +78,8 @@ const useFlowStore = create<FlowState>((set, get) => ({
       toast.error(`Selected flow ${flowName} not found`)
       return
     }
-    reactFlowStore.setState({ nodes: selectedFlow.data.nodes, edges: selectedFlow.data.edges })
+    reactFlowStore.setState({ nodes: selectedFlow.data.nodes, edges: selectedFlow.data.edges, nodesSubFlowsMap: selectedFlow.subFlowsMap })
     set({ selectedFlowName: flowName })
-  },
-
-  updateFlow: async () => {
-    const selectedFlow = get().getSelectedFlow()
-    if (!selectedFlow) {
-      toast.error('No flow selected')
-      return
-    }
-    const nodes = reactFlowStore.getState().nodes
-    const edges = reactFlowStore.getState().edges
-    const updatedFlow = { ...selectedFlow, data: { nodes, edges } }
-
-    await flowsApi.updateFlow(updatedFlow)
-    set((state) => ({
-      flows: state.flows.map((f) => (f.name === selectedFlow.name ? updatedFlow : f)),
-    }))
   },
 
   getSelectedFlow: () => {
@@ -104,6 +90,23 @@ const useFlowStore = create<FlowState>((set, get) => ({
   getSelectedFlowAllowedNodes: () => {
     const selectedFlow = get().getSelectedFlow()
     return selectedFlow?.nodes || []
+  },
+
+  saveFlow: async () => {
+    const selectedFlow = get().getSelectedFlow()
+    if (!selectedFlow) {
+      toast.error('No flow selected')
+      return
+    }
+    const nodes = reactFlowStore.getState().nodes
+    const edges = reactFlowStore.getState().edges
+
+    const subFlowsMap = reactFlowStore.getState().nodesSubFlowsMap
+
+    const updatedFlow = { ...selectedFlow, data: { nodes, edges }, subFlowsMap }
+
+    await flowsApi.updateFlow(updatedFlow)
+    set({ flows: get().flows.map((flow) => (flow.name === selectedFlow.name ? updatedFlow : flow)) })
   },
 }))
 

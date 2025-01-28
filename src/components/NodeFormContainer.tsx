@@ -4,11 +4,12 @@ import { AppNode } from '../nodes'
 import useUpdateOrAddNode from '../hooks/useUpdateOrAddNode'
 import Button from './Button'
 import { toast } from 'react-toastify'
-import useFlowStore from '../store/flow.store'
 import useReactFlowStore from '../store/reactFlow.store'
 import { getRandomId } from '../utils'
 import { useShallow } from 'zustand/react/shallow'
 import { useReactFlow } from '@xyflow/react'
+import NodeSubFlowForm from './NodeSubFlowForm'
+import useFlowStore from '../store/flow.store'
 
 export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
 
@@ -20,19 +21,20 @@ interface FormProps<T extends FormikValues> {
 
 const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues }: FormProps<T>) => {
   const { updateOrAddNode } = useUpdateOrAddNode()
-  const getSelectedFlow = useFlowStore((state) => state.getSelectedFlow)
-  const { selectedNode, nodeToAdd } = useReactFlowStore(
+  const { selectedNode, nodeToAdd, nodesSubFlowsMap, onNodesSubFlowsMapChange } = useReactFlowStore(
     useShallow(
       (state) =>
         ({
           selectedNode: state.getSelectedNode(),
           nodeToAdd: state.nodeToAdd,
+          nodesSubFlowsMap: state.nodesSubFlowsMap,
+          onNodesSubFlowsMapChange: state.onNodesSubFlowsMapChange,
         } as const)
     )
   )
   const { getViewport } = useReactFlow()
+  const selectedFlow = useFlowStore((state) => state.getSelectedFlow())
 
-  const flow = getSelectedFlow()
   const id = useMemo(() => selectedNode?.id || getRandomId(), [selectedNode])
   const type = selectedNode?.type || nodeToAdd
 
@@ -44,7 +46,9 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
     }
   }, [getViewport])
 
-  if (!flow) return <div>No flow found</div>
+  const subFlowsFormInitialValues = nodesSubFlowsMap[id] || { nudge: 'inherit', validator: 'inherit' }
+  const combinedInitialValues = { ...initialValues, ...subFlowsFormInitialValues }
+
   if (!type) return <div>No node to add</div>
 
   const handleSubmit = useCallback(
@@ -59,7 +63,11 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
           dragHandle: '.drag-handle__custom',
         } as AppNode
 
-        updateOrAddNode(node, selectedNode ? 'edit' : 'add', true)
+        const { nudge, validator } = values as typeof combinedInitialValues
+        const mode = selectedNode ? 'edit' : 'add'
+
+        onNodesSubFlowsMapChange(id, nudge, validator)
+        updateOrAddNode(node, mode, true)
       } catch (error) {
         toast.error(String(error))
       }
@@ -68,21 +76,25 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
   )
 
   return (
-    <Formik<T> initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
-      {(formikProps) => (
-        <Form className="space-y-4">
-          <h2 className="text-xl font-bold">{type}</h2>
+    <>
+      <Formik<T> initialValues={combinedInitialValues} onSubmit={handleSubmit} enableReinitialize>
+        {(formikProps) => (
+          <Form className="space-y-4">
+            <h2 className="text-xl font-bold">{type}</h2>
 
-          {typeof children === 'function' ? children(formikProps) : children}
+            {typeof children === 'function' ? children(formikProps) : children}
 
-          <div>
-            <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
-              {selectedNode ? 'Update' : 'Add'}
-            </Button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+            {selectedFlow?.type === 'campaign' && <NodeSubFlowForm nudgeSelectorName="nudge" validatorSelectorName="validator" />}
+
+            <div>
+              <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
+                {selectedNode ? 'Update' : 'Add'}
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
   )
 }
 

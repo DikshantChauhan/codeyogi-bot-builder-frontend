@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { nodesUIMeta, NodeTypeKeys } from '../nodes'
 import useFlowStore, { Flow } from '../store/flow.store'
 import { toast } from 'react-toastify'
@@ -11,9 +11,9 @@ interface AddFlowFormProps {
 
 function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
   const [name, setName] = useState('')
-  const [type, setType] = useState<'campaign' | 'nudge'>('campaign')
+  const [type, setType] = useState<Flow['type']>('campaign')
   const [selectedNodes, setSelectedNodes] = useState<NodeTypeKeys[]>([])
-  const { flows } = useFlowStore()
+  const flows = useFlowStore((state) => state.flows)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,16 +31,20 @@ function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
         nodes: [],
         edges: [],
       },
-      subFlowsMap: {
-        nudges: {},
-        validators: {},
-      },
+      subFlowsMap: {},
     })
     setName('')
     setType('campaign')
     setSelectedNodes([])
     onClose()
   }
+
+  const typesOptions = useMemo(() => {
+    return ['campaign', 'nudge', 'validator'].map((type) => ({
+      value: type,
+      label: type,
+    }))
+  }, [])
 
   if (!isOpen) return null
 
@@ -56,9 +60,12 @@ function AddFlowForm({ isOpen, onClose, onAdd }: AddFlowFormProps) {
             </div>
             <div>
               <label className="block mb-1">Type</label>
-              <select value={type} onChange={(e) => setType(e.target.value as 'campaign' | 'nudge')} className="w-full border rounded p-2">
-                <option value="campaign">Campaign</option>
-                <option value="nudge">Nudge</option>
+              <select value={type} onChange={(e) => setType(e.target.value as Flow['type'])} className="w-full border rounded p-2">
+                {typesOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div>

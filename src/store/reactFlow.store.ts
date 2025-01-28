@@ -13,10 +13,13 @@ import {
 import { AppNode, initialNodes, NodeTypeKeys } from '../nodes'
 import { AppEdge, initialEdges } from '../edges'
 import { createStrictStore } from './util'
+import { SubFlowsMap, SubFlowsMapValue } from './flow.store'
 
 export type ReactFlowState = {
   nodes: AppNode[]
   edges: AppEdge[]
+  nodesSubFlowsMap: SubFlowsMap
+  onNodesSubFlowsMapChange: (nodeId: string, nudge: SubFlowsMapValue, validator: SubFlowsMapValue) => void
   onNodesChange: OnNodesChange<AppNode>
   onEdgesChange: OnEdgesChange<AppEdge>
   onConnect: OnConnect
@@ -80,6 +83,10 @@ const useReactFlowStore = create<ReactFlowState>((set, get) => ({
   reconnectingEdge: null,
   getSelectedNode: () => {
     return get().nodes.find((node) => node.id === get().selectedNodeId)
+  },
+  nodesSubFlowsMap: {},
+  onNodesSubFlowsMapChange: (nodeId, nudge, validator) => {
+    set({ nodesSubFlowsMap: { ...get().nodesSubFlowsMap, [nodeId]: { nudge, validator } } })
   },
 }))
 

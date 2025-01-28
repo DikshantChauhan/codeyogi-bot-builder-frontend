@@ -8,10 +8,12 @@ import useFlowStore from '../store/flow.store'
 
 const MenuBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { updateFlow } = useFlowStore()
+  const { saveFlow } = useFlowStore((state) => ({
+    saveFlow: state.saveFlow,
+  }))
 
   const handleSave = useCallback(async () => {
-    await updateFlow()
+    await saveFlow()
     setIsOpen(false)
   }, [])
 
