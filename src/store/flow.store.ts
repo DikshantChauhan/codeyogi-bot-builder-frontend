@@ -31,6 +31,7 @@ type FlowState = {
   getSelectedFlow: () => Flow | null
   getSelectedFlowAllowedNodes: () => NodeTypeKeys[]
   saveFlow: () => Promise<void>
+  updateFlow: (flow: Flow) => Promise<void>
 }
 
 const useFlowStore = create<FlowState>((set, get) => ({
@@ -107,6 +108,11 @@ const useFlowStore = create<FlowState>((set, get) => ({
 
     await flowsApi.updateFlow(updatedFlow)
     set({ flows: get().flows.map((flow) => (flow.name === selectedFlow.name ? updatedFlow : flow)) })
+  },
+
+  updateFlow: async (flow: Flow) => {
+    await flowsApi.updateFlow(flow)
+    set({ flows: get().flows.map((f) => (f.name === flow.name ? flow : f)) })
   },
 }))
 
