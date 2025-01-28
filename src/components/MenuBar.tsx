@@ -8,8 +8,9 @@ import useFlowStore from '../store/flow.store'
 
 const MenuBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { saveFlow } = useFlowStore((state) => ({
+  const { saveFlow, getSelectedFlow } = useFlowStore((state) => ({
     saveFlow: state.saveFlow,
+    getSelectedFlow: state.getSelectedFlow,
   }))
 
   const handleSave = useCallback(async () => {
@@ -18,15 +19,15 @@ const MenuBar: FC = () => {
   }, [])
 
   const handleExport = useCallback(() => {
-    // const data = toObject()
-    // const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    // const url = URL.createObjectURL(blob)
-    // const a = document.createElement('a')
-    // a.href = url
-    // a.download = 'flow.json'
-    // a.click()
-    // URL.revokeObjectURL(url)
-    // setIsOpen(false)
+    const data = getSelectedFlow()
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'flow.json'
+    a.click()
+    URL.revokeObjectURL(url)
+    setIsOpen(false)
   }, [])
 
   return (

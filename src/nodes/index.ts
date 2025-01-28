@@ -49,6 +49,9 @@ import { IoIosImages } from 'react-icons/io'
 import { DELAY_NODE_KEY, DelayNodeType } from './customs/delay/type'
 import DelayNode from './customs/delay/Node'
 import { IoMdTime } from 'react-icons/io'
+import { END_NODE_KEY, EndNodeType } from './customs/end/type'
+import EndNode from './customs/end/Node'
+import { IoMdSquare } from 'react-icons/io'
 
 export const initialNodes: AppNode[] = []
 
@@ -72,6 +75,7 @@ export type AppNode =
   | WhatsappReactionNodeType
   | WhatsappStickerNodeType
   | DelayNodeType
+  | EndNodeType
 
 export type AppNodeData = Pick<Exclude<AppNode, BuiltInNode>, 'data'>['data']
 
@@ -94,6 +98,7 @@ export const nodeTypes = {
   [WHATSAPP_REACTION_NODE_KEY]: WhatsappReactionNode,
   [WHATSAPP_STICKER_NODE_KEY]: WhatsappStickerNode,
   [DELAY_NODE_KEY]: DelayNode,
+  [END_NODE_KEY]: EndNode,
 } satisfies NodeTypes
 
 export const nodesUIMeta: Record<NodeTypeKeys, { color: `bg-${string}-${number}`; Icon: IconType; title: string }> = {
@@ -101,20 +106,21 @@ export const nodesUIMeta: Record<NodeTypeKeys, { color: `bg-${string}-${number}`
   'prompt': { color: 'bg-sky-500', Icon: IoMdChatboxes, title: 'Prompt' },
   'message': { color: 'bg-emerald-500', Icon: IoMdMail, title: 'Message' },
   'quiz': { color: 'bg-violet-500', Icon: IoMdHelp, title: 'Quiz' },
-  'youtube-sorts': { color: 'bg-rose-500', Icon: IoLogoYoutube, title: 'Youtube Sorts' },
+  'youtube-sorts': { color: 'bg-rose-500', Icon: IoLogoYoutube, title: 'YT Sorts' },
   'native-sorts': { color: 'bg-amber-400', Icon: IoMdCode, title: 'Native Sorts' },
   'start': { color: 'bg-slate-500', Icon: IoMdFlag, title: 'Start' },
-  'whatsapp-audio': { color: 'bg-blue-500', Icon: IoIosMusicalNotes, title: 'WhatsApp Audio' },
-  'whatsapp-document': { color: 'bg-purple-500', Icon: IoIosDocument, title: 'WhatsApp Document' },
-  'whatsapp-image': { color: 'bg-pink-500', Icon: IoIosImage, title: 'WhatsApp Image' },
-  'whatsapp-link-button': { color: 'bg-green-500', Icon: IoIosLink, title: 'WhatsApp Link Button' },
-  'whatsapp-form': { color: 'bg-indigo-500', Icon: IoIosListBox, title: 'WhatsApp Form' },
-  'whatsapp-list': { color: 'bg-orange-500', Icon: IoIosList, title: 'WhatsApp List' },
-  'whatsapp-button': { color: 'bg-teal-500', Icon: IoIosRadioButtonOn, title: 'WhatsApp Button' },
-  'whatsapp-video': { color: 'bg-red-500', Icon: IoIosVideocam, title: 'WhatsApp Video' },
-  'whatsapp-reaction': { color: 'bg-yellow-500', Icon: IoIosHappy, title: 'WhatsApp Reaction' },
-  'whatsapp-sticker': { color: 'bg-cyan-500', Icon: IoIosImages, title: 'WhatsApp Sticker' },
+  'whatsapp-audio': { color: 'bg-blue-500', Icon: IoIosMusicalNotes, title: 'W-Audio' },
+  'whatsapp-document': { color: 'bg-purple-500', Icon: IoIosDocument, title: 'W-Document' },
+  'whatsapp-image': { color: 'bg-pink-500', Icon: IoIosImage, title: 'W-Image' },
+  'whatsapp-link-button': { color: 'bg-green-500', Icon: IoIosLink, title: 'W-Link Button' },
+  'whatsapp-form': { color: 'bg-indigo-500', Icon: IoIosListBox, title: 'W-Form' },
+  'whatsapp-list': { color: 'bg-orange-500', Icon: IoIosList, title: 'W-List' },
+  'whatsapp-button': { color: 'bg-teal-500', Icon: IoIosRadioButtonOn, title: 'W-Button' },
+  'whatsapp-video': { color: 'bg-red-500', Icon: IoIosVideocam, title: 'W-Video' },
+  'whatsapp-reaction': { color: 'bg-yellow-500', Icon: IoIosHappy, title: 'W-Reaction' },
+  'whatsapp-sticker': { color: 'bg-cyan-500', Icon: IoIosImages, title: 'W-Sticker' },
   'delay': { color: 'bg-gray-500', Icon: IoMdTime, title: 'Delay' },
+  'end': { color: 'bg-slate-700', Icon: IoMdSquare, title: 'End' },
 }
 
 export type NodeTypeKeys = keyof typeof nodeTypes

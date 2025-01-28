@@ -5,6 +5,9 @@ import { nodesUIMeta, NodeTypeKeys } from '../nodes'
 import useFlowStore, { Flow } from '../store/flow.store'
 import { toast } from 'react-toastify'
 import { useShallow } from 'zustand/react/shallow'
+import { START_NODE_KEY } from '../nodes/customs/start/type'
+import { END_NODE_KEY } from '../nodes/customs/end/type'
+import { getRandomId } from '../utils'
 
 interface FlowFormProps {
   isOpen: boolean
@@ -51,7 +54,10 @@ function FlowForm({ isOpen, onClose, initialData }: FlowFormProps) {
       type: values.type,
       nodes: values.nodes,
       data: initialData?.data || {
-        nodes: [],
+        nodes: [
+          { id: getRandomId(), type: 'start', position: { x: 0, y: 0 }, data: {} },
+          { id: getRandomId(), type: 'end', position: { x: 400, y: 0 }, data: {} },
+        ],
         edges: [],
       },
       subFlowsMap: initialData?.subFlowsMap || {},
@@ -72,6 +78,15 @@ function FlowForm({ isOpen, onClose, initialData }: FlowFormProps) {
       value: type,
       label: type,
     }))
+  }, [])
+
+  const nodesOptions = useMemo(() => {
+    return Object.entries(nodesUIMeta)
+      .map(([key, { title }]) => ({
+        value: key,
+        label: title,
+      }))
+      .filter((node) => node.value !== START_NODE_KEY && node.value !== END_NODE_KEY)
   }, [])
 
   if (!isOpen) return null
@@ -103,19 +118,19 @@ function FlowForm({ isOpen, onClose, initialData }: FlowFormProps) {
 
               <div>
                 <label className="block mb-1">Nodes</label>
-                <div className="border rounded p-2 max-h-40 overflow-y-auto">
-                  {Object.entries(nodesUIMeta).map(([key, meta]) => (
-                    <label key={key} className="flex items-center p-1">
+                <div className="border rounded p-2 max-h-56 overflow-y-auto">
+                  {nodesOptions.map(({ value, label }) => (
+                    <label key={value} className="flex items-center p-1">
                       <input
                         type="checkbox"
-                        checked={values.nodes.includes(key as NodeTypeKeys)}
+                        checked={values.nodes.includes(value as NodeTypeKeys)}
                         onChange={(e) => {
-                          const newNodes = e.target.checked ? [...values.nodes, key as NodeTypeKeys] : values.nodes.filter((n) => n !== key)
+                          const newNodes = e.target.checked ? [...values.nodes, value as NodeTypeKeys] : values.nodes.filter((n) => n !== value)
                           setFieldValue('nodes', newNodes)
                         }}
                         className="mr-2"
                       />
-                      {meta.title}
+                      {label}
                     </label>
                   ))}
                 </div>
