@@ -1,9 +1,7 @@
-import { Node } from "@xyflow/react";
+import { Node } from '@xyflow/react'
 
-export const PROMPT_NODE_KEY = "prompt";
+export const PROMPT_NODE_KEY = 'prompt'
 
-export type PromptNodeData = {
-    text: string;
-}
+export type PromptNodeData = {}
 
-export type PromptNodeType = Node<PromptNodeData, typeof PROMPT_NODE_KEY>;
+export type PromptNodeType = Node<PromptNodeData, typeof PROMPT_NODE_KEY>

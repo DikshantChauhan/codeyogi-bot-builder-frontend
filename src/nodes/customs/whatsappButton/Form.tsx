@@ -11,6 +11,8 @@ const Form: React.FC<Props> = ({ node }) => {
   const [formData, setFormData] = useState({
     text: data?.text || '',
     buttons: data?.buttons || [''],
+    footer: data?.footer || '',
+    header: data?.header || { type: 'text' as const },
   })
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappButtonNodeData> = (value) => {
@@ -23,11 +25,22 @@ const Form: React.FC<Props> = ({ node }) => {
     return value
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }))
+  }
+
+  const handleHeaderChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      header: {
+        ...prev.header,
+        [name]: value,
+      },
     }))
   }
 
@@ -57,6 +70,25 @@ const Form: React.FC<Props> = ({ node }) => {
   return (
     <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Header Type</label>
+          <select name="type" value={formData.header.type} onChange={handleHeaderChange} className="w-full rounded-md border px-3 py-2">
+            <option value="text">Text</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="document">Document</option>
+          </select>
+
+          {formData.header.type === 'text' && (
+            <input
+              name="text"
+              value={formData.header.text || ''}
+              onChange={handleHeaderChange}
+              placeholder="Enter header text"
+              className="w-full rounded-md border px-3 py-2"
+            />
+          )}
+        </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Text</label>
           <textarea
@@ -89,6 +121,16 @@ const Form: React.FC<Props> = ({ node }) => {
               </button>
             </div>
           ))}
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Footer (optional)</label>
+          <input
+            name="footer"
+            value={formData.footer}
+            onChange={handleInputChange}
+            placeholder="Enter footer text"
+            className="w-full rounded-md border px-3 py-2"
+          />
         </div>
       </div>
     </NodeFormContainer>

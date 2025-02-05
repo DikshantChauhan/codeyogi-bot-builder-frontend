@@ -9,14 +9,14 @@ interface Props {
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
   const [formData, setFormData] = useState({
-    id: data?.id || '',
-    url: data?.url || '',
+    media: data?.media || '',
+    mediaType: data?.mediaType || 'id',
     caption: data?.caption || '',
   })
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappVideoNodeData> = (value) => {
-    if (!value.id && !value.url) {
-      throw new Error('Either Video ID or URL is required')
+    if (!value.media) {
+      throw new Error('Video media is required')
     }
     return value
   }
@@ -29,27 +29,30 @@ const Form: React.FC<Props> = ({ node }) => {
     }))
   }
 
+  const handleMediaTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      mediaType: e.target.value as 'id' | 'link',
+    }))
+  }
+
   return (
     <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Video ID (recommended)</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp video ID"
-            className="w-full rounded-md border px-3 py-2"
-          />
+          <label className="text-sm font-medium">Media Type</label>
+          <select name="mediaType" value={formData.mediaType} onChange={handleMediaTypeChange} className="w-full rounded-md border px-3 py-2">
+            <option value="id">Video ID</option>
+            <option value="link">Video URL</option>
+          </select>
         </div>
-        <div className="text-center text-sm text-gray-500">OR</div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Video URL</label>
+          <label className="text-sm font-medium">{formData.mediaType === 'id' ? 'Video ID' : 'Video URL'}</label>
           <input
-            name="url"
-            value={formData.url}
+            name="media"
+            value={formData.media}
             onChange={handleInputChange}
-            placeholder="Enter WhatsApp video URL"
+            placeholder={formData.mediaType === 'id' ? 'Enter WhatsApp video ID' : 'Enter WhatsApp video URL'}
             className="w-full rounded-md border px-3 py-2"
           />
         </div>

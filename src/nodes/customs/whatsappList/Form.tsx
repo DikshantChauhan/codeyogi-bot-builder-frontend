@@ -1,5 +1,5 @@
 import { memo, useState } from 'react'
-import { ListItem, WhatsappListNodeData, WhatsappListNodeType } from './type'
+import { WhatsappListNodeData, WhatsappListNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
 interface Props {
@@ -9,18 +9,19 @@ interface Props {
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
   const [formData, setFormData] = useState({
+    text: data?.text || '',
+    buttons: data?.buttons || [''],
+    footer: data?.footer || '',
     header: data?.header || '',
-    body: data?.body || '',
-    buttonText: data?.buttonText || '',
-    items: data?.items || [{ title: '', description: '' }],
+    buttonLabel: data?.buttonLabel || '',
   })
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappListNodeData> = (value) => {
-    if (!value.header || !value.body || !value.buttonText || value.items.length === 0) {
-      throw new Error('Header, body, button text and at least one item are required')
+    if (!value.text || !value.buttons.length || !value.buttonLabel) {
+      throw new Error('Text, button label and at least one button are required')
     }
-    if (value.items.some((item) => !item.title)) {
-      throw new Error('All items must have a title')
+    if (value.buttons.some((button) => !button.trim())) {
+      throw new Error('All buttons must have text')
     }
     return value
   }
@@ -33,24 +34,24 @@ const Form: React.FC<Props> = ({ node }) => {
     }))
   }
 
-  const handleItemChange = (index: number, item: Partial<ListItem>) => {
+  const handleButtonChange = (index: number, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      items: prev.items.map((i, idx) => (idx === index ? { ...i, ...item } : i)),
+      buttons: prev.buttons.map((btn, idx) => (idx === index ? value : btn)),
     }))
   }
 
-  const addItem = () => {
+  const addButton = () => {
     setFormData((prev) => ({
       ...prev,
-      items: [...prev.items, { title: '', description: '' }],
+      buttons: [...prev.buttons, ''],
     }))
   }
 
-  const removeItem = (index: number) => {
+  const removeButton = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      items: prev.items.filter((_, idx) => idx !== index),
+      buttons: prev.buttons.filter((_, idx) => idx !== index),
     }))
   }
 
@@ -58,7 +59,7 @@ const Form: React.FC<Props> = ({ node }) => {
     <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Header</label>
+          <label className="text-sm font-medium">Header (Optional)</label>
           <input
             name="header"
             value={formData.header}
@@ -68,53 +69,53 @@ const Form: React.FC<Props> = ({ node }) => {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Body</label>
+          <label className="text-sm font-medium">Text</label>
           <textarea
-            name="body"
-            value={formData.body}
+            name="text"
+            value={formData.text}
             onChange={handleInputChange}
-            placeholder="Enter list body text"
+            placeholder="Enter list text"
             className="w-full rounded-md border px-3 py-2 min-h-[80px]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Button Text</label>
+          <label className="text-sm font-medium">Button Label</label>
           <input
-            name="buttonText"
-            value={formData.buttonText}
+            name="buttonLabel"
+            value={formData.buttonLabel}
             onChange={handleInputChange}
-            placeholder="Enter button text"
+            placeholder="Enter button label"
+            className="w-full rounded-md border px-3 py-2"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Footer (Optional)</label>
+          <input
+            name="footer"
+            value={formData.footer}
+            onChange={handleInputChange}
+            placeholder="Enter footer text"
             className="w-full rounded-md border px-3 py-2"
           />
         </div>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">List Items</label>
-            <button type="button" onClick={addItem} className="text-sm text-blue-500 hover:text-blue-600">
-              + Add Item
+            <label className="text-sm font-medium">Buttons</label>
+            <button type="button" onClick={addButton} className="text-sm text-blue-500 hover:text-blue-600">
+              + Add Button
             </button>
           </div>
-          {formData.items.map((item, index) => (
-            <div key={index} className="space-y-2 p-3 border rounded-md">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 space-y-2">
-                  <input
-                    value={item.title}
-                    onChange={(e) => handleItemChange(index, { title: e.target.value })}
-                    placeholder="Item title"
-                    className="w-full rounded-md border px-3 py-2"
-                  />
-                  <input
-                    value={item.description || ''}
-                    onChange={(e) => handleItemChange(index, { description: e.target.value })}
-                    placeholder="Item description (optional)"
-                    className="w-full rounded-md border px-3 py-2"
-                  />
-                </div>
-                <button type="button" onClick={() => removeItem(index)} className="ml-2 text-red-500 hover:text-red-600">
-                  ×
-                </button>
-              </div>
+          {formData.buttons.map((button, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <input
+                value={button}
+                onChange={(e) => handleButtonChange(index, e.target.value)}
+                placeholder="Button text"
+                className="flex-1 rounded-md border px-3 py-2"
+              />
+              <button type="button" onClick={() => removeButton(index)} className="text-red-500 hover:text-red-600">
+                ×
+              </button>
             </div>
           ))}
         </div>
