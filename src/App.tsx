@@ -1,27 +1,34 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import FlowEditor from './pages/FlowEditor'
-import { ROUTE_FLOW_EDITOR, ROUTE_HOME } from './constants'
-import useFlowStore from './store/flow.store'
-import { useEffect } from 'react'
+import { Routes, Route, useLocation, Location } from 'react-router-dom'
+import CampaignsListPage from './pages/CampaignsList.Page'
+import CampaignDetailPage from './pages/CampaignDetail.Page'
+import FlowPage from './pages/Flow.Page'
+import { ROUTE_CAMPAIGNS_LIST, ROUTE_CAMPAIGN_DETAILS, ROUTE_FLOW } from './constants'
+import { memo, useEffect } from 'react'
+import { locationActions } from './store/slices/location.slice'
+import { connect } from 'react-redux'
 
-export default function App() {
-  const { initFlows, initLoading } = useFlowStore()
+interface AppProps {
+  changeLocation: (location: Location) => void
+}
+
+function App({ changeLocation }: AppProps) {
+  const location = useLocation()
 
   useEffect(() => {
-    initFlows()
-  }, [])
-
-  if (initLoading) {
-    return <div className="p-8">Loading...</div>
-  }
+    changeLocation(location)
+  }, [location])
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index path={ROUTE_HOME} element={<Home />} />
-        <Route path={ROUTE_FLOW_EDITOR()} element={<FlowEditor />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route index path={ROUTE_CAMPAIGNS_LIST} element={<CampaignsListPage />} />
+      <Route path={ROUTE_CAMPAIGN_DETAILS()} element={<CampaignDetailPage />} />
+      <Route path={ROUTE_FLOW()} element={<FlowPage />} />
+    </Routes>
   )
 }
+
+const mapDispatchToProps = {
+  changeLocation: locationActions.changeLocation,
+}
+
+export default memo(connect(null, mapDispatchToProps)(App))

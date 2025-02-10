@@ -1,30 +1,36 @@
 import { GiArrowCursor } from 'react-icons/gi'
 import { Panel } from '@xyflow/react'
-import { NodeTypeKeys, nodesUIMeta } from '../nodes'
-import useAppStore from '../store/reactFlow.store'
 import Button from './Button'
-import useFlowStore from '../store/flow.store'
+import { memo, useMemo } from 'react'
+import { connect } from 'react-redux'
+import { AppState } from '../store/store'
+import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
+import { nodeToAddSelector } from '../store/selectors/ui.selector'
+import { uiActions } from '../store/slices/UI.slice'
+import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.selector'
 
-interface ToolbarProps {}
+interface ToolbarProps {
+  nodeToAdd: AppNodeKeys | null
+  setNodeToAdd: (nodeToAdd: AppNodeKeys | null) => void
+  allowedNodes: AppNodeKeys[]
+}
 
-const Toolbar: React.FC<ToolbarProps> = ({}) => {
-  const pickedTool = useAppStore((state) => state.nodeToAdd)
-  const setNodeToAdd = useAppStore((state) => state.setNodeToAdd)
-
-  const { getSelectedFlowAllowedNodes } = useFlowStore((state) => ({
-    getSelectedFlowAllowedNodes: state.getSelectedFlowAllowedNodes,
-  }))
-  const allowedNodesKey = getSelectedFlowAllowedNodes()
-  const allowedNodes = [
-    [null, { Icon: GiArrowCursor, color: 'bg-slate-500', title: 'cursor' }] as const,
-    ...allowedNodesKey.sort().map((key: NodeTypeKeys) => [key, nodesUIMeta[key]] as const),
-  ]
+const Toolbar: React.FC<ToolbarProps> = ({ nodeToAdd, setNodeToAdd, allowedNodes }) => {
+  const nodesList = useMemo(
+    () => [
+      [null, { Icon: GiArrowCursor, color: 'bg-slate-500', title: 'cursor' }] as const,
+      ...allowedNodes
+        .sort()
+        .map((key: AppNodeKeys) => [key, { Icon: nodesRegistry[key].Icon, color: nodesRegistry[key].color, title: key }] as const),
+    ],
+    [allowedNodes]
+  )
 
   return (
     <Panel position="top-center" className="p-4 bg-white z-10 shadow-md drop-shadow rounded-md flex gap-2">
-      {allowedNodes.map(([key, { Icon, color, title }]) => {
+      {nodesList.map(([key, { Icon, color, title }]) => {
         return (
-          <Button active={pickedTool === key} onClick={() => setNodeToAdd(key)} title={title} className={`${color}`}>
+          <Button active={nodeToAdd === key} onClick={() => setNodeToAdd(key)} title={title} className={`${color}`}>
             <Icon />
           </Button>
         )
@@ -33,4 +39,13 @@ const Toolbar: React.FC<ToolbarProps> = ({}) => {
   )
 }
 
-export default Toolbar
+const mapStateToProps = (state: AppState) => ({
+  nodeToAdd: nodeToAddSelector(state),
+  allowedNodes: selectedFlowAllowedNodesSelector(state),
+})
+
+const mapDispatchToProps = {
+  setNodeToAdd: uiActions.setNodeToAdd,
+}
+
+export default memo(connect(mapStateToProps, mapDispatchToProps)(Toolbar))

@@ -1,46 +1,38 @@
 import { memo, useMemo } from 'react'
-import useFlowStore, { SubFlowsMapValue } from '../store/flow.store'
 import { Field } from 'formik'
+import { connect } from 'react-redux'
+import { nudgeFlowsSelector } from '../store/selectors/flow.selector'
+import { AppState } from '../store/store'
+import { Flow } from '../models/Flow.model'
 
 interface NodeSubFlowFormProps {
   nudgeSelectorName: string
-  validatorSelectorName: string
+  nudgeFlows: Flow[]
 }
 
-const NodeSubFlowForm = ({ nudgeSelectorName, validatorSelectorName }: NodeSubFlowFormProps) => {
-  const allFlows = useFlowStore((state) => state.flows)
-
-  const allNudges = useMemo(() => allFlows.filter((flow) => flow.type === 'nudge'), [allFlows])
-  const allValidators = useMemo(() => allFlows.filter((flow) => flow.type === 'validator'), [allFlows])
-
+const NodeSubFlowForm = ({ nudgeSelectorName, nudgeFlows }: NodeSubFlowFormProps) => {
+  const subFlows = useMemo(
+    () => [{ id: 'inherit', name: 'Inherit' }, { id: 'none', name: 'None' }, ...nudgeFlows.map((flow) => ({ id: flow.id, name: flow.name }))],
+    [nudgeFlows]
+  )
   return (
-    <div>
-      {(['nudge', 'validator'] as const).map((type) => {
-        const flows = type === 'nudge' ? allNudges : allValidators
-        const options: SubFlowsMapValue[] = ['inherit', 'none', ...flows.map((flow) => flow.name)]
-
-        return (
-          <div key={type} className="space-y-2">
-            <label htmlFor={type} className="text-sm font-medium capitalize">
-              {type}
-            </label>
-            <Field
-              as="select"
-              id={type}
-              name={type === 'nudge' ? nudgeSelectorName : validatorSelectorName}
-              className="w-full rounded-md border px-3 py-2"
-            >
-              {options.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </Field>
-          </div>
-        )
-      })}
+    <div className="space-y-2">
+      <label htmlFor={nudgeSelectorName} className="text-sm font-medium capitalize">
+        {nudgeSelectorName}
+      </label>
+      <Field as="select" id={nudgeSelectorName} name={nudgeSelectorName} className="w-full rounded-md border px-3 py-2">
+        {subFlows.map(({ id, name }) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </Field>
     </div>
   )
 }
 
-export default memo(NodeSubFlowForm)
+const mapStateToProps = (state: AppState) => ({
+  nudgeFlows: nudgeFlowsSelector(state),
+})
+
+export default memo(connect(mapStateToProps)(NodeSubFlowForm))

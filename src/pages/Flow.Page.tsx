@@ -1,29 +1,33 @@
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { nodeTypes } from '../nodes'
-import { edgeTypes } from '../edges'
 import Toolbar from '../components/Toolbar'
 import ToolSidePanel from '../components/ToolSidePanel'
 import MenuBar from '../components/MenuBar'
-import useFlowEditorData from '../hooks/useFlowEditorData'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
+import { memo } from 'react'
+import Loading from '../components/Loading'
+import useFlowPageData from '../hooks/useFlowPageData'
+import Error from '../components/Error'
+import { edgeTypes } from '../models/Edge.model'
 
-export default function FlowEditor() {
+const FlowPage = () => {
   const {
     nodes,
     edges,
     onNodesChange,
     onEdgesChange,
     onConnect,
-    onNodeClick,
     isConnnectionValid,
     onReconnect,
     onReconnectEnd,
     onReconnectStart,
-    selectedFlowName,
-  } = useFlowEditorData()
+    selectedFlowError,
+    selectedFlowLoading,
+    nodeTypes,
+  } = useFlowPageData()
 
-  if (!selectedFlowName) return <div>Loading... setting up flow</div>
+  if (selectedFlowLoading) return <Loading message="Setting up flow" />
+  if (selectedFlowError) return <Error message={selectedFlowError} />
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -37,7 +41,7 @@ export default function FlowEditor() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
-          onNodeClick={onNodeClick}
+          onNodeClick={() => {}}
           selectNodesOnDrag={false}
           deleteKeyCode={['Delete', 'Backspace']}
           isValidConnection={isConnnectionValid}
@@ -54,7 +58,8 @@ export default function FlowEditor() {
           <Controls />
         </ReactFlow>
       </div>
-      
     </div>
   )
 }
+
+export default memo(FlowPage)

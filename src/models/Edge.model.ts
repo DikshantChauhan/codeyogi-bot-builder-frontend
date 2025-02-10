@@ -1,7 +1,7 @@
 import type { BuiltInEdge, EdgeTypes } from '@xyflow/react'
 
-import { DIRECTIONAL_EDGE_KEY, DirectionalEdgeType } from './custom/directional/type'
-import DirectionalEdge from './custom/directional/Edge'
+import { DIRECTIONAL_EDGE_KEY, DirectionalEdgeType } from '../edges/custom/directional/type'
+import DirectionalEdge from '../edges/custom/directional/Edge'
 
 export const initialEdges: AppEdge[] = []
 

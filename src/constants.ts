@@ -1,4 +1,8 @@
-export const ROUTE_FLOW_EDITOR = (flowName?: string) => `/flow/${flowName || ':flow_name'}`
-ROUTE_FLOW_EDITOR.dynamicKey = 'flow_name' as const
+export const ROUTE_CAMPAIGNS_LIST = '/'
 
-export const ROUTE_HOME = '/'
+export const ROUTE_CAMPAIGN_DETAILS = (campaignId?: string) => `/campaign/${campaignId || ':campaign_id'}`
+ROUTE_CAMPAIGN_DETAILS.dynamicKey = 'campaign_id' as const
+
+export const ROUTE_FLOW = (campaignId?: string, flowId?: string) => `${ROUTE_CAMPAIGN_DETAILS(campaignId)}/flow/${flowId || ':flow_id'}`
+ROUTE_FLOW.dynamicKey = 'flow_id' as const
+
