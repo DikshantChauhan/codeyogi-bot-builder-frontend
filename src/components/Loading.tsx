@@ -5,7 +5,7 @@ const Loading = ({ message }: { message?: string }) => {
   return (
     <div className="flex justify-center items-center p-8">
       <AiOutlineLoading3Quarters size={24} className="animate-spin" />
-      {message && <div className="ml-2">{message}</div>}
+      {message && <div className="ml-2 animate-pulse">{message}</div>}
     </div>
   )
 }

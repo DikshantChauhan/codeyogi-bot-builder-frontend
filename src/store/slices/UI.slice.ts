@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppNodeKeys } from '../../models/Node.model'
 
 type UiState = {
@@ -15,10 +15,10 @@ const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    setNodeToAdd: (state, action) => {
+    setNodeToAdd: (state, action: PayloadAction<AppNodeKeys | null>) => {
       state.nodeToAdd = action.payload
     },
-    setSelectedNodeId: (state, action) => {
+    setSelectedNodeId: (state, action: PayloadAction<string | null>) => {
       state.selectedNodeId = action.payload
     },
   },

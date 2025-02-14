@@ -8,9 +8,11 @@ import { all } from 'redux-saga/effects'
 import locationSlice from './slices/location.slice'
 import { watchLocationSaga } from './sagas/location.saga'
 import uiSlice from './slices/UI.slice'
+import { watchCampaignSaga } from './sagas/campaign.saga'
+import { watchFlowAddSaga } from './sagas/flow.saga'
 
 function* rootSaga() {
-  yield all([watchLocationSaga()])
+  yield all([watchLocationSaga(), watchCampaignSaga(), watchFlowAddSaga()])
 }
 
 const rootReducer = combineReducers({

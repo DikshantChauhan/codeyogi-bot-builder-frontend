@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { connect } from 'react-redux'
 import { FiPlus } from 'react-icons/fi'
 import { AppState } from '../store/store'
@@ -12,6 +12,7 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { Link } from 'react-router-dom'
 import { ROUTE_FLOW } from '../constants'
+import FlowAddPopup from '../components/FlowAddPopup'
 
 interface CampaignDetailPageProps {
   selectedNormalizedCampaign: NormalizedCampaign | null
@@ -20,6 +21,8 @@ interface CampaignDetailPageProps {
 }
 
 const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetching, selectedCampaignFetchError }: CampaignDetailPageProps) => {
+  const [isFlowAddPopupOpen, setIsFlowAddPopupOpen] = useState(false)
+
   if (selectedCampaignFetching) {
     return <Loading />
   }
@@ -33,8 +36,7 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
   }
 
   const handleAddLevel = () => {
-    // TODO: Implement add level functionality
-    console.log('Add level clicked')
+    setIsFlowAddPopupOpen(true)
   }
 
   return (
@@ -67,6 +69,13 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
         {selectedNormalizedCampaign.levels.length === 0 && (
           <div className="text-center py-8 text-gray-500">No levels found. Click the "Add Level" button to create one.</div>
         )}
+
+        <FlowAddPopup
+          isOpen={isFlowAddPopupOpen}
+          onClose={() => setIsFlowAddPopupOpen(false)}
+          type="level"
+          campaignRef={{ id: selectedNormalizedCampaign.id }}
+        />
       </div>
     </div>
   )

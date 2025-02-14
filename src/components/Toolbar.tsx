@@ -1,7 +1,7 @@
 import { GiArrowCursor } from 'react-icons/gi'
 import { Panel } from '@xyflow/react'
 import Button from './Button'
-import { memo, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { AppState } from '../store/store'
 import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
@@ -12,25 +12,34 @@ import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.select
 interface ToolbarProps {
   nodeToAdd: AppNodeKeys | null
   setNodeToAdd: (nodeToAdd: AppNodeKeys | null) => void
-  allowedNodes: AppNodeKeys[]
+  allowed_nodes: AppNodeKeys[]
+  setSelectedNodeId: (selectedNodeId: string | null) => void
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ nodeToAdd, setNodeToAdd, allowedNodes }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ nodeToAdd, setNodeToAdd, allowed_nodes, setSelectedNodeId }) => {
   const nodesList = useMemo(
     () => [
       [null, { Icon: GiArrowCursor, color: 'bg-slate-500', title: 'cursor' }] as const,
-      ...allowedNodes
+      ...allowed_nodes
         .sort()
         .map((key: AppNodeKeys) => [key, { Icon: nodesRegistry[key].Icon, color: nodesRegistry[key].color, title: key }] as const),
     ],
-    [allowedNodes]
+    [allowed_nodes]
+  )
+
+  const onToolClick = useCallback(
+    (node: AppNodeKeys | null) => {
+      setNodeToAdd(node)
+      setSelectedNodeId(null)
+    },
+    [setNodeToAdd, setSelectedNodeId]
   )
 
   return (
     <Panel position="top-center" className="p-4 bg-white z-10 shadow-md drop-shadow rounded-md flex gap-2">
       {nodesList.map(([key, { Icon, color, title }]) => {
         return (
-          <Button active={nodeToAdd === key} onClick={() => setNodeToAdd(key)} title={title} className={`${color}`}>
+          <Button active={nodeToAdd === key} onClick={() => onToolClick(key)} title={title} className={`${color}`}>
             <Icon />
           </Button>
         )
@@ -41,11 +50,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ nodeToAdd, setNodeToAdd, allowedNodes
 
 const mapStateToProps = (state: AppState) => ({
   nodeToAdd: nodeToAddSelector(state),
-  allowedNodes: selectedFlowAllowedNodesSelector(state),
+  allowed_nodes: selectedFlowAllowedNodesSelector(state),
 })
 
 const mapDispatchToProps = {
   setNodeToAdd: uiActions.setNodeToAdd,
+  setSelectedNodeId: uiActions.setSelectedNodeId,
 }
 
 export default memo(connect(mapStateToProps, mapDispatchToProps)(Toolbar))

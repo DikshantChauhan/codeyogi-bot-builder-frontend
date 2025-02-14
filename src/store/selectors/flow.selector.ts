@@ -31,7 +31,7 @@ export const selectedFlowAllowedNodesSelector: (state: AppState) => AppNodeKeys[
     if (selectedFlow.type === 'nudge') {
       return ['delay', 'message', 'if-else']
     }
-    return [...(selectedCampaign?.allowedNodes || [])]
+    return [...(selectedCampaign?.allowed_nodes || [])]
   }
 )
 

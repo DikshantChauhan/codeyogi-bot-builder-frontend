@@ -63,25 +63,27 @@ import { NamedExoticComponent } from 'react'
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
 export type AppNode =
-  | IfElseNodeType
-  | QuizNodeType
-  | YoutubeSortsNodeType
-  | NativeSortsNodeType
-  | PromptNodeType
-  | MessageNodeType
-  | StartNodeType
-  | WhatsappAudioNodeType
-  | WhatsappDocumentNodeType
-  | WhatsappImageNodeType
-  | WhatsappLinkButtonNodeType
-  | WhatsappFormNodeType
-  | WhatsappListNodeType
-  | WhatsappButtonNodeType
-  | WhatsappVideoNodeType
-  | WhatsappReactionNodeType
-  | WhatsappStickerNodeType
-  | DelayNodeType
-  | (EndNodeType & { nudge: SubFlowValue; validator: SubFlowValue })
+  | (
+      | IfElseNodeType
+      | QuizNodeType
+      | YoutubeSortsNodeType
+      | NativeSortsNodeType
+      | PromptNodeType
+      | MessageNodeType
+      | StartNodeType
+      | WhatsappAudioNodeType
+      | WhatsappDocumentNodeType
+      | WhatsappImageNodeType
+      | WhatsappLinkButtonNodeType
+      | WhatsappFormNodeType
+      | WhatsappListNodeType
+      | WhatsappButtonNodeType
+      | WhatsappVideoNodeType
+      | WhatsappReactionNodeType
+      | WhatsappStickerNodeType
+      | DelayNodeType
+      | EndNodeType
+    ) & { nudge: SubFlowValue; validator: SubFlowValue }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
 

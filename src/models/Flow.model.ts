@@ -1,14 +1,14 @@
 import { AppEdge } from './Edge.model'
 import { AppNode } from './Node.model'
+import { Entity } from './Entity.model'
 
-export interface Flow {
-  id: string
+export type FlowType = 'level' | 'nudge'
+
+export interface Flow extends Entity {
   name: string
-  type: 'level' | 'nudge'
+  type: FlowType
   data: {
     nodes: AppNode[]
     edges: AppEdge[]
   }
-  createdAt: string
-  updatedAt: string
 }

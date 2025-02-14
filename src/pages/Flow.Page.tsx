@@ -24,6 +24,7 @@ const FlowPage = () => {
     selectedFlowError,
     selectedFlowLoading,
     nodeTypes,
+    onNodeClick,
   } = useFlowPageData()
 
   if (selectedFlowLoading) return <Loading message="Setting up flow" />
@@ -41,7 +42,7 @@ const FlowPage = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
-          onNodeClick={() => {}}
+          onNodeClick={onNodeClick}
           selectNodesOnDrag={false}
           deleteKeyCode={['Delete', 'Backspace']}
           isValidConnection={isConnnectionValid}

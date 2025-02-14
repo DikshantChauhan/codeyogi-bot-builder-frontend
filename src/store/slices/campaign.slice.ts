@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { NormalizedCampaign } from '../../models/Campaign.model'
+import { CampaignAddOrUpdateFormData } from '../../components/CampaignAddOrUpdatePopup'
 
 interface CampaignState {
   campaignsById: { [id: string]: NormalizedCampaign }
@@ -8,6 +9,10 @@ interface CampaignState {
   selectedCampaignId: string | null
   campaignsListFetching: boolean
   campaignsListFetchError: string | null
+  campaignAddLoading: boolean
+  campaignAddError: string | null
+  campaignUpdateLoading: boolean
+  campaignUpdateError: string | null
 }
 
 const initialState: CampaignState = {
@@ -15,8 +20,12 @@ const initialState: CampaignState = {
   campaignsLoading: {},
   campaignsError: {},
   selectedCampaignId: null,
-  campaignsListFetching: false,
+  campaignsListFetching: true,
   campaignsListFetchError: null,
+  campaignAddLoading: false,
+  campaignAddError: null,
+  campaignUpdateLoading: false,
+  campaignUpdateError: null,
 }
 
 const campaignSlice = createSlice({
@@ -46,6 +55,24 @@ const campaignSlice = createSlice({
     },
     setCampaignsListFetchError: (state, action: PayloadAction<string | null>) => {
       state.campaignsListFetchError = action.payload
+    },
+
+    // Add Campaign
+    campaignAddTry: (_, __: PayloadAction<CampaignAddOrUpdateFormData>) => undefined,
+    campaignAddLoading: (state, { payload }: PayloadAction<boolean>) => {
+      state.campaignAddLoading = payload
+    },
+    campaignAddError: (state, { payload }: PayloadAction<string | null>) => {
+      state.campaignAddError = payload
+    },
+
+    // Update Campaign
+    campaignUpdateTry: (_, __: PayloadAction<{ id: string; campaign: CampaignAddOrUpdateFormData }>) => undefined,
+    campaignUpdateLoading: (state, { payload }: PayloadAction<boolean>) => {
+      state.campaignUpdateLoading = payload
+    },
+    campaignUpdateError: (state, { payload }: PayloadAction<string | null>) => {
+      state.campaignUpdateError = payload
     },
   },
 })

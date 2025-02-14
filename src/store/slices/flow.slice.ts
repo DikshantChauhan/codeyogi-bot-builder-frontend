@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Flow } from '../../models/Flow.model'
+import { FlowAddFormData } from '../../components/FlowAddPopup'
+import { createFlowAPI } from '../../api/api'
 
 interface FlowState {
   flowsById: { [id: string]: Flow }
@@ -7,6 +9,9 @@ interface FlowState {
   flowsError: { [flowId: string]: string | null }
   selectedFlowId: string | null
   nudgeFlowsIds: string[]
+
+  flowAddLoading: boolean
+  flowAddError: string | null
 }
 
 const initialState: FlowState = {
@@ -15,6 +20,9 @@ const initialState: FlowState = {
   flowsError: {},
   selectedFlowId: null,
   nudgeFlowsIds: [],
+
+  flowAddLoading: false,
+  flowAddError: null,
 }
 
 const flowSlice = createSlice({
@@ -42,6 +50,13 @@ const flowSlice = createSlice({
     setNudgeFlowsIds: (state, action: PayloadAction<string[]>) => {
       state.nudgeFlowsIds = [...new Set([...action.payload, ...state.nudgeFlowsIds])]
     },
+    setFlowAddLoading: (state, action: PayloadAction<boolean>) => {
+      state.flowAddLoading = action.payload
+    },
+    setFlowAddError: (state, action: PayloadAction<string | null>) => {
+      state.flowAddError = action.payload
+    },
+    flowAddTry: (_, __: PayloadAction<Parameters<typeof createFlowAPI>[0]>) => undefined,
   },
 })
 

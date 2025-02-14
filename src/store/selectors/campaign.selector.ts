@@ -30,4 +30,10 @@ export const selectedCampaignFetchErrorSelector = createSelector(
   (selectedCampaignId, campaignsError) => (selectedCampaignId ? campaignsError[selectedCampaignId] : null)
 )
 
-// export const selectedCampaignSelector = createSelector([selectedNormalizedCampaignSelector], (normalizedCampaign) => {})
+export const campaignAddLoadingSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignAddLoading)
+
+export const campaignAddErrorSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignAddError)
+
+export const campaignUpdateLoadingSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignUpdateLoading)
+
+export const campaignUpdateErrorSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignUpdateError)

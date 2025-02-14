@@ -18,6 +18,7 @@ import { OnNodesChange } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
 import { getSourceHandleConnection } from '../utils'
+import { uiActions } from '../store/slices/UI.slice'
 
 const useFlowPageData = () => {
   const selectedFlow = useSelector(selectedFlowSelector)
@@ -116,6 +117,13 @@ const useFlowPageData = () => {
     }, {} as Record<string, React.NamedExoticComponent<any>>)
   }, [])
 
+  const onNodeClick = useCallback(
+    (_: React.MouseEvent, node: AppNode) => {
+      dispatch(uiActions.setSelectedNodeId(node.id))
+    },
+    [dispatch]
+  )
+
   return {
     nodes: selectedFlow?.data.nodes || [],
     edges: selectedFlow?.data.edges || [],
@@ -129,6 +137,7 @@ const useFlowPageData = () => {
     onReconnectStart,
     onReconnectEnd,
     nodeTypes,
+    onNodeClick,
   }
 }
 

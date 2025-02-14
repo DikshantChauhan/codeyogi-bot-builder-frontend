@@ -1,13 +1,11 @@
 import { Flow } from './Flow.model'
 import { AppNodeKeys } from './Node.model'
+import { Entity } from './Entity.model'
 
-export interface Campaign {
-  id: string
+export interface Campaign extends Entity {
   name: string
-  allowedNodes: AppNodeKeys[]
+  allowed_nodes: AppNodeKeys[]
   levels: Flow[]
-  createdAt: string
-  updatedAt: string
 }
 
 export type NormalizedCampaign = Omit<Campaign, 'levels'> & {
