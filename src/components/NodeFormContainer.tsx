@@ -14,7 +14,7 @@ interface FormProps<T extends FormikValues> {
 }
 
 const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues }: FormProps<T>) => {
-  const { selectedNode, handleSubmit, type, slectedFlow } = useNodeFormContainerData(transFormNodeDataOrFail)
+  const { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge } = useNodeFormContainerData(transFormNodeDataOrFail)
 
   if (!type) return <div>No node to add</div>
 
@@ -27,7 +27,7 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
 
             {typeof children === 'function' ? children(formikProps) : children}
 
-            {slectedFlow?.type === 'level' && <NodeSubFlowForm nudgeSelectorName="nudge" />}
+            {slectedFlow?.type === 'level' && <NodeSubFlowForm selectedNudge={selectedNudge} setSelectedNudge={setSelectedNudge} />}
 
             <div>
               <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">

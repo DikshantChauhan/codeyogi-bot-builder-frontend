@@ -17,6 +17,8 @@ import CampaignAddOrUpdatePopup, { CampaignAddOrUpdateFormData } from '../compon
 import { campaignActions } from '../store/slices/campaign.slice'
 import CampaignCard from '../components/CampaignCard'
 import FlowAddPopup from '../components/FlowAddPopup'
+import { Link } from 'react-router-dom'
+import { ROUTE_NUDGES_LIST } from '../constants'
 
 interface CampaignsListPageProps {
   normalizedCampaigns: NormalizedCampaign[]
@@ -56,6 +58,7 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
         {campaignsListFetching && <Loading message="Loading campaigns..." />}
         {campaignsListFetchError && <Error message={campaignsListFetchError} />}
         <div className="flex flex-col sm:flex-row gap-4">
+          <Link to={ROUTE_NUDGES_LIST}>Nudges List</Link>
           <ActionButton icon={FiPlus} onClick={() => setIsNudgeAddPopupOpen(true)}>
             Add New Nudge
           </ActionButton>

@@ -2,8 +2,8 @@ import { nodeToAddSelector } from '../store/selectors/ui.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectedNodeSelector } from '../store/selectors/ui.selector'
 import { uiActions } from '../store/slices/UI.slice'
-import { AppNode } from '../models/Node.model'
-import { useCallback, useMemo } from 'react'
+import { AppNode, SubFlowValue } from '../models/Node.model'
+import { useCallback, useMemo, useState } from 'react'
 import { useReactFlow } from '@xyflow/react'
 import { FormikHelpers, FormikValues } from 'formik'
 import { getRandomId } from '../utils'
@@ -19,6 +19,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
   const nodeToAdd = useSelector(nodeToAddSelector)
   const slectedFlow = useSelector(selectedFlowSelector)
   const dispatch = useDispatch()
+  const [selectedNudge, setSelectedNudge] = useState<SubFlowValue>('inherit')
 
   const closeSideBar = useCallback(() => {
     dispatch(uiActions.setSelectedNodeId(null))
@@ -48,17 +49,21 @@ const useNodeFormContainerData = <T extends FormikValues>(
       try {
         const data = transFormNodeDataOrFail(values, formikHelpers)
         const id = selectedNode?.id || getRandomId()
+
+        const nodes = [...(slectedFlow?.data.nodes || [])]
+        const nodeIndex = nodes.findIndex((node) => node.id === id)
+        const oldNode = nodeIndex !== -1 ? nodes[nodeIndex] : null
+
         const node = {
           id,
           data: data,
           type,
-          position: centerPosition,
+          position: oldNode?.position || centerPosition,
           dragHandle: '.drag-handle__custom',
+          nudge: selectedNudge,
         } as AppNode
 
-        const nodes = [...(slectedFlow?.data.nodes || [])]
-        const nodeIndex = nodes.findIndex((node) => node.id === id)
-        if (nodeIndex === -1) {
+        if (!oldNode) {
           nodes.push(node)
         } else {
           nodes[nodeIndex] = node
@@ -70,10 +75,10 @@ const useNodeFormContainerData = <T extends FormikValues>(
         toast.error(String(error))
       }
     },
-    [centerPosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type]
+    [centerPosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type, selectedNudge]
   )
 
-  return { selectedNode, handleSubmit, type, slectedFlow }
+  return { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge }
 }
 
 export default useNodeFormContainerData

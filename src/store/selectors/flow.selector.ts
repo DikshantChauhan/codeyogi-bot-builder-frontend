@@ -3,6 +3,11 @@ import { flowsSelector } from './app.selector'
 import { selectedNormalizedCampaignSelector } from './campaign.selector'
 import { AppState } from '../store'
 import { AppNodeKeys } from '../../models/Node.model'
+import { DELAY_NODE_KEY } from '../../nodes/customs/delay/type'
+import { MESSAGE_NODE_KEY } from '../../nodes/customs/message/type'
+import { IF_ELSE_NODE_KEY } from '../../nodes/customs/ifElse/type'
+import { START_NODE_KEY } from '../../nodes/customs/start/type'
+import { END_NODE_KEY } from '../../nodes/customs/end/type'
 
 const flowsByIdsSelector = createSelector([flowsSelector], (flows) => flows.flowsById)
 
@@ -29,7 +34,7 @@ export const selectedFlowAllowedNodesSelector: (state: AppState) => AppNodeKeys[
   (selectedFlow, selectedCampaign) => {
     if (!selectedFlow) return []
     if (selectedFlow.type === 'nudge') {
-      return ['delay', 'message', 'if-else']
+      return [DELAY_NODE_KEY, MESSAGE_NODE_KEY, IF_ELSE_NODE_KEY, START_NODE_KEY, END_NODE_KEY]
     }
     return [...(selectedCampaign?.allowed_nodes || [])]
   }
@@ -41,4 +46,8 @@ export const nudgeFlowsSelector = createSelector([flowsByIdsSelector, nudgeFlows
   nudgeFlowsIds.map((id) => flowsByIds[id])
 )
 
-export const flowUpdateLoadingSeletor  = createSelector(flowsSelector, (state) => state.flowUpdateLoading)
+export const flowUpdateLoadingSeletor = createSelector(flowsSelector, (state) => state.flowUpdateLoading)
+
+export const nudgeFlowsLoadingSelector = createSelector(flowsSelector, (state) => state.nudgeFlowsLoading)
+
+export const nudgeFlowsErrorSelector = createSelector(flowsSelector, (state) => state.nudgeFlowsError)

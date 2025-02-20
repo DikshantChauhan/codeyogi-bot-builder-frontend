@@ -3,11 +3,11 @@ import { campaignActions } from '../slices/campaign.slice'
 import { flowActions } from '../slices/flow.slice'
 import { put, call, all, takeLatest } from 'redux-saga/effects'
 import { PathMatch } from 'react-router-dom'
-import { ROUTE_CAMPAIGN_DETAILS, ROUTE_FLOW } from '../../constants'
+import { ROUTE_CAMPAIGN_DETAILS, ROUTE_LEVEL_FLOW, ROUTE_NUDGE_FLOW } from '../../constants'
 import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, updateFlowAPI } from '../../api/api'
 import { toast } from 'react-toastify'
 
-function* fetchFlowSaga(match: PathMatch<typeof ROUTE_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+function* fetchLevelFlowSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   const flowId = match.params.flow_id!
   const campaignId = match.params.campaign_id!
   try {
@@ -29,16 +29,24 @@ function* fetchFlowSaga(match: PathMatch<typeof ROUTE_FLOW.dynamicKey | typeof R
   }
 }
 
-function* fetchNudgeFlowsListSaga(): Generator {
-  const response: Flow[] = yield call(fetchNudgeFlowsListAPI)
-  for (const flow of response) {
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+export function* fetchNudgeFlowsListSaga(): Generator {
+  try {
+    yield put(flowActions.setNudgeFlowsLoading(true))
+    yield put(flowActions.setNudgeFlowsError(null))
+    const response: Flow[] = yield call(fetchNudgeFlowsListAPI)
+    for (const flow of response) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
+    yield put(flowActions.setNudgeFlowsIds(response.map((flow) => flow.id)))
+  } catch (error) {
+    yield put(flowActions.setNudgeFlowsError(String(error)))
+  } finally {
+    yield put(flowActions.setNudgeFlowsLoading(false))
   }
-  yield put(flowActions.setNudgeFlowsIds(response.map((flow) => flow.id)))
 }
 
-export function* flowPageSaga(match: PathMatch<typeof ROUTE_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
-  yield call(fetchFlowSaga, match)
+export function* levelFlowPageSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+  yield call(fetchLevelFlowSaga, match)
   yield call(fetchNudgeFlowsListSaga)
 }
 
@@ -73,6 +81,21 @@ function* flowUpdateSaga({ payload }: ReturnType<typeof flowActions.flowUpdateTr
     yield put(flowActions.setFlowUpdateError(String(error)))
   } finally {
     yield put(flowActions.setFlowUpdateLoading(false))
+  }
+}
+
+export function* fetchNudgeFlowSaga(match: PathMatch<typeof ROUTE_NUDGE_FLOW.dynamicKey>): Generator {
+  const nudgeId = match.params.nudge_id!
+  try {
+    yield put(flowActions.setSelectedFlowId(nudgeId))
+    yield put(flowActions.setFlowLoading({ flowId: nudgeId, loading: true }))
+
+    const flow: Awaited<ReturnType<typeof fetchFlowAPI>> = yield call(fetchFlowAPI, nudgeId)
+    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+  } catch (error) {
+    yield put(flowActions.setFlowError({ flowId: nudgeId, error: String(error) }))
+  } finally {
+    yield put(flowActions.setFlowLoading({ flowId: nudgeId, loading: false }))
   }
 }
 

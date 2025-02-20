@@ -14,6 +14,9 @@ interface FlowState {
 
   flowUpdateLoading: boolean
   flowUpdateError: string | null
+
+  nudgeFlowsLoading: boolean
+  nudgeFlowsError: string | null
 }
 
 const initialState: FlowState = {
@@ -28,6 +31,9 @@ const initialState: FlowState = {
 
   flowUpdateLoading: false,
   flowUpdateError: null,
+
+  nudgeFlowsLoading: false,
+  nudgeFlowsError: null,
 }
 
 const flowSlice = createSlice({
@@ -70,6 +76,14 @@ const flowSlice = createSlice({
     setFlowUpdateError: (state, action: PayloadAction<string | null>) => {
       state.flowUpdateError = action.payload
     },
+
+    setNudgeFlowsLoading: (state, action: PayloadAction<boolean>) => {
+      state.nudgeFlowsLoading = action.payload
+    },
+    setNudgeFlowsError: (state, action: PayloadAction<string | null>) => {
+      state.nudgeFlowsError = action.payload
+    },
+    
   },
 })
 

@@ -11,7 +11,7 @@ import { NormalizedCampaign } from '../models/Campaign.model'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { Link } from 'react-router-dom'
-import { ROUTE_FLOW } from '../constants'
+import { ROUTE_LEVEL_FLOW } from '../constants'
 import FlowAddPopup from '../components/FlowAddPopup'
 
 interface CampaignDetailPageProps {
@@ -55,7 +55,7 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
         ) : (
           selectedNormalizedCampaign.levels.map((levelId, index) => (
             <Link
-              to={ROUTE_FLOW(selectedNormalizedCampaign.id, levelId)}
+              to={ROUTE_LEVEL_FLOW(selectedNormalizedCampaign.id, levelId)}
               key={levelId}
               className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
             >
