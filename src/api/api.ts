@@ -1,7 +1,7 @@
-import { CampaignAddOrUpdateFormData } from '../components/CampaignAddOrUpdatePopup'
 import { FlowAddOrUpdateFormData } from '../components/FlowAddPopup'
 import { API_BASE_URL } from '../constants'
 import { NormalizedCampaign } from '../models/Campaign.model'
+import { Entity } from '../models/Entity.model'
 import { Flow } from '../models/Flow.model'
 import axios from 'axios'
 
@@ -17,13 +17,15 @@ export const fetchCampaignAPI = async (campaignId: string) => {
   return response.data
 }
 
-export const createCampaignAPI = async (campaign: CampaignAddOrUpdateFormData): Promise<NormalizedCampaign> => {
+export type CampaignCreatePayload = Omit<NormalizedCampaign, keyof Entity>
+export const createCampaignAPI = async (campaign: CampaignCreatePayload): Promise<NormalizedCampaign> => {
   const url = `${API_BASE_URL}/campaign`
   const response = await axios.post<NormalizedCampaign>(url, campaign)
   return response.data
 }
 
-export const updateCampaignAPI = async (campaignId: string, campaign: CampaignAddOrUpdateFormData): Promise<NormalizedCampaign> => {
+export type CampaignUpdatePayload = Partial<NormalizedCampaign>
+export const updateCampaignAPI = async (campaignId: string, campaign: CampaignUpdatePayload): Promise<NormalizedCampaign> => {
   const url = `${API_BASE_URL}/campaign/${campaignId}`
   const response = await axios.put<NormalizedCampaign>(url, { ...campaign })
   return response.data

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { NormalizedCampaign } from '../../models/Campaign.model'
-import { CampaignAddOrUpdateFormData } from '../../components/CampaignAddOrUpdatePopup'
+import { CampaignCreatePayload, CampaignUpdatePayload } from '../../api/api'
 
 interface CampaignState {
   campaignsById: { [id: string]: NormalizedCampaign }
@@ -58,7 +58,7 @@ const campaignSlice = createSlice({
     },
 
     // Add Campaign
-    campaignAddTry: (_, __: PayloadAction<CampaignAddOrUpdateFormData>) => undefined,
+    campaignAddTry: (_, __: PayloadAction<CampaignCreatePayload>) => undefined,
     campaignAddLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.campaignAddLoading = payload
     },
@@ -67,7 +67,7 @@ const campaignSlice = createSlice({
     },
 
     // Update Campaign
-    campaignUpdateTry: (_, __: PayloadAction<{ id: string; campaign: CampaignAddOrUpdateFormData }>) => undefined,
+    campaignUpdateTry: (_, __: PayloadAction<{ id: string; campaign: CampaignUpdatePayload }>) => undefined,
     campaignUpdateLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.campaignUpdateLoading = payload
     },

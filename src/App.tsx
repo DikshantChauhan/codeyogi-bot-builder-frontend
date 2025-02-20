@@ -20,13 +20,15 @@ function App({ changeLocation }: AppProps) {
   }, [location])
 
   return (
-    <Routes>
-      <Route index path={ROUTE_CAMPAIGNS_LIST} element={<CampaignsListPage />} />
-      <Route path={ROUTE_CAMPAIGN_DETAILS()} element={<CampaignDetailPage />} />
-      <Route path={ROUTE_LEVEL_FLOW()} element={<FlowPage />} />
-      <Route path={ROUTE_NUDGES_LIST} element={<NudgesListPage />} />
-      <Route path={ROUTE_NUDGE_FLOW()} element={<FlowPage />} />
-    </Routes>
+    <div className="min-h-screen w-full bg-background">
+      <Routes>
+        <Route index path={ROUTE_CAMPAIGNS_LIST} element={<CampaignsListPage />} />
+        <Route path={ROUTE_CAMPAIGN_DETAILS()} element={<CampaignDetailPage />} />
+        <Route path={ROUTE_LEVEL_FLOW()} element={<FlowPage />} />
+        <Route path={ROUTE_NUDGES_LIST} element={<NudgesListPage />} />
+        <Route path={ROUTE_NUDGE_FLOW()} element={<FlowPage />} />
+      </Routes>
+    </div>
   )
 }
 

@@ -13,6 +13,7 @@ import Error from '../components/Error'
 import { Link } from 'react-router-dom'
 import { ROUTE_LEVEL_FLOW } from '../constants'
 import FlowAddPopup from '../components/FlowAddPopup'
+import Button from '../components/Button'
 
 interface CampaignDetailPageProps {
   selectedNormalizedCampaign: NormalizedCampaign | null
@@ -28,43 +29,55 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">{selectedNormalizedCampaign?.name}</h1>
-        {selectedCampaignFetching && <Loading />}
-        <button
-          onClick={handleAddLevel}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
-          <FiPlus className="text-lg" />
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-semibold text-gray-500">{selectedNormalizedCampaign?.name}</h1>
+          {selectedCampaignFetching && <Loading />}
+        </div>
+        <Button onClick={handleAddLevel} Icon={FiPlus}>
           Add Level
-        </button>
+        </Button>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-6">
         {selectedCampaignFetchError ? (
           <Error message={selectedCampaignFetchError} />
         ) : !selectedNormalizedCampaign ? (
           selectedCampaignFetching ? (
-            <div className="text-center py-8 text-gray-500">Fetching campaign...</div>
+            <div className="text-center py-12 text-gray-500">
+              <div className="animate-pulse">Fetching campaign...</div>
+            </div>
           ) : (
             <Error message="Campaign not found" />
           )
         ) : selectedNormalizedCampaign.levels.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">No levels found. Click the "Add Level" button to create one.</div>
+          <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+            <p className="text-gray-500 mb-4">No levels found in this campaign</p>
+            <button onClick={handleAddLevel} className="text-indigo-600 hover:text-indigo-700 font-medium">
+              + Create your first level
+            </button>
+          </div>
         ) : (
-          selectedNormalizedCampaign.levels.map((levelId, index) => (
-            <Link
-              to={ROUTE_LEVEL_FLOW(selectedNormalizedCampaign.id, levelId)}
-              key={levelId}
-              className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-800">Level {index + 1}</h3>
-                <span className="text-gray-500 text-sm">ID: {levelId}</span>
-              </div>
-            </Link>
-          ))
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {selectedNormalizedCampaign.levels.map((levelId, index) => (
+              <Link
+                to={ROUTE_LEVEL_FLOW(selectedNormalizedCampaign.id, levelId)}
+                key={levelId}
+                className="group p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-indigo-100"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">Level {index + 1}</h3>
+                    <p className="text-gray-500 text-sm mt-1">ID: {levelId}</p>
+                  </div>
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-50 group-hover:bg-indigo-100 transition-colors">
+                    <span className="text-2xl font-semibold text-indigo-600">{index + 1}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
         {selectedNormalizedCampaign && (
           <FlowAddPopup

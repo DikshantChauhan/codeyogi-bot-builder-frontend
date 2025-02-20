@@ -1,6 +1,6 @@
 import { memo, FC, useState, useCallback } from 'react'
 import { connect } from 'react-redux'
-import { FiPlus } from 'react-icons/fi'
+import { FiEye, FiPlus } from 'react-icons/fi'
 import { AppState } from '../store/store'
 import {
   campaignAddErrorSelector,
@@ -10,15 +10,16 @@ import {
   normalizedCampaignsListSelector,
 } from '../store/selectors/campaign.selector'
 import { NormalizedCampaign } from '../models/Campaign.model'
-import { ActionButton } from '../components/ActionButton'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import CampaignAddOrUpdatePopup, { CampaignAddOrUpdateFormData } from '../components/CampaignAddOrUpdatePopup'
 import { campaignActions } from '../store/slices/campaign.slice'
 import CampaignCard from '../components/CampaignCard'
 import FlowAddPopup from '../components/FlowAddPopup'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ROUTE_NUDGES_LIST } from '../constants'
+import Button from '../components/Button'
+import { AppNodeKeys } from '../models/Node.model'
 
 interface CampaignsListPageProps {
   normalizedCampaigns: NormalizedCampaign[]
@@ -39,10 +40,11 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
 }) => {
   const [isCampaignAddPopupOpen, setIsCampaignAddPopupOpen] = useState(false)
   const [isNudgeAddPopupOpen, setIsNudgeAddPopupOpen] = useState(false)
+  const navigate = useNavigate()
 
   const handleCreateCampaign = useCallback(
     (values: CampaignAddOrUpdateFormData) => {
-      campaignAddTry(values)
+      campaignAddTry({ ...values, levels: [] as string[], allowed_nodes: values.allowed_nodes as AppNodeKeys[] })
     },
     [campaignAddTry]
   )
@@ -52,28 +54,48 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
   }, [])
 
   return (
-    <main className="p-4 sm:p-8 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8 sm:mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Campaigns List</h1>
-        {campaignsListFetching && <Loading message="Loading campaigns..." />}
-        {campaignsListFetchError && <Error message={campaignsListFetchError} />}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link to={ROUTE_NUDGES_LIST}>Nudges List</Link>
-          <ActionButton icon={FiPlus} onClick={() => setIsNudgeAddPopupOpen(true)}>
-            Add New Nudge
-          </ActionButton>
-          <ActionButton icon={FiPlus} onClick={() => setIsCampaignAddPopupOpen(true)}>
-            Add New Campaign
-          </ActionButton>
+    <main className="p-6 max-w-[1600px] mx-auto">
+      <div className="flex flex-col space-y-6 mb-8">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-500">Campaigns</h1>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Button variant="secondary" Icon={FiEye} onClick={() => navigate(ROUTE_NUDGES_LIST)}>
+              View Nudges
+            </Button>
+            <Button variant="primary" Icon={FiPlus} onClick={() => setIsNudgeAddPopupOpen(true)}>
+              New Nudge
+            </Button>
+            <Button variant="primary" Icon={FiPlus} onClick={() => setIsCampaignAddPopupOpen(true)}>
+              New Campaign
+            </Button>
+          </div>
         </div>
+
+        {/* Status Messages */}
+        {campaignsListFetching && (
+          <div className="w-full">
+            <Loading message="Loading campaigns..." />
+          </div>
+        )}
+        {campaignsListFetchError && (
+          <div className="w-full">
+            <Error message={campaignsListFetchError} />
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+      {/* Campaigns Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {normalizedCampaigns.map((campaign) => (
           <CampaignCard key={campaign.id} campaign={campaign} />
         ))}
       </div>
 
+      {/* Popups */}
       {isCampaignAddPopupOpen && (
         <CampaignAddOrUpdatePopup
           isOpen={isCampaignAddPopupOpen}

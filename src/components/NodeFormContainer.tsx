@@ -30,7 +30,7 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
             {slectedFlow?.type === 'level' && <NodeSubFlowForm selectedNudge={selectedNudge} setSelectedNudge={setSelectedNudge} />}
 
             <div>
-              <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
+              <Button type="submit" className="w-full" variant="secondary">
                 {selectedNode ? 'Update' : 'Add'}
               </Button>
             </div>

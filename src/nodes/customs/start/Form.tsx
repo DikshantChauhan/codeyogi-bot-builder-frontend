@@ -11,7 +11,7 @@ const Form: React.FC<Props> = ({}) => {
 
   return (
     <NodeFormContainer initialValues={{}} transFormNodeDataOrFail={transFormNodeDataOrFail}>
-      <p>------</p>
+      <p>-----</p>
     </NodeFormContainer>
   )
 }
