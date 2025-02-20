@@ -1,31 +1,28 @@
 import { FC, memo, useCallback, useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
-import { CiExport, CiSaveDown2 } from 'react-icons/ci'
+import { CiSaveDown2 } from 'react-icons/ci'
 import { Panel } from '@xyflow/react'
 import { Link } from 'react-router-dom'
 import { BiHome } from 'react-icons/bi'
+import { connect } from 'react-redux'
+import { flowActions } from '../store/slices/flow.slice'
+import { AppState } from '../store/store'
+import { selectedFlowSelector } from '../store/selectors/flow.selector'
+import { Flow } from '../models/Flow.model'
 
-const MenuBar: FC = () => {
+type Props = {
+  updateFlow: typeof flowActions.flowUpdateTry
+  selectedFlow: Flow | null
+}
+
+const MenuBar: FC<Props> = ({ updateFlow, selectedFlow }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSave = useCallback(async () => {
-    alert('save')
-    // await saveFlow()
+  const handleSave = useCallback(() => {
+    if (!selectedFlow) return
+    updateFlow({ id: selectedFlow.id, data: selectedFlow })
     setIsOpen(false)
-  }, [])
-
-  const handleExport = useCallback(() => {
-    alert('export')
-    // const data = getSelectedFlow()
-    // const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    // const url = URL.createObjectURL(blob)
-    // const a = document.createElement('a')
-    // a.href = url
-    // a.download = 'flow.json'
-    // a.click()
-    // URL.revokeObjectURL(url)
-    setIsOpen(false)
-  }, [])
+  }, [selectedFlow, updateFlow])
 
   return (
     <Panel className="bg-white rounded-md shadow-lg">
@@ -44,10 +41,6 @@ const MenuBar: FC = () => {
               <CiSaveDown2 className="w-5 h-5 mr-3" />
               <span className="flex-grow">Save</span>
             </button>
-            <button onClick={handleExport} className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <CiExport className="w-5 h-5 mr-3" />
-              <span className="flex-grow">Export</span>
-            </button>
           </div>
         )}
       </div>
@@ -55,4 +48,12 @@ const MenuBar: FC = () => {
   )
 }
 
-export default memo(MenuBar)
+const mapStateToProps = (state: AppState) => ({
+  selectedFlow: selectedFlowSelector(state),
+})
+
+const mapDispatchToProps = {
+  updateFlow: flowActions.flowUpdateTry,
+}
+
+export default memo(connect(mapStateToProps, mapDispatchToProps)(MenuBar))

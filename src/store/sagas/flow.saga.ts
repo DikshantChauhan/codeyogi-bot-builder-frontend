@@ -1,11 +1,10 @@
 import { Flow } from '../../models/Flow.model'
-import { NormalizedCampaign } from '../../models/Campaign.model'
 import { campaignActions } from '../slices/campaign.slice'
 import { flowActions } from '../slices/flow.slice'
 import { put, call, all, takeLatest } from 'redux-saga/effects'
 import { PathMatch } from 'react-router-dom'
 import { ROUTE_CAMPAIGN_DETAILS, ROUTE_FLOW } from '../../constants'
-import { fetchCampaignDetailsAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI } from '../../api/api'
+import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, updateFlowAPI } from '../../api/api'
 import { toast } from 'react-toastify'
 
 function* fetchFlowSaga(match: PathMatch<typeof ROUTE_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
@@ -16,7 +15,10 @@ function* fetchFlowSaga(match: PathMatch<typeof ROUTE_FLOW.dynamicKey | typeof R
     yield put(flowActions.setSelectedFlowId(flowId))
     yield put(flowActions.setFlowLoading({ flowId, loading: true }))
 
-    const [campaign, flow]: [NormalizedCampaign, Flow] = yield all([call(fetchCampaignDetailsAPI, campaignId), call(fetchFlowAPI, flowId)])
+    const [campaign, flow]: [Awaited<ReturnType<typeof fetchCampaignAPI>>, Awaited<ReturnType<typeof fetchFlowAPI>>] = yield all([
+      call(fetchCampaignAPI, campaignId),
+      call(fetchFlowAPI, flowId),
+    ])
 
     yield put(campaignActions.setCampaign({ campaign, error: null, loading: false }))
     yield put(flowActions.setFlow({ flow, error: null, loading: false }))
@@ -59,6 +61,22 @@ function* flowAddSaga({ payload }: ReturnType<typeof flowActions.flowAddTry>): G
   }
 }
 
+function* flowUpdateSaga({ payload }: ReturnType<typeof flowActions.flowUpdateTry>): Generator {
+  try {
+    yield put(flowActions.setFlowUpdateLoading(true))
+    yield put(flowActions.setFlowUpdateError(null))
+
+    const flow: Awaited<ReturnType<typeof updateFlowAPI>> = yield call(updateFlowAPI, payload)
+    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+  } catch (error) {
+    console.error(error)
+    yield put(flowActions.setFlowUpdateError(String(error)))
+  } finally {
+    yield put(flowActions.setFlowUpdateLoading(false))
+  }
+}
+
 export function* watchFlowAddSaga(): Generator {
   yield takeLatest(flowActions.flowAddTry.type, flowAddSaga)
+  yield takeLatest(flowActions.flowUpdateTry.type, flowUpdateSaga)
 }

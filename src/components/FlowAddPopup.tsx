@@ -9,7 +9,7 @@ import { AppState } from '../store/store'
 import { connect } from 'react-redux'
 import { flowActions } from '../store/slices/flow.slice'
 
-export type FlowAddFormData = Omit<Flow, keyof Entity>
+export type FlowAddOrUpdateFormData = Omit<Flow, keyof Entity>
 
 type Props = {
   isOpen: boolean
@@ -26,19 +26,19 @@ function FlowAddPopup({ isOpen, onClose, type, loading, error, addFlow, campaign
 
   const initialValues = {
     name: '',
-    order: 0,
+    level_number: 1,
   }
 
   const onSubmit = (values: typeof initialValues) => {
     const flow = {
-      ...values,
+      name: values.name,
       type,
       data: {
         nodes: [],
         edges: [],
       },
     }
-    addFlow({ ...flow, campaign_id: campaignRef?.id })
+    addFlow({ campaign_id: campaignRef!.id, flow_data: flow, level_number: values.level_number })
   }
 
   if (!isOpen) return null
@@ -60,8 +60,8 @@ function FlowAddPopup({ isOpen, onClose, type, loading, error, addFlow, campaign
 
               {type === 'level' && (
                 <div>
-                  <label className="block mb-1">Order</label>
-                  <Field name="order" type="number" className="w-full border rounded p-2" />
+                  <label className="block mb-1">Level Number</label>
+                  <Field name="level_number" type="number" className="w-full border rounded p-2" />
                 </div>
               )}
 

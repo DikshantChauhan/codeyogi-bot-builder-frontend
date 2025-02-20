@@ -1,10 +1,9 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { campaignActions } from '../slices/campaign.slice'
 import { PathMatch } from 'react-router-dom'
-import { createCampaignAPI, fetchCampaignDetailsAPI, fetchCampaignslistAPI, updateCampaignAPI } from '../../api/api'
+import { createCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, updateCampaignAPI } from '../../api/api'
 import { ROUTE_CAMPAIGN_DETAILS } from '../../constants'
-import { Campaign, NormalizedCampaign } from '../../models/Campaign.model'
-import { flowActions } from '../slices/flow.slice'
+import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'
 
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
@@ -40,26 +39,16 @@ function* createCampaignSaga(action: ReturnType<typeof campaignActions.campaignA
   }
 }
 
-export function* fetchCampaignDetailSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+export function* fetchCampaignSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   const campaignId = match.params.campaign_id!
   try {
     yield put(campaignActions.setSelectedCampaignId(campaignId))
     yield put(campaignActions.setCampaignLoading({ campaignId, loading: true }))
-    const response: Campaign = yield call(fetchCampaignDetailsAPI, campaignId)
-    const { levels, ...campaignData } = response
-
-    for (const flow of levels) {
-      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
-    }
-
-    const normalizedCampaign: NormalizedCampaign = {
-      ...campaignData,
-      levels: levels.map((flow) => flow.id),
-    }
+    const response: Awaited<ReturnType<typeof fetchCampaignAPI>> = yield call(fetchCampaignAPI, campaignId)
 
     yield put(
       campaignActions.setCampaign({
-        campaign: normalizedCampaign,
+        campaign: response,
         error: null,
         loading: false,
       })

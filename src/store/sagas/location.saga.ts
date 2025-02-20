@@ -2,14 +2,14 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { locationActions } from '../slices/location.slice'
 import { takeLatest } from 'redux-saga/effects'
 import { Location } from 'react-router-dom'
-import { fetchCampaignDetailSaga, fetchCampaignsListSaga } from './campaign.saga'
+import { fetchCampaignsListSaga, fetchCampaignSaga } from './campaign.saga'
 import { ROUTE_CAMPAIGNS_LIST, ROUTE_CAMPAIGN_DETAILS, ROUTE_FLOW } from '../../constants'
 import { matchPath } from 'react-router-dom'
 import { flowPageSaga } from './flow.saga'
 
 const sagasByPath = {
   [ROUTE_CAMPAIGNS_LIST]: fetchCampaignsListSaga,
-  [ROUTE_CAMPAIGN_DETAILS()]: fetchCampaignDetailSaga,
+  [ROUTE_CAMPAIGN_DETAILS()]: fetchCampaignSaga,
   [ROUTE_FLOW()]: flowPageSaga,
 }
 

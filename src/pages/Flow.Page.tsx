@@ -1,4 +1,4 @@
-import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, Panel } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import Toolbar from '../components/Toolbar'
 import ToolSidePanel from '../components/ToolSidePanel'
@@ -25,9 +25,9 @@ const FlowPage = () => {
     selectedFlowLoading,
     nodeTypes,
     onNodeClick,
+    updateLoading,
   } = useFlowPageData()
 
-  if (selectedFlowLoading) return <Loading message="Setting up flow" />
   if (selectedFlowError) return <Error message={selectedFlowError} />
 
   return (
@@ -57,6 +57,16 @@ const FlowPage = () => {
           <Background color="white" />
           <MiniMap className="border border-gray-400" />
           <Controls />
+          {selectedFlowLoading && (
+            <Panel position="top-left">
+              <Loading message="Fetching flow" />
+            </Panel>
+          )}
+          {updateLoading && (
+            <Panel position="top-left">
+              <Loading message="updating flow" />
+            </Panel>
+          )}
         </ReactFlow>
       </div>
     </div>

@@ -1,4 +1,9 @@
-import { selectedFlowErrorSelector, selectedFlowLoadingSelector, selectedFlowSelector } from '../store/selectors/flow.selector'
+import {
+  flowUpdateLoadingSeletor,
+  selectedFlowErrorSelector,
+  selectedFlowLoadingSelector,
+  selectedFlowSelector,
+} from '../store/selectors/flow.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { flowActions } from '../store/slices/flow.slice'
 import { useCallback, useMemo, useState } from 'react'
@@ -24,6 +29,7 @@ const useFlowPageData = () => {
   const selectedFlow = useSelector(selectedFlowSelector)
   const selectedFlowLoading = useSelector(selectedFlowLoadingSelector)
   const selectedFlowError = useSelector(selectedFlowErrorSelector)
+  const updateLoading = useSelector(flowUpdateLoadingSeletor)
   const [reconnectingEdge, setReconnectingEdge] = useState<AppEdge | null>(null)
 
   const dispatch = useDispatch()
@@ -138,6 +144,7 @@ const useFlowPageData = () => {
     onReconnectEnd,
     nodeTypes,
     onNodeClick,
+    updateLoading,
   }
 }
 

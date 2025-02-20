@@ -1,7 +1,7 @@
 import { CampaignAddOrUpdateFormData } from '../components/CampaignAddOrUpdatePopup'
-import { FlowAddFormData } from '../components/FlowAddPopup'
+import { FlowAddOrUpdateFormData } from '../components/FlowAddPopup'
 import { API_BASE_URL } from '../constants'
-import { Campaign, NormalizedCampaign } from '../models/Campaign.model'
+import { NormalizedCampaign } from '../models/Campaign.model'
 import { Flow } from '../models/Flow.model'
 import axios from 'axios'
 
@@ -11,9 +11,9 @@ export const fetchCampaignslistAPI = async (): Promise<NormalizedCampaign[]> => 
   return response.data
 }
 
-export const fetchCampaignDetailsAPI = async (campaignId: string): Promise<Campaign> => {
+export const fetchCampaignAPI = async (campaignId: string) => {
   const url = `${API_BASE_URL}/campaign/${campaignId}`
-  const response = await axios.get<Campaign>(url)
+  const response = await axios.get<NormalizedCampaign>(url)
   return response.data
 }
 
@@ -24,8 +24,8 @@ export const createCampaignAPI = async (campaign: CampaignAddOrUpdateFormData): 
 }
 
 export const updateCampaignAPI = async (campaignId: string, campaign: CampaignAddOrUpdateFormData): Promise<NormalizedCampaign> => {
-  const url = `${API_BASE_URL}/campaign`
-  const response = await axios.put<NormalizedCampaign>(url, { ...campaign, id: campaignId })
+  const url = `${API_BASE_URL}/campaign/${campaignId}`
+  const response = await axios.put<NormalizedCampaign>(url, { ...campaign })
   return response.data
 }
 
@@ -41,8 +41,14 @@ export const fetchNudgeFlowsListAPI = async (): Promise<Flow[]> => {
   return response.data
 }
 
-export const createFlowAPI = async (data: FlowAddFormData & { campaign_id?: string; order?: number }) => {
+export const createFlowAPI = async (data: { flow_data: FlowAddOrUpdateFormData; campaign_id: string; level_number: number }) => {
   const url = `${API_BASE_URL}/flow`
   const response = await axios.post<{ flow: Flow; campaign?: NormalizedCampaign }>(url, data)
+  return response.data
+}
+
+export const updateFlowAPI = async ({ id, data }: { id: string; data: FlowAddOrUpdateFormData }) => {
+  const url = `${API_BASE_URL}/flow/${id}`
+  const response = await axios.put<Flow>(url, data)
   return response.data
 }

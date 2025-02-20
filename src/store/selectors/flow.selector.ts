@@ -40,3 +40,5 @@ const nudgeFlowsIdsSelector = createSelector([flowsSelector], (flows) => flows.n
 export const nudgeFlowsSelector = createSelector([flowsByIdsSelector, nudgeFlowsIdsSelector], (flowsByIds, nudgeFlowsIds) =>
   nudgeFlowsIds.map((id) => flowsByIds[id])
 )
+
+export const flowUpdateLoadingSeletor  = createSelector(flowsSelector, (state) => state.flowUpdateLoading)

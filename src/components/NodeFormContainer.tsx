@@ -1,9 +1,9 @@
 import { memo } from 'react'
 import { Formik, Form, FormikValues, FormikHelpers, FormikProps } from 'formik'
 import Button from './Button'
-import NodeSubFlowForm from './NodeSubFlowForm'
 import { AppNode } from '../models/Node.model'
 import useNodeFormContainerData from '../hooks/useNodeFormContainerData'
+import NodeSubFlowForm from './NodeSubFlowForm'
 
 export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
 
