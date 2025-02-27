@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { IconType } from 'react-icons/lib'
 import { twMerge } from 'tailwind-merge'
 
@@ -6,9 +7,10 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean
   variant?: 'primary' | 'secondary' | 'tertiary'
   Icon?: IconType
+  loading?: boolean
 }
 
-export default memo(({ children, className, active, variant = 'primary', Icon, ...rest }: Props) => {
+export default memo(({ children, className, active, variant = 'primary', Icon, loading, ...rest }: Props) => {
   const variants = {
     primary: `bg-primary-500 text-white hover:bg-primary-600
       ${active ? 'bg-primary-600 ring-2 ring-primary-300' : ''}`,
@@ -26,11 +28,12 @@ export default memo(({ children, className, active, variant = 'primary', Icon, .
         variants[variant],
         className
       )}
+      disabled={loading}
       {...rest}
     >
       <div className="flex items-center gap-2">
         {Icon && <Icon className="h-5 w-5" />}
-        {children}
+        {loading ? <AiOutlineLoading3Quarters className="h-5 w-5 animate-spin" /> : children}
       </div>
     </button>
   )

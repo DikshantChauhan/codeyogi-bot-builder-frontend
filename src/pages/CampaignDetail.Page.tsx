@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { connect } from 'react-redux'
 import { FiPlus } from 'react-icons/fi'
 import { AppState } from '../store/store'
@@ -6,26 +6,58 @@ import {
   selectedNormalizedCampaignSelector,
   selectedCampaignFetchingSelector,
   selectedCampaignFetchErrorSelector,
+  campaignUpdateLoadingSelector,
+  campaignUpdateErrorSelector,
 } from '../store/selectors/campaign.selector'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
-import { Link } from 'react-router-dom'
-import { ROUTE_LEVEL_FLOW } from '../constants'
 import FlowAddPopup from '../components/FlowAddPopup'
 import Button from '../components/Button'
+import ReorderableCampaignLevelsList from '../components/ReorderableCampaignLevelsList'
+import { campaignActions } from '../store/slices/campaign.slice'
 
 interface CampaignDetailPageProps {
   selectedNormalizedCampaign: NormalizedCampaign | null
   selectedCampaignFetching: boolean
   selectedCampaignFetchError: string | null
+  campaignUpdateTry: typeof campaignActions.campaignUpdateTry
+  campaignUpdateLoading: boolean
 }
 
-const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetching, selectedCampaignFetchError }: CampaignDetailPageProps) => {
+const CampaignDetailPage = ({
+  selectedNormalizedCampaign,
+  selectedCampaignFetching,
+  selectedCampaignFetchError,
+  campaignUpdateTry,
+  campaignUpdateLoading,
+}: CampaignDetailPageProps) => {
   const [isFlowAddPopupOpen, setIsFlowAddPopupOpen] = useState(false)
+  const [levelsIds, setLevelsIds] = useState(selectedNormalizedCampaign?.levels || [])
+
+  useEffect(() => {
+    if (selectedNormalizedCampaign) {
+      setLevelsIds(selectedNormalizedCampaign.levels)
+    }
+  }, [selectedNormalizedCampaign])
+
+  const isLevelsOrderChanged = useMemo(() => {
+    if (!selectedNormalizedCampaign) return false
+    return JSON.stringify(levelsIds) !== JSON.stringify(selectedNormalizedCampaign.levels)
+  }, [levelsIds, selectedNormalizedCampaign?.levels])
 
   const handleAddLevel = () => {
     setIsFlowAddPopupOpen(true)
+  }
+
+  const handleSaveLevelsOrder = () => {
+    selectedNormalizedCampaign &&
+      campaignUpdateTry({
+        id: selectedNormalizedCampaign.id,
+        campaign: {
+          levels: levelsIds,
+        },
+      })
   }
 
   return (
@@ -35,9 +67,16 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
           <h1 className="text-3xl font-semibold text-gray-500">{selectedNormalizedCampaign?.name}</h1>
           {selectedCampaignFetching && <Loading />}
         </div>
-        <Button onClick={handleAddLevel} Icon={FiPlus}>
-          Add Level
-        </Button>
+        <div className="flex items-center gap-4">
+          {isLevelsOrderChanged && (
+            <Button onClick={handleSaveLevelsOrder} Icon={FiPlus} loading={campaignUpdateLoading}>
+              Save Levels Order
+            </Button>
+          )}
+          <Button onClick={handleAddLevel} Icon={FiPlus}>
+            Add Level
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6">
@@ -59,25 +98,7 @@ const CampaignDetailPage = ({ selectedNormalizedCampaign, selectedCampaignFetchi
             </button>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {selectedNormalizedCampaign.levels.map((levelId, index) => (
-              <Link
-                to={ROUTE_LEVEL_FLOW(selectedNormalizedCampaign.id, levelId)}
-                key={levelId}
-                className="group p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-indigo-100"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">Level {index + 1}</h3>
-                    <p className="text-gray-500 text-sm mt-1">ID: {levelId}</p>
-                  </div>
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-50 group-hover:bg-indigo-100 transition-colors">
-                    <span className="text-2xl font-semibold text-indigo-600">{index + 1}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ReorderableCampaignLevelsList campaignId={selectedNormalizedCampaign.id} levelsIds={levelsIds} setLevelsIds={setLevelsIds} />
         )}
         {selectedNormalizedCampaign && (
           <FlowAddPopup
@@ -96,6 +117,11 @@ const mapStateToProps = (state: AppState) => ({
   selectedNormalizedCampaign: selectedNormalizedCampaignSelector(state),
   selectedCampaignFetching: selectedCampaignFetchingSelector(state),
   selectedCampaignFetchError: selectedCampaignFetchErrorSelector(state),
+  campaignUpdateLoading: campaignUpdateLoadingSelector(state),
 })
 
-export default memo(connect(mapStateToProps)(CampaignDetailPage))
+const mapDispatchToProps = {
+  campaignUpdateTry: campaignActions.campaignUpdateTry,
+}
+
+export default memo(connect(mapStateToProps, mapDispatchToProps)(CampaignDetailPage))
