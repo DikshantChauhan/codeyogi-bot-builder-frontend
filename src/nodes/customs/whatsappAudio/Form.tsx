@@ -1,6 +1,7 @@
-import { memo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { WhatsappAudioNodeData, WhatsappAudioNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
+import SuggestionField from '../../../components/SuggestionField'
 
 interface Props {
   node?: WhatsappAudioNodeType
@@ -8,10 +9,13 @@ interface Props {
 
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
-  const [formData, setFormData] = useState({
-    id: data?.id || '',
-    url: data?.url || '',
-  })
+  const initialValues = useMemo(
+    () => ({
+      id: data?.id || '',
+      url: data?.url || '',
+    }),
+    [data]
+  )
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappAudioNodeData> = (value) => {
     if (!value.id && !value.url) {
@@ -20,37 +24,15 @@ const Form: React.FC<Props> = ({ node }) => {
     return value
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
   return (
-    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Audio ID (recommended)</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp audio ID"
-            className="w-full rounded-md border px-3 py-2"
-          />
+          <SuggestionField name="id" placeholder="Enter WhatsApp audio ID" as="input" label="Audio ID (recommended)" />
         </div>
         <div className="text-center text-sm text-gray-500">OR</div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Audio URL</label>
-          <input
-            name="url"
-            value={formData.url}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp audio URL"
-            className="w-full rounded-md border px-3 py-2"
-          />
+          <SuggestionField name="url" placeholder="Enter WhatsApp audio URL" as="input" label="Audio URL" />
         </div>
       </div>
     </NodeFormContainer>

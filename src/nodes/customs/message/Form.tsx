@@ -1,7 +1,7 @@
 import { FC, memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { MessageNodeData, MessageNodeType } from './type'
-import { Field } from 'formik'
+import SuggestionField from '../../../components/SuggestionField'
 
 interface Props {
   node?: MessageNodeType
@@ -18,7 +18,7 @@ const MessageForm: FC<Props> = ({ node }) => {
   return (
     <NodeFormContainer initialValues={data || { text: '' }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div>
-        <Field
+        <SuggestionField
           as="textarea"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={4}

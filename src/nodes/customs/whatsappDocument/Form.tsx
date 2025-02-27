@@ -1,6 +1,7 @@
-import { memo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { WhatsappDocumentNodeData, WhatsappDocumentNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
+import SuggestionField from '../../../components/SuggestionField'
 
 interface Props {
   node?: WhatsappDocumentNodeType
@@ -8,10 +9,13 @@ interface Props {
 
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
-  const [formData, setFormData] = useState({
-    id: data?.id || '',
-    url: data?.url || '',
-  })
+  const initialValues = useMemo(
+    () => ({
+      id: data?.id || '',
+      url: data?.url || '',
+    }),
+    [data]
+  )
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappDocumentNodeData> = (value) => {
     if (!value.id && !value.url) {
@@ -20,37 +24,15 @@ const Form: React.FC<Props> = ({ node }) => {
     return value
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
   return (
-    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Document ID (recommended)</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp document ID"
-            className="w-full rounded-md border px-3 py-2"
-          />
+          <SuggestionField name="id" placeholder="Enter WhatsApp document ID" as="input" label="Document ID (recommended)" />
         </div>
         <div className="text-center text-sm text-gray-500">OR</div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Document URL</label>
-          <input
-            name="url"
-            value={formData.url}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp document URL"
-            className="w-full rounded-md border px-3 py-2"
-          />
+          <SuggestionField name="url" placeholder="Enter WhatsApp document URL" as="input" label="Document URL" />
         </div>
       </div>
     </NodeFormContainer>

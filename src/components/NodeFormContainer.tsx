@@ -22,10 +22,10 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
     <>
       <Formik<T> initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
         {(formikProps) => (
-          <Form className="space-y-4 max-h-full overflow-y-auto">
+          <Form className="flex flex-col flex-1 max-h-full gap-3">
             <h2 className="text-xl font-bold">{type}</h2>
 
-            {typeof children === 'function' ? children(formikProps) : children}
+            <div className="flex-1 overflow-auto">{typeof children === 'function' ? children(formikProps) : children}</div>
 
             {slectedFlow?.type === 'level' && <NodeSubFlowForm selectedNudge={selectedNudge} setSelectedNudge={setSelectedNudge} />}
 

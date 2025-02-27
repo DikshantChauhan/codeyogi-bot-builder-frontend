@@ -40,7 +40,7 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ nodeToAdd, selectedNode, 
   }, [pickedTool, selectedNode, allowedNodesKey])
 
   return pickedTool && ToolForm ? (
-    <Panel position="top-right" className="w-[300px] h-screen p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border">
+    <Panel position="top-right" className="w-[320px] bottom-0 p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border flex flex-col">
       {ToolForm}
     </Panel>
   ) : (
