@@ -5,13 +5,15 @@ import { AppNode } from '../models/Node.model'
 import useNodeFormContainerData from '../hooks/useNodeFormContainerData'
 import NodeSubFlowForm from './NodeSubFlowForm'
 
-export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
+
 
 interface FormProps<T extends FormikValues> {
   initialValues: T
   transFormNodeDataOrFail: TransFormNodeDataOrFail<T>
   children: React.ReactNode | ((props: FormikProps<T>) => React.ReactNode)
 }
+
+export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
 
 const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues }: FormProps<T>) => {
   const { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge } = useNodeFormContainerData(transFormNodeDataOrFail)

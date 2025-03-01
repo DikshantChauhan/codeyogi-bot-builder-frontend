@@ -7,7 +7,6 @@ import {
   selectedCampaignFetchingSelector,
   selectedCampaignFetchErrorSelector,
   campaignUpdateLoadingSelector,
-  campaignUpdateErrorSelector,
 } from '../store/selectors/campaign.selector'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import Loading from '../components/Loading'

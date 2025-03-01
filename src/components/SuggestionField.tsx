@@ -1,8 +1,7 @@
 import { useFormikContext } from 'formik'
 import React, { useState, useRef, FC, memo } from 'react'
 import { MdClose } from 'react-icons/md'
-
-const variables = ['user.name', 'user.email', 'user.phone', 'user.address', 'user.city', 'user.state', 'user.zip', 'user.country', 'assignment.score']
+import { VARIABLE_NAMES } from '../constants'
 
 interface Props {
   name: string | { key: string; index: number; removeable?: boolean }
@@ -103,7 +102,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
 
       {showDropdown && (
         <ul className="absolute border inset-x-0 shadow-md min-h-max z-10 bg-gray-900">
-          {variables.map((variable) => (
+          {VARIABLE_NAMES.map((variable) => (
             <li key={variable} onClick={() => insertVariable(`\${${variable}}`)} className="p-2 cursor-pointer hover:bg-gray-800 text-white">
               {variable}
             </li>
