@@ -103,7 +103,7 @@ const useFlowPageData = () => {
   const isConnnectionValid = useCallback(
     (connection: AppEdge | Connection) => {
       const { source: sourceId, sourceHandle: sourceHandleName } = connection
-      console.log(reconnectingEdge)
+      //console.log(reconnectingEdge)
 
       //no self connections
       if (connection.source === connection.target) return false

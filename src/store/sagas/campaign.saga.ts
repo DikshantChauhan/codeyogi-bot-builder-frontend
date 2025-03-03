@@ -1,10 +1,12 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { campaignActions } from '../slices/campaign.slice'
 import { PathMatch } from 'react-router-dom'
-import { createCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, updateCampaignAPI } from '../../api/api'
+import { createCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, fetchFlowAPI, updateCampaignAPI } from '../../api/api'
 import { ROUTE_CAMPAIGN_DETAILS } from '../../constants'
 import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'
+import { selectedNormalizedCampaignSelector } from '../selectors/campaign.selector'
+import { flowActions } from '../slices/flow.slice'
 
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
   try {
@@ -39,7 +41,7 @@ function* createCampaignSaga(action: ReturnType<typeof campaignActions.campaignA
   }
 }
 
-export function* fetchCampaignSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+function* fetchCampaignSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   const campaignId = match.params.campaign_id!
   try {
     yield put(campaignActions.setSelectedCampaignId(campaignId))
@@ -74,6 +76,18 @@ function* updateCampaignSaga({ payload }: ReturnType<typeof campaignActions.camp
     yield put(campaignActions.campaignUpdateError(String(error)))
   } finally {
     yield put(campaignActions.campaignUpdateLoading(false))
+  }
+}
+
+export function* fetchCampaignDetailsSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+  yield call(fetchCampaignSaga, match)
+
+  const campaign: NormalizedCampaign = yield select(selectedNormalizedCampaignSelector)
+
+  const flows: Awaited<ReturnType<typeof fetchFlowAPI>>[] = yield all(campaign.levels.map(async (level) => await fetchFlowAPI(level)))
+
+  for (const flow of flows) {
+    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
   }
 }
 

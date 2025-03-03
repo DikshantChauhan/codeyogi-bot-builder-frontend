@@ -48,6 +48,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
     (values: T, formikHelpers: FormikHelpers<T>) => {
       try {
         const data = transFormNodeDataOrFail(values, formikHelpers)
+        console.log(data)
         const id = selectedNode?.id || getRandomId()
 
         const nodes = [...(slectedFlow?.data.nodes || [])]
@@ -68,7 +69,6 @@ const useNodeFormContainerData = <T extends FormikValues>(
         } else {
           nodes[nodeIndex] = node
         }
-        console.log(nodes)
         setFlow({ ...slectedFlow!, data: { ...slectedFlow!.data, nodes } })
         closeSideBar()
       } catch (error) {

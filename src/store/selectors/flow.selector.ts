@@ -9,7 +9,7 @@ import { IF_ELSE_NODE_KEY } from '../../nodes/customs/ifElse/type'
 import { START_NODE_KEY } from '../../nodes/customs/start/type'
 import { END_NODE_KEY } from '../../nodes/customs/end/type'
 
-const flowsByIdsSelector = createSelector([flowsSelector], (flows) => flows.flowsById)
+export const flowsByIdsSelector = createSelector([flowsSelector], (flows) => flows.flowsById)
 
 const selectedFlowIdSelector = createSelector([flowsSelector], (flows) => flows.selectedFlowId)
 

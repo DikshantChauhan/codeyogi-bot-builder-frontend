@@ -8,6 +8,7 @@ export type WhatsappListNodeData = {
   footer?: string
   header?: string
   buttonLabel?: string
+  correctIndex: number
 }
 
 export type WhatsappListNodeType = Node<WhatsappListNodeData, typeof WHATSAPP_LIST_NODE_KEY>

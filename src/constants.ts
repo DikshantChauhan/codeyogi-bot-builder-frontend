@@ -13,14 +13,4 @@ ROUTE_LEVEL_FLOW.dynamicKey = 'flow_id' as const
 
 export const API_BASE_URL = 'https://7psqs47xjf.execute-api.us-east-1.amazonaws.com'
 
-export const VARIABLE_NAMES = [
-  'user.name',
-  'user.email',
-  'user.phone',
-  'user.address',
-  'user.city',
-  'user.state',
-  'user.zip',
-  'user.country',
-  'assignment.score',
-] as const
+export const VARIABLE_NAMES = ['user.name', 'user.level_id', 'user.phone_number', 'user.total_score', 'user.level_score'] as const
