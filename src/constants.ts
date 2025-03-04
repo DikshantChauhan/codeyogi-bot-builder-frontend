@@ -21,4 +21,5 @@ export const VARIABLE_NAMES = [
   'chat.input',
   'user.total_score',
   'user.level_score',
+  'prompt.input',
 ] as const

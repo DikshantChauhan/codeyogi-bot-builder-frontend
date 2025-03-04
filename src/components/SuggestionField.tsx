@@ -19,7 +19,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   const { setFieldValue, values } = useFormikContext<{ [key: string]: string }>()
 
-  const inputValue = typeof name === 'string' ? values[name] : values[name.key][name.index]
+  const inputValue = (typeof name === 'string' ? values[name] : values[name.key][name.index]) || ''
 
   const setInputValue = (value: string) => {
     if (typeof name === 'string') {

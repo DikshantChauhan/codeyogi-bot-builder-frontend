@@ -57,8 +57,11 @@ import {
   IoMdTime,
   IoIosVideocam,
   IoMdSquare,
+  IoMdPerson,
 } from 'react-icons/io'
 import { NamedExoticComponent } from 'react'
+import { WHATSAPP_USER_UPDATE_NODE_KEY, WhatsappUserUpdateNodeType } from '../nodes/customs/whatsappUserUpdate/type'
+import WhatsappUserUpdateNode from '../nodes/customs/whatsappUserUpdate/Node'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -83,6 +86,7 @@ export type AppNode =
       | WhatsappStickerNodeType
       | DelayNodeType
       | EndNodeType
+      | WhatsappUserUpdateNodeType
     ) & { nudge: SubFlowValue; validator: SubFlowValue }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
@@ -109,4 +113,5 @@ export const nodesRegistry = {
   [WHATSAPP_STICKER_NODE_KEY]: { node: WhatsappStickerNode, color: 'bg-cyan-500', Icon: IoIosImages },
   [DELAY_NODE_KEY]: { node: DelayNode, color: 'bg-gray-500', Icon: IoMdTime },
   [END_NODE_KEY]: { node: EndNode, color: 'bg-slate-700', Icon: IoMdSquare },
+  [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, color: 'bg-blue-600', Icon: IoMdPerson },
 } satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>
