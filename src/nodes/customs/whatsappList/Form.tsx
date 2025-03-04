@@ -54,6 +54,7 @@ const Form: React.FC<Props> = ({ node }) => {
               name="buttons"
               labelGenerator={(index) => `Button ${index + 1}`}
               placeholderGenerator={(index) => `Enter button ${index + 1} text`}
+              characterLimit={24}
             />
           </div>
 

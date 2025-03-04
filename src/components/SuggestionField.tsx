@@ -2,6 +2,7 @@ import { useFormikContext } from 'formik'
 import React, { useState, useRef, FC, memo } from 'react'
 import { MdClose } from 'react-icons/md'
 import { VARIABLE_NAMES } from '../constants'
+import { toast } from 'react-toastify'
 
 interface Props {
   name: string | { key: string; index: number; removeable?: boolean }
@@ -10,9 +11,10 @@ interface Props {
   className?: string
   as?: 'input' | 'textarea'
   label?: string
+  characterLimit?: number
 }
 
-const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as = 'textarea', label }) => {
+const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as = 'textarea', label, characterLimit }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   const { setFieldValue, values } = useFormikContext<{ [key: string]: string }>()
@@ -62,6 +64,14 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
     setFieldValue(name.key, newValues)
   }
 
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (characterLimit && e.target.value.length > characterLimit) {
+      toast.error(`Character limit of ${characterLimit} exceeded`)
+      return
+    }
+    setInputValue(e.target.value)
+  }
+
   const baseClassName = 'w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 
   return (
@@ -83,7 +93,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
         <textarea
           ref={inputRef as React.RefObject<HTMLTextAreaElement>}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={onChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`${baseClassName} ${className}`}
@@ -93,7 +103,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
         <input
           ref={inputRef as React.RefObject<HTMLInputElement>}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={onChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`${baseClassName} ${className}`}

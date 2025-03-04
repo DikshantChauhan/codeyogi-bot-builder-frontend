@@ -8,9 +8,10 @@ type DynamicFieldArrayProps = {
   name: string
   labelGenerator: (index: number, length: number) => string
   placeholderGenerator: (index: number, length: number) => string
+  characterLimit?: number
 }
 
-const ListField: React.FC<DynamicFieldArrayProps> = ({ name, labelGenerator, placeholderGenerator }) => {
+const ListField: React.FC<DynamicFieldArrayProps> = ({ name, labelGenerator, placeholderGenerator, characterLimit }) => {
   return (
     <FieldArray name={name}>
       {({ push, form }: FieldArrayRenderProps) => (
@@ -23,6 +24,7 @@ const ListField: React.FC<DynamicFieldArrayProps> = ({ name, labelGenerator, pla
                 className="w-full p-2 border border-gray-300 rounded"
                 as="input"
                 label={labelGenerator(index, (form.values[name] as string[]).length)}
+                characterLimit={characterLimit}
               />
             </div>
           ))}
