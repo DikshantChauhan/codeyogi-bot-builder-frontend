@@ -44,7 +44,7 @@ const FlowPage = () => {
           fitView
           onNodeClick={onNodeClick}
           selectNodesOnDrag={false}
-          deleteKeyCode={['Delete', 'Backspace']}
+          deleteKeyCode={[]}
           isValidConnection={isConnnectionValid}
           onReconnectStart={onReconnectStart}
           onReconnectEnd={onReconnectEnd}

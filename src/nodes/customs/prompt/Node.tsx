@@ -3,8 +3,8 @@ import { FC, memo } from 'react'
 import { PromptNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<PromptNodeType>> = ({}) => {
-  return <NodeCard nodeType="prompt" />
+const Node: FC<NodeProps<PromptNodeType>> = ({ id }) => {
+  return <NodeCard nodeId={id} nodeType="prompt" />
 }
 
 export default memo(Node)

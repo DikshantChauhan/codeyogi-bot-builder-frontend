@@ -3,9 +3,9 @@ import { WhatsappLinkButtonNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappLinkButtonNode: FC<NodeProps<WhatsappLinkButtonNodeType>> = ({ data }) => {
+const WhatsappLinkButtonNode: FC<NodeProps<WhatsappLinkButtonNodeType>> = ({ id, data }) => {
   return (
-    <NodeCard nodeType="whatsapp-link-button">
+    <NodeCard nodeId={id} nodeType="whatsapp-link-button">
       <div className="space-y-2">
         <p className="text-sm">{data.text}</p>
         <a

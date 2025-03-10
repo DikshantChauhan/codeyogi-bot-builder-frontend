@@ -3,10 +3,10 @@ import { WhatsappListNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappListNode: FC<NodeProps<WhatsappListNodeType>> = ({ data }) => {
+const WhatsappListNode: FC<NodeProps<WhatsappListNodeType>> = ({ id, data }) => {
   const listOptions = (data.buttons || []).map((item) => ['', item] as [string, string])
   return (
-    <NodeCard nodeType="whatsapp-list" options={listOptions}>
+    <NodeCard nodeId={id} nodeType="whatsapp-list" options={listOptions}>
       <div>
         {data.header && <h3 className="font-medium">{data.header}</h3>}
         <p className="text-gray-600">{data.text}</p>

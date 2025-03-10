@@ -6,7 +6,7 @@ import {
 } from '../store/selectors/flow.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { flowActions } from '../store/slices/flow.slice'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Flow } from '../models/Flow.model'
 import {
   addEdge,
@@ -22,14 +22,17 @@ import {
 import { OnNodesChange } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
-import { getSourceHandleConnection } from '../utils'
+import { getRandomId, getSourceHandleConnection } from '../utils'
 import { uiActions } from '../store/slices/UI.slice'
+import { selectedNodeIdSelector } from '../store/selectors/ui.selector'
 
 const useFlowPageData = () => {
   const selectedFlow = useSelector(selectedFlowSelector)
   const selectedFlowLoading = useSelector(selectedFlowLoadingSelector)
   const selectedFlowError = useSelector(selectedFlowErrorSelector)
   const updateLoading = useSelector(flowUpdateLoadingSeletor)
+  const selectedNodeId = useSelector(selectedNodeIdSelector)
+
   const [reconnectingEdge, setReconnectingEdge] = useState<AppEdge | null>(null)
 
   const dispatch = useDispatch()
@@ -103,13 +106,13 @@ const useFlowPageData = () => {
   const isConnnectionValid = useCallback(
     (connection: AppEdge | Connection) => {
       const { source: sourceId, sourceHandle: sourceHandleName } = connection
-      //console.log(reconnectingEdge)
 
       //no self connections
       if (connection.source === connection.target) return false
 
       //no multiple connections to the source handle
       const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, selectedEdges)
+      console.log(reconnectingEdge)
       if (handleConnections.length !== 0) return false
 
       return true
@@ -124,11 +127,73 @@ const useFlowPageData = () => {
   }, [])
 
   const onNodeClick = useCallback(
-    (_: React.MouseEvent, node: AppNode) => {
-      dispatch(uiActions.setSelectedNodeId(node.id))
+    (e: React.MouseEvent, node: AppNode) => {
+      //capture shift + click to select multiple nodes
+      if (e.shiftKey) {
+        dispatch(uiActions.setSelectedNodeId(node.id))
+      } else {
+        dispatch(uiActions.setSelectedNodeId(node.id))
+      }
     },
     [dispatch]
   )
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      //ctrl + d
+      if ((e.ctrlKey && e.key === 'd') || (e.ctrlKey && e.key === 'D')) {
+        e.preventDefault()
+        const selectedNode = selectedNodeId && selectedNodes.find((node) => node.id === selectedNodeId)
+        if (selectedNode) {
+          const newNode = { ...selectedNode, id: getRandomId(), position: { x: selectedNode.position.x + 20, y: selectedNode.position.y + 20 } }
+          dispatch(
+            flowActions.setFlow({
+              flow: {
+                ...selectedFlow!,
+                data: { ...selectedFlow!.data, nodes: [...selectedFlow!.data.nodes, newNode] },
+              },
+            })
+          )
+          dispatch(uiActions.setSelectedNodeId(newNode.id))
+        }
+      }
+
+      //escape
+      if (e.key === 'Escape') {
+        dispatch(uiActions.setSelectedNodeId(null))
+        dispatch(uiActions.setNodeToAdd(null))
+      }
+
+      //backspace
+      if (
+        (e.key === 'Backspace' || e.key === 'Delete') &&
+        selectedNodeId &&
+        !(document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)
+      ) {
+        e.preventDefault()
+        const selectedNode = selectedNodeId && selectedNodes.find((node) => node.id === selectedNodeId)
+        if (selectedNode) {
+          dispatch(
+            flowActions.setFlow({
+              flow: {
+                ...selectedFlow!,
+                data: {
+                  ...selectedFlow!.data,
+                  nodes: selectedNodes.filter((node) => node.id !== selectedNodeId),
+                  edges: selectedEdges.filter((edge) => edge.source !== selectedNodeId || edge.target !== selectedNodeId),
+                },
+              },
+            })
+          )
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [selectedNodeId, selectedNodes, selectedFlow])
 
   return {
     nodes: selectedFlow?.data.nodes || [],

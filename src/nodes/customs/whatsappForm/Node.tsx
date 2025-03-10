@@ -3,9 +3,9 @@ import { WhatsappFormNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappFormNode: FC<NodeProps<WhatsappFormNodeType>> = ({ data }) => {
+const WhatsappFormNode: FC<NodeProps<WhatsappFormNodeType>> = ({ id, data }) => {
   return (
-    <NodeCard nodeType="whatsapp-form">
+    <NodeCard nodeId={id} nodeType="whatsapp-form">
       <div className="space-y-2">
         <h3 className="font-medium">{data.title}</h3>
         <p className="text-sm text-gray-600">{data.description}</p>

@@ -18,8 +18,12 @@ const formatDuration = (seconds: number): string => {
   return parts.join(' ')
 }
 
-const Node: FC<NodeProps<DelayNodeType>> = ({ data }) => {
-  return <NodeCard nodeType="delay">{formatDuration(data.delayInSecs)}</NodeCard>
+const Node: FC<NodeProps<DelayNodeType>> = ({ id, data }) => {
+  return (
+    <NodeCard nodeId={id} nodeType="delay">
+      {formatDuration(data.delayInSecs)}
+    </NodeCard>
+  )
 }
 
 export default memo(Node)

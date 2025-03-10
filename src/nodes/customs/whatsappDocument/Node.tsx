@@ -3,9 +3,9 @@ import { WhatsappDocumentNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappDocumentNode: FC<NodeProps<WhatsappDocumentNodeType>> = ({ data }) => {
+const WhatsappDocumentNode: FC<NodeProps<WhatsappDocumentNodeType>> = ({ id, data }) => {
   return (
-    <NodeCard nodeType="whatsapp-document">
+    <NodeCard nodeId={id} nodeType="whatsapp-document">
       {data.url && (
         <div className="text-sm text-blue-500 underline">
           <a href={data.url} target="_blank" rel="noopener noreferrer">

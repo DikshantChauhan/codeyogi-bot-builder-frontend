@@ -8,7 +8,7 @@ interface Props {
 }
 
 const Form: FC<Props> = ({ node }) => {
-  const data = node?.data
+  const initialValues = { ...(node?.data || { links: [''] }) }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<YoutubeSortsNodeData> = (value) => {
     if (!value.links || value.links.length === 0) {
@@ -18,7 +18,7 @@ const Form: FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContainer initialValues={data || { links: [''] }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <ListField name="links" labelGenerator={(index) => `Link ${index + 1}`} placeholderGenerator={(index) => `Enter youtube link ${index + 1}`} />
     </NodeFormContainer>
   )
