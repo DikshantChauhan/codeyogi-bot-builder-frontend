@@ -59,9 +59,18 @@ import {
   IoMdSquare,
   IoMdPerson,
 } from 'react-icons/io'
+import { PiPathBold } from 'react-icons/pi'
 import { NamedExoticComponent } from 'react'
 import { WHATSAPP_USER_UPDATE_NODE_KEY, WhatsappUserUpdateNodeType } from '../nodes/customs/whatsappUserUpdate/type'
 import WhatsappUserUpdateNode from '../nodes/customs/whatsappUserUpdate/Node'
+import { WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY, WhatsappOwnboardingLinkParserNodeType } from '../nodes/customs/whatsappOwnboardingLinkParser/type'
+import WhatsappOwnboardingLinkParserNode from '../nodes/customs/whatsappOwnboardingLinkParser/Node'
+import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY, WhatsappValidateDiseCodeNodeType } from '../nodes/customs/whatsappValidateDiseCode/type'
+import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseCode/Node'
+import WhatsappConfirmSchoolNode from '../nodes/customs/whatsappConfirmSchool/Node'
+import { GrValidate } from 'react-icons/gr'
+import { WHATSAPP_CONFIRM_SCHOOL_NODE_KEY, WhatsappConfirmSchoolNodeType } from '../nodes/customs/whatsappConfirmSchool/type'
+import { GiConfirmed } from 'react-icons/gi'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -87,6 +96,9 @@ export type AppNode =
       | DelayNodeType
       | EndNodeType
       | WhatsappUserUpdateNodeType
+      | WhatsappOwnboardingLinkParserNodeType
+      | WhatsappValidateDiseCodeNodeType
+      | WhatsappConfirmSchoolNodeType
     ) & { nudge: SubFlowValue; validator: SubFlowValue }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
@@ -114,4 +126,7 @@ export const nodesRegistry = {
   [DELAY_NODE_KEY]: { node: DelayNode, color: 'bg-gray-500', Icon: IoMdTime },
   [END_NODE_KEY]: { node: EndNode, color: 'bg-slate-700', Icon: IoMdSquare },
   [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, color: 'bg-blue-600', Icon: IoMdPerson },
+  [WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOwnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
+  [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: { node: WhatsappValidateDiseCodeNode, color: 'bg-yellow-600', Icon: GrValidate },
+  [WHATSAPP_CONFIRM_SCHOOL_NODE_KEY]: { node: WhatsappConfirmSchoolNode, color: 'bg-amber-600', Icon: GiConfirmed },
 } satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>

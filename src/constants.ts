@@ -22,4 +22,9 @@ export const VARIABLE_NAMES = [
   'user.total_score',
   'user.level_score',
   'prompt.input',
+  'user.node_meta.whatsapp_ownboarding_link.school_name',
+  'user.node_meta.whatsapp_ownboarding_link.dise_code',
+  'user.node_meta.whatsapp_ownboarding_link.district_id',
+  'user.node_meta.whatsapp_ownboarding_link.district_name',
+  'user.node_meta.whatsapp_ownboarding_link.state_name',
 ] as const

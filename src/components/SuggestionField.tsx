@@ -113,7 +113,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
       {showDropdown && (
         <ul className="absolute border inset-x-0 shadow-md min-h-max z-10 bg-gray-900">
           {VARIABLE_NAMES.map((variable) => (
-            <li key={variable} onClick={() => insertVariable(`\${${variable}}`)} className="p-2 cursor-pointer hover:bg-gray-800 text-white">
+            <li key={variable} onClick={() => insertVariable(`\${${variable}}`)} className="p-2 cursor-pointer hover:bg-gray-800 text-white break-words">
               {variable}
             </li>
           ))}
