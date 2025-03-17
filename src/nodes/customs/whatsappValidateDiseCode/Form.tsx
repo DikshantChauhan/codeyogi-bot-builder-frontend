@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappValidateDiseCodeNodeData, WhatsappValidateDiseCodeNodeType, WhatsappValidateDiseCodePaths } from './type'
+import SuggestionField from '../../../components/SuggestionField'
 
 interface Props {
   node?: WhatsappValidateDiseCodeNodeType
@@ -9,7 +10,7 @@ interface Props {
 const Form: React.FC<Props> = ({}) => {
   const data = useMemo(
     () => ({
-      diseCode: '${prompt.input}',
+      diseCode: '${user.prompt_input}',
       paths: WhatsappValidateDiseCodePaths,
     }),
     []
@@ -22,7 +23,7 @@ const Form: React.FC<Props> = ({}) => {
   return (
     <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <p className="font-bold">Link</p>
-      <p>{data.diseCode}</p>
+      <SuggestionField name="diseCode" />
 
       <div className="mt-4">
         <p className="font-bold">Paths</p>

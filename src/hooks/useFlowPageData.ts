@@ -138,6 +138,25 @@ const useFlowPageData = () => {
     [dispatch]
   )
 
+  const onNodeDelete = useCallback(
+    (nodes: AppNode[]) => {
+      nodes.forEach((node) => {
+        dispatch(
+          flowActions.setFlow({
+            flow: {
+              ...selectedFlow!,
+              data: {
+                ...selectedFlow!.data,
+                edges: selectedEdges.filter((edge) => edge.source !== node.id && edge.target !== node.id),
+              },
+            },
+          })
+        )
+      })
+    },
+    [selectedEdges, selectedFlow]
+  )
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       //ctrl + d
@@ -163,30 +182,6 @@ const useFlowPageData = () => {
         dispatch(uiActions.setSelectedNodeId(null))
         dispatch(uiActions.setNodeToAdd(null))
       }
-
-      //backspace
-      if (
-        (e.key === 'Backspace' || e.key === 'Delete') &&
-        selectedNodeId &&
-        !(document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)
-      ) {
-        e.preventDefault()
-        const selectedNode = selectedNodeId && selectedNodes.find((node) => node.id === selectedNodeId)
-        if (selectedNode) {
-          dispatch(
-            flowActions.setFlow({
-              flow: {
-                ...selectedFlow!,
-                data: {
-                  ...selectedFlow!.data,
-                  nodes: selectedNodes.filter((node) => node.id !== selectedNodeId),
-                  edges: selectedEdges.filter((edge) => edge.source !== selectedNodeId || edge.target !== selectedNodeId),
-                },
-              },
-            })
-          )
-        }
-      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -210,6 +205,7 @@ const useFlowPageData = () => {
     nodeTypes,
     onNodeClick,
     updateLoading,
+    onNodeDelete,
   }
 }
 

@@ -26,6 +26,7 @@ const FlowPage = () => {
     nodeTypes,
     onNodeClick,
     updateLoading,
+    onNodeDelete,
   } = useFlowPageData()
 
   if (selectedFlowError) return <Error message={selectedFlowError} />
@@ -44,12 +45,13 @@ const FlowPage = () => {
           fitView
           onNodeClick={onNodeClick}
           selectNodesOnDrag={false}
-          deleteKeyCode={[]}
+          deleteKeyCode={['Backspace', 'Delete']}
           isValidConnection={isConnnectionValid}
           onReconnectStart={onReconnectStart}
           onReconnectEnd={onReconnectEnd}
           onReconnect={onReconnect}
           defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
+          onNodesDelete={onNodeDelete}
         >
           <MenuBar />
           <Toolbar />

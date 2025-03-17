@@ -7,9 +7,9 @@ interface Props {
   node?: WhatsappConfirmSchoolNodeType
 }
 
-const Form: React.FC<Props> = ({}) => {
+const Form: React.FC<Props> = ({ node }) => {
   const data = {
-    text: '',
+    text: node?.data.text || '',
     paths: WhatsappConfirmSchoolPaths,
   }
 
@@ -20,7 +20,7 @@ const Form: React.FC<Props> = ({}) => {
   return (
     <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <p className="font-bold">Link</p>
-      <SuggestionField name="text" as="input" />
+      <SuggestionField name="text" as="textarea" />
 
       <div className="mt-4">
         <p className="font-bold">Paths</p>
