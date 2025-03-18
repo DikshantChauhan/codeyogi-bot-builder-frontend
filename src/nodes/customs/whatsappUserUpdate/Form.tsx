@@ -13,6 +13,7 @@ const Form: FC<Props> = ({ node }) => {
     name: undefined,
     level_id: undefined,
     age: undefined,
+    whatsapp_ownboarding_dise_code: undefined,
   }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappUserUpdateNodeData> = (value) => {
@@ -25,6 +26,7 @@ const Form: FC<Props> = ({ node }) => {
       <SuggestionField name="level_id" as="input" label="Level ID" />
       <SuggestionField name="age" as="input" label="Age" />
       <SuggestionField name="node_id" as="input" label="Node ID" />
+      <SuggestionField name="whatsapp_ownboarding_dise_code" as="input" label="Dise Code" />
     </NodeFormContainer>
   )
 }

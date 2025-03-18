@@ -7,6 +7,7 @@ export type WhatsappUserUpdateNodeData = {
   level_id?: string
   node_id?: string
   age?: string
+  whatsapp_ownboarding_dise_code?: string
 }
 
 export type WhatsappUserUpdateNodeType = Node<WhatsappUserUpdateNodeData, typeof WHATSAPP_USER_UPDATE_NODE_KEY>

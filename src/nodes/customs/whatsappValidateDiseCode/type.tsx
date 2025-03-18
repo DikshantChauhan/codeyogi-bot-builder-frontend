@@ -4,7 +4,6 @@ export const WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY = 'whatsapp-validate-dise-code
 
 export const WhatsappValidateDiseCodePaths = ['valid', 'invalid'] as const
 export type WhatsappValidateDiseCodeNodeData = {
-  diseCode: string
   paths: typeof WhatsappValidateDiseCodePaths
 }
 

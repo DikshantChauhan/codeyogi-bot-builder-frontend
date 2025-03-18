@@ -5,11 +5,7 @@ import NodeCard from '../../../components/NodeCard'
 
 const Node: FC<NodeProps<WhatsappValidateDiseCodeNodeType>> = ({ id, data }) => {
   const options = useMemo(() => data.paths.map((value) => ['', value] as [string, string]), [])
-  return (
-    <NodeCard nodeId={id} nodeType={WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY} options={options}>
-      <div>{data.diseCode}</div>
-    </NodeCard>
-  )
+  return <NodeCard nodeId={id} nodeType={WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY} options={options}></NodeCard>
 }
 
 export default memo(Node)
