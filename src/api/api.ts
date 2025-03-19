@@ -43,7 +43,7 @@ export const fetchNudgeFlowsListAPI = async (): Promise<Flow[]> => {
   return response.data
 }
 
-export const createFlowAPI = async (data: { flow_data: FlowAddOrUpdateFormData; campaign_id: string; level_number: number }) => {
+export const createFlowAPI = async (data: { flow_data: FlowAddOrUpdateFormData; campaign_id?: string; level_number?: number }) => {
   const url = `${API_BASE_URL}/flow`
   const response = await axios.post<{ flow: Flow; campaign?: NormalizedCampaign }>(url, data)
   return response.data

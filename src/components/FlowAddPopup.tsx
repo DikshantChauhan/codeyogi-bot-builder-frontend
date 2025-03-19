@@ -39,7 +39,7 @@ function FlowAddPopup({ isOpen, onClose, type, loading, error, addFlow, campaign
         edges: [],
       },
     }
-    addFlow({ campaign_id: campaignRef!.id, flow_data: flow, level_number: values.level_number })
+    addFlow({ campaign_id: campaignRef?.id, flow_data: flow, level_number: values.level_number })
   }
 
   if (!isOpen) return null

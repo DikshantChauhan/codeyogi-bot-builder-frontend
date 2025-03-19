@@ -83,7 +83,6 @@ const flowSlice = createSlice({
     setNudgeFlowsError: (state, action: PayloadAction<string | null>) => {
       state.nudgeFlowsError = action.payload
     },
-    
   },
 })
 
