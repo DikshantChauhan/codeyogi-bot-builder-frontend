@@ -95,7 +95,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
           value={inputValue}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={`${placeholder} \n\n [ ctrl + space to open suggestions ]`}
           className={`${baseClassName} ${className}`}
           rows={rows}
         />
@@ -105,7 +105,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
           value={inputValue}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={`${placeholder ? `${placeholder} \n\n` : ''}[ ctrl + space to open suggestions ]`}
           className={`${baseClassName} ${className}`}
         />
       )}

@@ -11,7 +11,10 @@ const MessageForm: FC<Props> = ({ node }) => {
   const data = node?.data
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<MessageNodeData> = (value) => {
-    // TODO: validate text
+    if (!value.text) {
+      throw new Error('Text is required')
+    }
+
     return value
   }
 

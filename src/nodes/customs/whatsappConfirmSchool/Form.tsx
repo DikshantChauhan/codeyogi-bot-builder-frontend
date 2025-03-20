@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappConfirmSchoolNodeData, WhatsappConfirmSchoolNodeType, WhatsappConfirmSchoolPaths } from './type'
 import SuggestionField from '../../../components/SuggestionField'
@@ -14,13 +14,16 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappConfirmSchoolNodeData> = (value) => {
+    if (!value.text) {
+      throw new Error('Text is required')
+    }
     return value
   }
 
   return (
     <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail}>
-      <p className="font-bold">Link</p>
-      <SuggestionField name="text" as="textarea" />
+      <p className="font-bold">Text</p>
+      <SuggestionField name="text" as="textarea" placeholder="school confirmation message" />
 
       <div className="mt-4">
         <p className="font-bold">Paths</p>

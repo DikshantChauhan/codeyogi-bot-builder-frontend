@@ -1,11 +1,16 @@
-import { memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { Field } from 'formik'
 import { DelayNodeData, DelayNodeType } from './type'
 import SuggestionInput from '../../../components/SuggestionField'
+import { AppState } from '../../../store/store'
+import { selectedFlowSelector } from '../../../store/selectors/flow.selector'
+import { Flow } from '../../../models/Flow.model'
+import { connect } from 'react-redux'
+import { memo } from 'react'
 
 interface Props {
   node?: DelayNodeType
+  flow: Flow | null
 }
 
 const parseHumanTime = (humanTime: string): number => {
@@ -32,8 +37,20 @@ const parseHumanTime = (humanTime: string): number => {
   return totalSeconds
 }
 
-const Form: React.FC<Props> = ({ node }) => {
+const toHumanTime = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+  return `${hours}h ${minutes}m ${remainingSeconds}s`
+}
+
+const Form: React.FC<Props> = ({ node, flow }) => {
   const data = node?.data
+
+  const initialValues = {
+    message: data?.message || '',
+    delayInSecs: (data?.delayInSecs ? toHumanTime(data.delayInSecs) : 0) as number,
+  }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<DelayNodeData> = (value) => {
     const delayInSecs = parseHumanTime(value.delayInSecs?.toString() || '0')
@@ -44,12 +61,14 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContainer initialValues={data || { message: '', delayInSecs: 0 }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
-      <SuggestionInput
-        name="message"
-        placeholder="Optional message"
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+      {flow?.type === 'level' && (
+        <SuggestionInput
+          name="message"
+          placeholder="Optional message ( this will be sent if the delay is not completed and user try to interact i.e will not run on first time running )"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      )}
       <Field
         name="delayInSecs"
         placeholder="Delay (e.g. 2h 30m 15s)"
@@ -60,4 +79,10 @@ const Form: React.FC<Props> = ({ node }) => {
   )
 }
 
-export default memo(Form)
+const mapStateToProps = (state: AppState) => {
+  return {
+    flow: selectedFlowSelector(state),
+  }
+}
+
+export default memo(connect(mapStateToProps)(Form))

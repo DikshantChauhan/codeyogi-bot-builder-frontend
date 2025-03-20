@@ -28,6 +28,11 @@ const Form: React.FC<Props> = ({ node }) => {
     if (value.buttons.some((button) => !button)) {
       throw new Error('All buttons must have text')
     }
+
+    //check if all buttons are unique
+    if (value.buttons.some((button, index) => value.buttons.indexOf(button) !== index)) {
+      throw new Error('All buttons must be unique')
+    }
     return value
   }
 

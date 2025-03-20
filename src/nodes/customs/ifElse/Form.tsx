@@ -24,7 +24,7 @@ const ConditionSelector: React.FC<SelectorProps> = ({ index }) => {
       <option value="==">==</option>
       <option value="!=">!=</option>
       <option value=">">{'>'}</option>
-      <option value="<">{'<'}</option>  
+      <option value="<">{'<'}</option>
       <option value=">=">{'>='}</option>
       <option value="<=">{'<='}</option>
     </select>
@@ -42,6 +42,7 @@ const VariableSelector: React.FC<SelectorProps & { name: 'variable' | 'value' }>
 
   return (
     <select onChange={handleChange} value={values.conditions[index][name]} className="w-full border rounded-md p-1">
+      <option value="">Select</option>
       {VARIABLE_NAMES.map((variable) => (
         <option key={variable} value={variable}>
           {variable}
@@ -118,7 +119,7 @@ const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
 
   const defaultCondition = {
-    variable: VARIABLE_NAMES[0],
+    variable: '',
     condition: '==',
     type: 'string',
     value: '',
@@ -129,7 +130,21 @@ const Form: React.FC<Props> = ({ node }) => {
   const handleTransformNode: TransFormNodeDataOrFail<IfElseNodeData> = (value) => {
     const data = { ...value, conditions: value.conditions }
 
-    // TODO: validate conditions
+    //atleast one condition is required
+    if (data.conditions.length === 0) {
+      throw new Error('At least one condition is required')
+    }
+
+    //check if all conditions are valid
+    for (const condition of data.conditions) {
+      if (!condition.variable || !condition.condition || !condition.type) {
+        throw new Error('All conditions are required')
+      }
+
+      if (condition.type !== 'null' && !condition.value) {
+        throw new Error('Value is required for all non-null conditions')
+      }
+    }
 
     return data
   }

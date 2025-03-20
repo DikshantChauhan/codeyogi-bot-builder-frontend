@@ -17,6 +17,9 @@ const Form: FC<Props> = ({ node }) => {
   }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappUserUpdateNodeData> = (value) => {
+    if (!value.name && !value.level_id && !value.age && !value.node_id && !value.whatsapp_ownboarding_dise_code) {
+      throw new Error('At least one field is required')
+    }
     return value
   }
 
