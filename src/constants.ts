@@ -11,7 +11,7 @@ ROUTE_CAMPAIGN_DETAILS.dynamicKey = 'campaign_id' as const
 export const ROUTE_LEVEL_FLOW = (campaignId?: string, flowId?: string) => `${ROUTE_CAMPAIGN_DETAILS(campaignId)}/flow/${flowId || ':flow_id'}`
 ROUTE_LEVEL_FLOW.dynamicKey = 'flow_id' as const
 
-export const API_BASE_URL = 'https://7psqs47xjf.execute-api.us-east-1.amazonaws.com'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const VARIABLE_NAMES = [
   'user.name',
