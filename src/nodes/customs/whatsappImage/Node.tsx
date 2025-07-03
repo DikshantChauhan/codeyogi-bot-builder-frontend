@@ -6,12 +6,13 @@ import NodeCard from '../../../components/NodeCard'
 const WhatsappImageNode: FC<NodeProps<WhatsappImageNodeType>> = ({ id, data }) => {
   return (
     <NodeCard nodeId={id} nodeType="whatsapp-image">
-      {data.link && (
-        <div className="space-y-2">
-          <img src={data.link} alt="WhatsApp" className="w-full h-32 object-cover rounded-md" />
-          {data.caption && <p className="text-sm text-gray-600">{data.caption}</p>}
+      <div className="flex items-start space-x-2 p-1 bg-gray-50 rounded border">
+        {/* Image Info */}
+        <div className="flex-1 min-w-0">
+          <div className="text-[0.5rem] font-medium text-gray-900">Image</div>
+          {data.caption && <div className="text-[0.5rem] text-gray-600 mt-1 line-clamp-2">{data.caption}</div>}
         </div>
-      )}
+      </div>
     </NodeCard>
   )
 }

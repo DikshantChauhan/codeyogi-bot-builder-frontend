@@ -4,7 +4,7 @@ import { selectedNormalizedCampaignSelector } from './campaign.selector'
 import { AppState } from '../store'
 import { AppNodeKeys } from '../../models/Node.model'
 import { DELAY_NODE_KEY } from '../../nodes/customs/delay/type'
-import { MESSAGE_NODE_KEY } from '../../nodes/customs/message/type'
+import { WHATSAPP_MESSAGE_NODE_KEY } from '../../nodes/customs/whatsappMessage/type'
 import { IF_ELSE_NODE_KEY } from '../../nodes/customs/ifElse/type'
 import { START_NODE_KEY } from '../../nodes/customs/start/type'
 import { END_NODE_KEY } from '../../nodes/customs/end/type'
@@ -34,7 +34,7 @@ export const selectedFlowAllowedNodesSelector: (state: AppState) => AppNodeKeys[
   (selectedFlow, selectedCampaign) => {
     if (!selectedFlow) return []
     if (selectedFlow.type === 'nudge') {
-      return [DELAY_NODE_KEY, MESSAGE_NODE_KEY, IF_ELSE_NODE_KEY, START_NODE_KEY, END_NODE_KEY]
+      return [DELAY_NODE_KEY, WHATSAPP_MESSAGE_NODE_KEY, IF_ELSE_NODE_KEY, START_NODE_KEY, END_NODE_KEY]
     }
     return [...(selectedCampaign?.allowed_nodes || [])]
   }

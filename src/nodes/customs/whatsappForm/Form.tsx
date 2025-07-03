@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { FormField, WhatsappFormNodeData, WhatsappFormNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 import ListField from '../../../components/ListField'
 import { Field, useFormikContext } from 'formik'
 

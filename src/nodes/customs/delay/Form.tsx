@@ -1,7 +1,7 @@
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { Field } from 'formik'
 import { DelayNodeData, DelayNodeType } from './type'
-import SuggestionInput from '../../../components/SuggestionField'
+import SuggestionInput from '../../../components/Field'
 import { AppState } from '../../../store/store'
 import { selectedFlowSelector } from '../../../store/selectors/flow.selector'
 import { Flow } from '../../../models/Flow.model'

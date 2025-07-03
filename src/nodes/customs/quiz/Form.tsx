@@ -3,7 +3,7 @@ import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/
 import { Field } from 'formik'
 import { QuizNodeData, QuizNodeType } from '../quiz/type'
 import ListField from '../../../components/ListField'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 
 interface Props {
   node?: QuizNodeType

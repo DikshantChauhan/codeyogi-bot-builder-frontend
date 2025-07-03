@@ -1,7 +1,7 @@
 import { FC, memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappUserUpdateNodeData, WhatsappUserUpdateNodeType } from './type'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 
 interface Props {
   node?: WhatsappUserUpdateNodeType

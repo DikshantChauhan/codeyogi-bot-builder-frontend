@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappConfirmSchoolNodeData, WhatsappConfirmSchoolNodeType, WhatsappConfirmSchoolPaths } from './type'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 
 interface Props {
   node?: WhatsappConfirmSchoolNodeType

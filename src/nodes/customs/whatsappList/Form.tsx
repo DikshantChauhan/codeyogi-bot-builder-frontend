@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react'
 import { WhatsappListNodeData, WhatsappListNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 import ListField from '../../../components/ListField'
 
 interface Props {

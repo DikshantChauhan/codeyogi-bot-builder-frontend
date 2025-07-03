@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react'
 import { WhatsappAudioNodeData, WhatsappAudioNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
-import SuggestionField from '../../../components/SuggestionField'
+import SuggestionField from '../../../components/Field'
 
 interface Props {
   node?: WhatsappAudioNodeType

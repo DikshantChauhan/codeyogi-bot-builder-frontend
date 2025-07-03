@@ -1,6 +1,8 @@
-import { memo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { WhatsappImageNodeData, WhatsappImageNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
+import Field from '../../../components/Field'
+import DropDown from '../../../components/DropDown'
 
 interface Props {
   node?: WhatsappImageNodeType
@@ -8,60 +10,63 @@ interface Props {
 
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
-  const [formData, setFormData] = useState({
-    id: data?.id || '',
-    link: data?.link || '',
-    caption: data?.caption || '',
-  })
+
+  // Determine initial selection type based on existing data
+  const getInitialSelectionType = () => {
+    if (data?.id) return 'id'
+    if (data?.link) return 'link'
+    return 'id' // default to id
+  }
+
+  const [selectionType, setSelectionType] = useState<'id' | 'link'>(getInitialSelectionType())
+
+  const initialValues = useMemo(
+    () => ({
+      id: data?.id || undefined,
+      link: data?.link || undefined,
+      caption: data?.caption || undefined,
+    }),
+    [data]
+  )
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappImageNodeData> = (value) => {
     if (!value.id && !value.link) {
-      throw new Error('Either Image ID or URL is required')
+      throw new Error('Either Image ID or Link is required')
     }
     return value
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
+  const imageTypeOptions = [
+    { value: 'id', label: 'Image ID (recommended)' },
+    { value: 'link', label: 'Image Link' },
+  ]
 
   return (
-    <NodeFormContainer initialValues={formData} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       <div className="space-y-4">
+        <DropDown
+          name="imageType"
+          label="Image Type"
+          options={imageTypeOptions}
+          placeholder="Select image type"
+          value={selectionType}
+          onChange={(value) => setSelectionType(value as 'id' | 'link')}
+        />
+
+        {selectionType === 'id' && (
+          <div className="space-y-2">
+            <Field name="id" placeholder="Enter WhatsApp image ID" as="input" label="Image ID" disableSuggestion />
+          </div>
+        )}
+
+        {selectionType === 'link' && (
+          <div className="space-y-2">
+            <Field name="link" placeholder="Enter WhatsApp image URL" as="input" label="Image Link" disableSuggestion />
+          </div>
+        )}
+
         <div className="space-y-2">
-          <label className="text-sm font-medium">Image ID (recommended)</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp image ID"
-            className="w-full rounded-md border px-3 py-2"
-          />
-        </div>
-        <div className="text-center text-sm text-gray-500">OR</div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Image URL</label>
-          <input
-            name="link"
-            value={formData.link}
-            onChange={handleInputChange}
-            placeholder="Enter WhatsApp image URL"
-            className="w-full rounded-md border px-3 py-2"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Caption (optional)</label>
-          <textarea
-            name="caption"
-            value={formData.caption}
-            onChange={handleInputChange}
-            placeholder="Enter image caption"
-            className="w-full rounded-md border px-3 py-2 min-h-[80px]"
-          />
+          <Field name="caption" placeholder="Enter image caption" as="textarea" label="Caption" />
         </div>
       </div>
     </NodeFormContainer>

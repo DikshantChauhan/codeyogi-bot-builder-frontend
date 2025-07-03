@@ -12,27 +12,74 @@ interface Props {
   as?: 'input' | 'textarea'
   label?: string
   characterLimit?: number
+  disableSuggestion?: boolean
 }
 
-const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as = 'textarea', label, characterLimit }) => {
+// Helper function to get nested object value
+const getNestedValue = (obj: any, path: string) => {
+  return path.split('.').reduce((current, key) => current?.[key], obj)
+}
+
+// Helper function to set nested object value
+const setNestedValue = (obj: any, path: string, value: any) => {
+  const keys = path.split('.')
+  const lastKey = keys.pop()!
+  const target = keys.reduce((current, key) => {
+    if (!current[key]) current[key] = {}
+    return current[key]
+  }, obj)
+  target[lastKey] = value
+  return obj
+}
+
+const SuggestionField: FC<Props> = ({
+  name,
+  placeholder,
+  rows = 5,
+  className,
+  as = 'textarea',
+  label,
+  characterLimit,
+  disableSuggestion = false,
+}) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
-  const { setFieldValue, values } = useFormikContext<{ [key: string]: string }>()
+  const { setFieldValue, values } = useFormikContext<{ [key: string]: any }>()
 
-  const inputValue = (typeof name === 'string' ? values[name] : values[name.key][name.index]) || ''
+  const inputValue = (() => {
+    if (typeof name === 'string') {
+      // Handle nested paths like 'header.text' or 'header.document.id'
+      if (name.includes('.')) {
+        return getNestedValue(values, name) || ''
+      }
+      return values[name] || ''
+    } else {
+      return values[name.key]?.[name.index] || ''
+    }
+  })()
 
   const setInputValue = (value: string) => {
     if (typeof name === 'string') {
-      setFieldValue(name, value)
+      // Handle nested paths like 'header.text' or 'header.document.id'
+      if (name.includes('.')) {
+        const newValues = { ...values }
+        setNestedValue(newValues, name, value)
+        // Update the entire form values to ensure nested objects are properly updated
+        Object.keys(newValues).forEach((key) => {
+          setFieldValue(key, newValues[key])
+        })
+      } else {
+        setFieldValue(name, value)
+      }
     } else {
-      const newValues = [...values[name.key]]
+      const newValues = [...(values[name.key] || [])]
       newValues[name.index] = value
       setFieldValue(name.key, newValues)
     }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    if (e.ctrlKey && e.code === 'Space') {
+    if (!disableSuggestion && e.ctrlKey && e.code === 'Space') {
       e.preventDefault()
       setShowDropdown((isOpen) => !isOpen)
     }
@@ -59,7 +106,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
   const removeListIteam = () => {
     if (typeof name === 'string') return
 
-    const newValues = [...values[name.key]]
+    const newValues = [...(values[name.key] || [])]
     newValues.splice(name.index, 1)
     setFieldValue(name.key, newValues)
   }
@@ -95,7 +142,7 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
           value={inputValue}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          placeholder={`${placeholder} \n\n [ ctrl + space to open suggestions ]`}
+          placeholder={`${placeholder}${!disableSuggestion ? ' \n\n [ ctrl + space to toggle suggestions ]' : ''}`}
           className={`${baseClassName} ${className}`}
           rows={rows}
         />
@@ -105,12 +152,14 @@ const SuggestionField: FC<Props> = ({ name, placeholder, rows = 5, className, as
           value={inputValue}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          placeholder={`${placeholder ? `${placeholder} \n\n` : ''}[ ctrl + space to open suggestions ]`}
+          placeholder={`${placeholder ? `${placeholder}${!disableSuggestion ? ' \n\n' : ''}` : ''}${
+            !disableSuggestion ? '[ ctrl + space to toggle suggestions ]' : ''
+          }`}
           className={`${baseClassName} ${className}`}
         />
       )}
 
-      {showDropdown && (
+      {showDropdown && !disableSuggestion && (
         <ul className="absolute border inset-x-0 shadow-md max-h-80 overflow-y-auto z-10 bg-gray-900">
           {VARIABLE_NAMES.map((variable) => (
             <li

@@ -1,7 +1,7 @@
 import { END_NODE_KEY, EndNodeType } from '../nodes/customs/end/type'
 import { DELAY_NODE_KEY, DelayNodeType } from '../nodes/customs/delay/type'
 import { START_NODE_KEY, StartNodeType } from '../nodes/customs/start/type'
-import { MESSAGE_NODE_KEY, MessageNodeType } from '../nodes/customs/message/type'
+import { WHATSAPP_MESSAGE_NODE_KEY, WhatsappMessageNodeType } from '../nodes/customs/whatsappMessage/type'
 import { WHATSAPP_REACTION_NODE_KEY, WhatsappReactionNodeType } from '../nodes/customs/whatsappReaction/type'
 import { WHATSAPP_STICKER_NODE_KEY, WhatsappStickerNodeType } from '../nodes/customs/whatsappSticker/type'
 import { WHATSAPP_VIDEO_NODE_KEY, WhatsappVideoNodeType } from '../nodes/customs/whatsappVideo/type'
@@ -18,7 +18,7 @@ import { YOUTUBE_SORTS_NODE_KEY, YoutubeSortsNodeType } from '../nodes/customs/y
 import { QUIZ_NODE_KEY, QuizNodeType } from '../nodes/customs/quiz/type'
 import { IF_ELSE_NODE_KEY, IfElseNodeType } from '../nodes/customs/ifElse/type'
 import PromptNode from '../nodes/customs/prompt/Node'
-import MessageNode from '../nodes/customs/message/Node'
+import WhatsappMessageNode from '../nodes/customs/whatsappMessage/Node'
 import IfElseNode from '../nodes/customs/ifElse/Node'
 import QuizNode from '../nodes/customs/quiz/Node'
 import YoutubeSortsNode from '../nodes/customs/youtubeSorts/Node'
@@ -67,6 +67,8 @@ import { WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY, WhatsappOwnboardingLinkParse
 import WhatsappOwnboardingLinkParserNode from '../nodes/customs/whatsappOwnboardingLinkParser/Node'
 import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY, WhatsappValidateDiseCodeNodeType } from '../nodes/customs/whatsappValidateDiseCode/type'
 import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseCode/Node'
+import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
+import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
 import WhatsappConfirmSchoolNode from '../nodes/customs/whatsappConfirmSchool/Node'
 import { GrValidate } from 'react-icons/gr'
 import { WHATSAPP_CONFIRM_SCHOOL_NODE_KEY, WhatsappConfirmSchoolNodeType } from '../nodes/customs/whatsappConfirmSchool/type'
@@ -81,7 +83,7 @@ export type AppNode =
       | YoutubeSortsNodeType
       | NativeSortsNodeType
       | PromptNodeType
-      | MessageNodeType
+      | WhatsappMessageNodeType
       | StartNodeType
       | WhatsappAudioNodeType
       | WhatsappDocumentNodeType
@@ -99,6 +101,7 @@ export type AppNode =
       | WhatsappOwnboardingLinkParserNodeType
       | WhatsappValidateDiseCodeNodeType
       | WhatsappConfirmSchoolNodeType
+      | WhatsappCtaUrlNodeType
     ) & { nudge: SubFlowValue; validator: SubFlowValue }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
@@ -107,7 +110,7 @@ export type AppNodeData = Pick<AppNode, 'data'>['data']
 
 export const nodesRegistry = {
   [PROMPT_NODE_KEY]: { node: PromptNode, color: 'bg-sky-500', Icon: IoMdChatboxes },
-  [MESSAGE_NODE_KEY]: { node: MessageNode, color: 'bg-emerald-500', Icon: IoMdMail },
+  [WHATSAPP_MESSAGE_NODE_KEY]: { node: WhatsappMessageNode, color: 'bg-emerald-500', Icon: IoMdMail },
   [IF_ELSE_NODE_KEY]: { node: IfElseNode, color: 'bg-amber-500', Icon: IoMdGitBranch },
   [QUIZ_NODE_KEY]: { node: QuizNode, color: 'bg-violet-500', Icon: IoMdHelp },
   [YOUTUBE_SORTS_NODE_KEY]: { node: YoutubeSortsNode, color: 'bg-rose-500', Icon: IoLogoYoutube },
@@ -129,4 +132,5 @@ export const nodesRegistry = {
   [WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOwnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
   [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: { node: WhatsappValidateDiseCodeNode, color: 'bg-yellow-600', Icon: GrValidate },
   [WHATSAPP_CONFIRM_SCHOOL_NODE_KEY]: { node: WhatsappConfirmSchoolNode, color: 'bg-amber-600', Icon: GiConfirmed },
+  [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, color: 'bg-lime-500', Icon: IoIosLink },
 } satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>

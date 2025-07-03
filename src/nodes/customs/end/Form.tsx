@@ -1,7 +1,7 @@
 import { FC, memo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { EndNodeData, EndNodeType } from './type'
-import SuggestionInput from '../../../components/SuggestionField'
+import SuggestionInput from '../../../components/Field'
 
 interface Props {
   node?: EndNodeType
