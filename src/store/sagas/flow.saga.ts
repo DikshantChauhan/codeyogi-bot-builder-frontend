@@ -6,6 +6,7 @@ import { PathMatch } from 'react-router-dom'
 import { ROUTE_CAMPAIGN_DETAILS, ROUTE_LEVEL_FLOW, ROUTE_NUDGE_FLOW } from '../../constants'
 import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, updateFlowAPI } from '../../api/api'
 import { toast } from 'react-toastify'
+import { shouldUpdateFlow } from '../../utils'
 
 function* fetchLevelFlowSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   const flowId = match.params.flow_id!
@@ -21,7 +22,9 @@ function* fetchLevelFlowSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey
     ])
 
     yield put(campaignActions.setCampaign({ campaign, error: null, loading: false }))
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    if (shouldUpdateFlow(flow)) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
   } catch (error) {
     yield put(flowActions.setFlowError({ flowId, error: String(error) }))
   } finally {
@@ -35,7 +38,9 @@ export function* fetchNudgeFlowsListSaga(): Generator {
     yield put(flowActions.setNudgeFlowsError(null))
     const response: Flow[] = yield call(fetchNudgeFlowsListAPI)
     for (const flow of response) {
-      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+      if (shouldUpdateFlow(flow)) {
+        yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+      }
     }
     yield put(flowActions.setNudgeFlowsIds(response.map((flow) => flow.id)))
   } catch (error) {
@@ -56,7 +61,9 @@ function* flowAddSaga({ payload }: ReturnType<typeof flowActions.flowAddTry>): G
     yield put(flowActions.setFlowAddError(null))
 
     const { flow, campaign }: Awaited<ReturnType<typeof createFlowAPI>> = yield call(createFlowAPI, payload)
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    if (shouldUpdateFlow(flow)) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
     if (campaign) {
       yield put(campaignActions.setCampaign({ campaign, error: null, loading: false }))
     }
@@ -75,7 +82,9 @@ function* flowUpdateSaga({ payload }: ReturnType<typeof flowActions.flowUpdateTr
     yield put(flowActions.setFlowUpdateError(null))
 
     const flow: Awaited<ReturnType<typeof updateFlowAPI>> = yield call(updateFlowAPI, payload)
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    if (shouldUpdateFlow(flow)) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
   } catch (error) {
     console.error(error)
     yield put(flowActions.setFlowUpdateError(String(error)))
@@ -91,7 +100,9 @@ export function* fetchNudgeFlowSaga(match: PathMatch<typeof ROUTE_NUDGE_FLOW.dyn
     yield put(flowActions.setFlowLoading({ flowId: nudgeId, loading: true }))
 
     const flow: Awaited<ReturnType<typeof fetchFlowAPI>> = yield call(fetchFlowAPI, nudgeId)
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    if (shouldUpdateFlow(flow)) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
   } catch (error) {
     yield put(flowActions.setFlowError({ flowId: nudgeId, error: String(error) }))
   } finally {

@@ -55,7 +55,5 @@ Learn:
 
 
 *//TODOS:*
-1. Check all whatsapp nodes are working and taking all possible parameters as there api
 2. Add templating feature
-3. Local storage support
 4. undo-redo

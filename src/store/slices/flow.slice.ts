@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Flow } from '../../models/Flow.model'
 import { createFlowAPI, updateFlowAPI } from '../../api/api'
+import { getLocalFlow, setLocalFlow } from '../../utils'
 
 interface FlowState {
   flowsById: { [id: string]: Flow }
@@ -20,7 +21,15 @@ interface FlowState {
 }
 
 const initialState: FlowState = {
-  flowsById: {},
+  flowsById: Object.keys(localStorage)
+    .filter((key) => key.startsWith('flow_'))
+    .reduce((acc, key) => {
+      const flow = getLocalFlow({ localFlowId: key })
+      if (flow) {
+        acc[flow.id] = flow
+      }
+      return acc
+    }, {} as { [id: string]: Flow }),
   flowsLoading: {},
   flowsError: {},
   selectedFlowId: null,
@@ -46,9 +55,11 @@ const flowSlice = createSlice({
     setFlow: (state, action: PayloadAction<{ flow: Flow; loading?: boolean; error?: string | null }>) => {
       const { flow, loading, error } = action.payload
       const flowId = flow.id
-      state.flowsById[flowId] = flow
+
+      state.flowsById[flowId] = flow as any
       state.flowsLoading[flowId] = loading ?? state.flowsLoading[flowId]
       state.flowsError[flowId] = error ?? state.flowsError[flowId]
+      setLocalFlow(flow)
     },
     setFlowLoading: (state, action: PayloadAction<{ flowId: string; loading: boolean }>) => {
       const { flowId, loading } = action.payload

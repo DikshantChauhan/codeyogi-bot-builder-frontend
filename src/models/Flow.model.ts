@@ -11,4 +11,6 @@ export interface Flow extends Entity {
     nodes: AppNode[]
     edges: AppEdge[]
   }
+  created: string
+  modified: string
 }

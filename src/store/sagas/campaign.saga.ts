@@ -7,6 +7,7 @@ import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'
 import { selectedNormalizedCampaignSelector } from '../selectors/campaign.selector'
 import { flowActions } from '../slices/flow.slice'
+import { shouldUpdateFlow } from '../../utils'
 
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
   try {
@@ -87,7 +88,9 @@ export function* fetchCampaignDetailsSaga(match: PathMatch<typeof ROUTE_CAMPAIGN
   const flows: Awaited<ReturnType<typeof fetchFlowAPI>>[] = yield all(campaign.levels.map(async (level) => await fetchFlowAPI(level)))
 
   for (const flow of flows) {
-    yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    if (shouldUpdateFlow(flow)) {
+      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
+    }
   }
 }
 
