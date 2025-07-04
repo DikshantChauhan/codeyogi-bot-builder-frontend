@@ -20,8 +20,11 @@ interface Props {
 const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeId }: Props) => {
   const { color, Icon } = nodesRegistry[nodeType]
   return (
-    <div className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative`}>
-      {selectedNodeId === nodeId && <div className="absolute inset-0 bg-blue-400 z-50 opacity-50 rounded-md"></div>}
+    <div
+      className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative ${
+        selectedNodeId === nodeId ? ' scale-105 shadow-md shadow-gray-500' : ''
+      }`}
+    >
       <div className="flex items-center mb-1 px-2 relative justify-between">
         {nodeType !== START_NODE_KEY && <Handle type="target" position={Position.Left} />}
         <div className="flex items-center mr-2">
@@ -60,4 +63,4 @@ const mapStateToProps = (state: AppState) => {
   }
 }
 
-export default connect(mapStateToProps)(NodeCard)
+export default memo(connect(mapStateToProps)(NodeCard))
