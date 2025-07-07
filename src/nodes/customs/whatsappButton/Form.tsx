@@ -5,91 +5,158 @@ import { Field } from 'formik'
 import SuggestionField from '../../../components/Field'
 import ListField from '../../../components/ListField'
 import DropDown from '../../../components/DropDown'
+import { MessageHeader } from '../../../models/Node.model'
 
 interface Props {
   node?: WhatsappButtonNodeType
 }
 
-type MediaType = 'image' | 'video' | 'document'
-
+type MediaType = keyof Pick<MessageHeader, 'image' | 'video' | 'document'>
 type SelectionType = 'id' | 'link'
 
-const Form: React.FC<Props> = ({ node }) => {
+// Utility type for form state
+type FormData = {
+  text: string
+  buttons: string[]
+  footer: string
+  header: {
+    type: MessageHeader['type']
+    text: string
+    imageId: string
+    imageLink: string
+    videoId: string
+    videoLink: string
+    documentId: string
+    documentLink: string
+  }
+}
+
+// Utility functions
+const getMediaValue = (media: { id: string } | { link: string } | undefined, type: 'id' | 'link'): string => {
+  if (!media) return ''
+  if (type === 'id' && 'id' in media) return media.id
+  if (type === 'link' && 'link' in media) return media.link
+  return ''
+}
+
+const getInitialSelectionType = (media: { id: string } | { link: string } | undefined): SelectionType => {
+  if (media && 'id' in media && media.id) return 'id'
+  if (media && 'link' in media && media.link) return 'link'
+  return 'id'
+}
+
+const createMediaObject = (id: string, link: string): { id: string } | { link: string } | undefined => {
+  if (id) return { id }
+  if (link) return { link }
+  return undefined
+}
+
+const Form = ({ node }: Props) => {
   const data = node?.data
 
-  // Helper to get initial selection for a media type
-  const getInitialSelectionType = (mediaType: MediaType) => {
-    const media = data?.header?.[mediaType]
-    if (media?.id) return 'id'
-    if (media?.link) return 'link'
-    return 'id'
+  // Initialize selection states
+  const [selections, setSelections] = useState<Record<MediaType, SelectionType>>({
+    image: getInitialSelectionType(data?.header?.image),
+    video: getInitialSelectionType(data?.header?.video),
+    document: getInitialSelectionType(data?.header?.document),
+  })
+
+  const updateSelection = (mediaType: MediaType, selection: SelectionType) => {
+    setSelections((prev) => ({ ...prev, [mediaType]: selection }))
   }
 
-  const [imageSelection, setImageSelection] = useState<SelectionType>(getInitialSelectionType('image'))
-  const [videoSelection, setVideoSelection] = useState<SelectionType>(getInitialSelectionType('video'))
-  const [documentSelection, setDocumentSelection] = useState<SelectionType>(getInitialSelectionType('document'))
-
   const initialValues = useMemo(
-    () => ({
+    (): FormData => ({
       text: data?.text || '',
       buttons: data?.buttons || [''],
       footer: data?.footer || '',
       header: {
         type: data?.header?.type || 'text',
         text: data?.header?.text || '',
-        image: data?.header?.image || { id: undefined, link: undefined },
-        video: data?.header?.video || { id: undefined, link: undefined },
-        document: data?.header?.document || { id: undefined, link: undefined },
+        imageId: getMediaValue(data?.header?.image, 'id'),
+        imageLink: getMediaValue(data?.header?.image, 'link'),
+        videoId: getMediaValue(data?.header?.video, 'id'),
+        videoLink: getMediaValue(data?.header?.video, 'link'),
+        documentId: getMediaValue(data?.header?.document, 'id'),
+        documentLink: getMediaValue(data?.header?.document, 'link'),
       },
     }),
     [data]
   )
 
-  const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappButtonNodeData> = (value) => {
-    if (!value.text || value.buttons.length === 0) {
-      throw new Error('Text and at least one button are required')
+  const transFormNodeDataOrFail: TransFormNodeDataOrFail<FormData> = (value) => {
+    // Validation
+    if (!value.text?.trim()) {
+      throw new Error('Text is required')
     }
-    if (value.buttons.some((button) => !button)) {
+
+    if (!value.buttons?.length || value.buttons.every((btn) => !btn?.trim())) {
+      throw new Error('At least one button is required')
+    }
+
+    if (value.buttons.some((btn) => !btn?.trim())) {
       throw new Error('All buttons must have text')
     }
-    if (value.buttons.some((button, index) => value.buttons.indexOf(button) !== index)) {
+
+    const uniqueButtons = new Set(value.buttons.filter((btn) => btn?.trim()))
+    if (uniqueButtons.size !== value.buttons.length) {
       throw new Error('All buttons must be unique')
     }
-    if (value.header?.type === 'text' && !value.header.text) {
+
+    // Header validation
+    if (value.header?.type === 'text' && !value.header.text?.trim()) {
       throw new Error('Header text is required when header type is text')
     }
-    if (value.header?.type === 'image' && !value.header.image?.id && !value.header.image?.link) {
-      throw new Error('Image ID or Link is required when header type is image')
-    }
-    if (value.header?.type === 'video' && !value.header.video?.id && !value.header.video?.link) {
-      throw new Error('Video ID or Link is required when header type is video')
-    }
-    if (value.header?.type === 'document' && !value.header.document?.id && !value.header.document?.link) {
-      throw new Error('Document ID or Link is required when header type is document')
+
+    const mediaValidations: Record<MediaType, { idField: keyof FormData['header']; linkField: keyof FormData['header'] }> = {
+      image: { idField: 'imageId', linkField: 'imageLink' },
+      video: { idField: 'videoId', linkField: 'videoLink' },
+      document: { idField: 'documentId', linkField: 'documentLink' },
     }
 
-    // Create clean header data with only the required fields
+    const currentMediaType = value.header?.type
+    if (currentMediaType && currentMediaType !== 'text') {
+      const mediaType = currentMediaType as MediaType
+      const { idField, linkField } = mediaValidations[mediaType]
+      const hasId = value.header[idField]?.trim()
+      const hasLink = value.header[linkField]?.trim()
+
+      if (!hasId && !hasLink) {
+        throw new Error(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} ID or Link is required`)
+      }
+    }
+
+    // Transform to WhatsappButtonNodeData
+    const result: WhatsappButtonNodeData = {
+      text: value.text.trim(),
+      buttons: value.buttons.map((btn) => btn.trim()).filter(Boolean),
+      footer: value.footer?.trim() || undefined,
+    }
+
     if (value.header) {
-      const cleanHeader: any = { type: value.header.type }
+      const header: MessageHeader = { type: value.header.type }
 
       if (value.header.type === 'text') {
-        cleanHeader.text = value.header.text
+        header.text = value.header.text.trim()
       } else {
-        const mediaData = value.header[value.header.type]
-        if (mediaData?.id) {
-          cleanHeader[value.header.type] = { id: mediaData.id }
-        } else if (mediaData?.link) {
-          cleanHeader[value.header.type] = { link: mediaData.link }
+        const mediaType = currentMediaType as MediaType
+        const mediaObject = createMediaObject(
+          value.header[`${mediaType}Id` as keyof FormData['header']] as string,
+          value.header[`${mediaType}Link` as keyof FormData['header']] as string
+        )
+        if (mediaObject) {
+          header[mediaType] = mediaObject
         }
       }
 
-      value.header = cleanHeader
+      result.header = header
     }
 
-    return value
+    return result
   }
 
-  const renderMediaField = (mediaType: MediaType, selection: SelectionType, setSelection: (val: SelectionType) => void, label: string) => {
+  const renderMediaField = (mediaType: MediaType, label: string) => {
+    const selection = selections[mediaType]
     const options = [
       { value: 'id', label: `${label} ID (recommended)` },
       { value: 'link', label: `${label} Link` },
@@ -103,12 +170,12 @@ const Form: React.FC<Props> = ({ node }) => {
           options={options}
           placeholder="Select type"
           value={selection}
-          onChange={(value) => setSelection(value as SelectionType)}
+          onChange={(value) => updateSelection(mediaType, value as SelectionType)}
         />
 
         {selection === 'id' && (
           <SuggestionField
-            name={`header.${mediaType}.id`}
+            name={`header.${mediaType}Id`}
             placeholder={`Enter WhatsApp ${mediaType} ID`}
             as="input"
             label={`${label} ID`}
@@ -118,7 +185,7 @@ const Form: React.FC<Props> = ({ node }) => {
 
         {selection === 'link' && (
           <SuggestionField
-            name={`header.${mediaType}.link`}
+            name={`header.${mediaType}Link`}
             placeholder={`Enter WhatsApp ${mediaType} URL`}
             as="input"
             label={`${label} Link`}
@@ -130,7 +197,7 @@ const Form: React.FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer<FormData> initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
       {({ values }) => (
         <div className="space-y-4">
           <div className="space-y-2">
@@ -145,9 +212,9 @@ const Form: React.FC<Props> = ({ node }) => {
             {values.header?.type === 'text' && (
               <SuggestionField name="header.text" placeholder="Enter header text" as="input" label="Header Text" characterLimit={60} />
             )}
-            {values.header?.type === 'image' && renderMediaField('image', imageSelection, setImageSelection, 'Image')}
-            {values.header?.type === 'video' && renderMediaField('video', videoSelection, setVideoSelection, 'Video')}
-            {values.header?.type === 'document' && renderMediaField('document', documentSelection, setDocumentSelection, 'Document')}
+            {values.header?.type === 'image' && renderMediaField('image', 'Image')}
+            {values.header?.type === 'video' && renderMediaField('video', 'Video')}
+            {values.header?.type === 'document' && renderMediaField('document', 'Document')}
           </div>
 
           <div className="space-y-2">

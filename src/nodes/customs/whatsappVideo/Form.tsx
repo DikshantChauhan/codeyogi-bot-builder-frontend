@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { WhatsappVideoNodeData, WhatsappVideoNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { Field } from 'formik'

@@ -5,11 +5,11 @@ import NodeCard from '../../../components/NodeCard'
 
 const WhatsappCtaUrlNode: FC<NodeProps<WhatsappCtaUrlNodeType>> = ({ id, data }) => {
   const getHeaderPreview = () => {
-    if (!data.headerType || data.headerType === 'none') return null
+    if (!data.header) return null
 
-    switch (data.headerType) {
+    switch (data.header.type) {
       case 'text':
-        return data.headerText ? <div className="text-[0.5rem] font-medium text-gray-900 truncate">{data.headerText}</div> : null
+        return data.header.text ? <div className="text-[0.5rem] font-medium text-gray-900 truncate">{data.header.text}</div> : null
       case 'image':
         return <div className="text-[0.5rem] text-blue-600">📷 Image Header</div>
       case 'video':
