@@ -164,6 +164,9 @@ const useFlowPageData = () => {
       } else {
         dispatch(uiActions.setSelectedNodeId(node.id))
       }
+      // Close context menu when clicking on a node
+      dispatch(uiActions.setIsContextMenuOpen(false))
+      dispatch(uiActions.setContextMenuPosition(null))
     },
     [dispatch]
   )
@@ -214,6 +217,8 @@ const useFlowPageData = () => {
       if (e.key === 'Escape') {
         dispatch(uiActions.setSelectedNodeId(null))
         dispatch(uiActions.setNodeToAdd(null))
+        dispatch(uiActions.setIsContextMenuOpen(false))
+        dispatch(uiActions.setContextMenuPosition(null))
       }
 
       //undo

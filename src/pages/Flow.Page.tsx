@@ -1,14 +1,15 @@
 import { ReactFlow, Background, Controls, MiniMap, Panel } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import Toolbar from '../components/Toolbar'
 import ToolSidePanel from '../components/ToolSidePanel'
+import ContextMenu from '../components/ContextMenu'
 import MenuBar from '../components/MenuBar'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
-import { memo } from 'react'
+import React, { memo } from 'react'
 import Loading from '../components/Loading'
 import useFlowPageData from '../hooks/useFlowPageData'
 import Error from '../components/Error'
 import { edgeTypes } from '../models/Edge.model'
+import { useFlowPageContextMenu } from '../hooks/useFlowPageContextMenu'
 
 const FlowPage = () => {
   const {
@@ -29,6 +30,8 @@ const FlowPage = () => {
     onNodeDelete,
   } = useFlowPageData()
 
+  const { onPaneContextMenu, onPaneClick } = useFlowPageContextMenu()
+
   if (selectedFlowError) return <Error message={selectedFlowError} />
 
   return (
@@ -44,6 +47,8 @@ const FlowPage = () => {
           onConnect={onConnect}
           fitView
           onNodeClick={onNodeClick}
+          onPaneClick={onPaneClick}
+          onPaneContextMenu={onPaneContextMenu}
           selectNodesOnDrag={false}
           deleteKeyCode={['Backspace', 'Delete']}
           isValidConnection={isConnnectionValid}
@@ -54,7 +59,6 @@ const FlowPage = () => {
           onNodesDelete={onNodeDelete}
         >
           <MenuBar />
-          <Toolbar />
           <ToolSidePanel />
           <Background color="white" />
           <MiniMap className="border border-gray-400" />
@@ -70,6 +74,7 @@ const FlowPage = () => {
             </Panel>
           )}
         </ReactFlow>
+        <ContextMenu />
       </div>
     </div>
   )

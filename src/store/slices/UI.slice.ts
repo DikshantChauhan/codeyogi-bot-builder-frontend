@@ -4,11 +4,15 @@ import { AppNodeKeys } from '../../models/Node.model'
 type UiState = {
   nodeToAdd: AppNodeKeys | null
   selectedNodeId: string | null
+  contextMenuPosition: { x: number; y: number; flowX?: number; flowY?: number } | null
+  isContextMenuOpen: boolean
 }
 
 const initialState: UiState = {
   nodeToAdd: null,
   selectedNodeId: null,
+  contextMenuPosition: null,
+  isContextMenuOpen: false,
 }
 
 const uiSlice = createSlice({
@@ -20,6 +24,12 @@ const uiSlice = createSlice({
     },
     setSelectedNodeId: (state, action: PayloadAction<string | null>) => {
       state.selectedNodeId = action.payload
+    },
+    setContextMenuPosition: (state, action: PayloadAction<{ x: number; y: number; flowX?: number; flowY?: number } | null>) => {
+      state.contextMenuPosition = action.payload
+    },
+    setIsContextMenuOpen: (state, action: PayloadAction<boolean>) => {
+      state.isContextMenuOpen = action.payload
     },
   },
 })
