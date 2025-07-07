@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { TypedUseSelectorHook } from 'react-redux'
 import campaignSlice from './slices/campaign.slice'
 import flowSlice from './slices/flow.slice'
+import historySlice from './slices/history.slice'
 import { all } from 'redux-saga/effects'
 import locationSlice from './slices/location.slice'
 import { watchLocationSaga } from './sagas/location.saga'
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   [campaignSlice.name]: campaignSlice.reducer,
   [flowSlice.name]: flowSlice.reducer,
   [uiSlice.name]: uiSlice.reducer,
+  [historySlice.name]: historySlice.reducer,
 })
 
 const sagaMiddleware = createSagaMiddleware()
