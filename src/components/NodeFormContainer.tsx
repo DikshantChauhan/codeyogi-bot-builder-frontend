@@ -24,7 +24,7 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
     <>
       <Formik<T> initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
         {(formikProps) => (
-          <Form className="flex flex-col flex-1 max-h-full gap-3">
+          <Form className="flex flex-col flex-1 max-h-full gap-3 p-4">
             <h2 className="text-xl font-bold">{type}</h2>
 
             <div className="flex-1 overflow-auto">{typeof children === 'function' ? children(formikProps) : children}</div>

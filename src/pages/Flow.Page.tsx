@@ -1,7 +1,6 @@
 import { ReactFlow, Background, Controls, MiniMap, Panel } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import ToolSidePanel from '../components/ToolSidePanel'
-import ContextMenu from '../components/ContextMenu'
 import MenuBar from '../components/MenuBar'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
 import { memo } from 'react'
@@ -9,7 +8,6 @@ import Loading from '../components/Loading'
 import useFlowPageData from '../hooks/useFlowPageData'
 import Error from '../components/Error'
 import { edgeTypes } from '../models/Edge.model'
-import { useFlowPageContextMenu } from '../hooks/useFlowPageContextMenu'
 
 const FlowPage = () => {
   const {
@@ -28,9 +26,8 @@ const FlowPage = () => {
     onNodeClick,
     updateLoading,
     onNodeDelete,
+    onPaneClick,
   } = useFlowPageData()
-
-  const { onPaneContextMenu, onPaneClick } = useFlowPageContextMenu()
 
   if (selectedFlowError) return <Error message={selectedFlowError} />
 
@@ -48,7 +45,6 @@ const FlowPage = () => {
           fitView
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
-          onPaneContextMenu={onPaneContextMenu}
           selectNodesOnDrag={false}
           deleteKeyCode={['Backspace', 'Delete']}
           isValidConnection={isConnnectionValid}
@@ -58,23 +54,22 @@ const FlowPage = () => {
           defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
           onNodesDelete={onNodeDelete}
         >
-          <MenuBar />
+          <MenuBar position="top-right" />
           <ToolSidePanel />
           <Background color="white" />
           <MiniMap className="border border-gray-400" />
           <Controls position="bottom-right" />
           {selectedFlowLoading && (
-            <Panel position="top-left">
+            <Panel position="top-center">
               <Loading message="Fetching flow" />
             </Panel>
           )}
           {updateLoading && (
-            <Panel position="top-left">
+            <Panel position="top-center">
               <Loading message="updating flow" />
             </Panel>
           )}
         </ReactFlow>
-        <ContextMenu />
       </div>
     </div>
   )

@@ -7,6 +7,7 @@ import { selectedNodeRefSelector, selectedNodeSelector } from '../store/selector
 import { AppState } from '../store/store'
 import { AppNode, AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.selector'
+import ToolPicker from './ToolPicker'
 
 interface ToolSidePanelProps {
   selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
@@ -37,12 +38,10 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNodeRef, selected
     )
   }, [pickedTool, selectedNode, allowedNodesKey])
 
-  return pickedTool && ToolForm ? (
-    <Panel position="top-right" className="w-[380px] bottom-0 p-4 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border flex flex-col">
-      {ToolForm}
+  return (
+    <Panel position="top-left" className="w-80 bottom-0 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border flex flex-col">
+      {ToolForm ? ToolForm : <ToolPicker />}
     </Panel>
-  ) : (
-    <></>
   )
 }
 

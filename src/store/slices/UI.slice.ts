@@ -3,14 +3,12 @@ import { AppNodeKeys } from '../../models/Node.model'
 
 type UiState = {
   selectedNodeRef: { type: AppNodeKeys } | { id: string } | null
-  contextMenuPosition: { x: number; y: number; flowX?: number; flowY?: number } | null
-  isContextMenuOpen: boolean
+  pannelClickedPosition: { x: number; y: number } | null
 }
 
 const initialState: UiState = {
   selectedNodeRef: null,
-  contextMenuPosition: null,
-  isContextMenuOpen: false,
+  pannelClickedPosition: null,
 }
 
 const uiSlice = createSlice({
@@ -20,11 +18,8 @@ const uiSlice = createSlice({
     setSelectedNode: (state, action: PayloadAction<UiState['selectedNodeRef']>) => {
       state.selectedNodeRef = action.payload
     },
-    setContextMenuPosition: (state, action: PayloadAction<{ x: number; y: number; flowX?: number; flowY?: number } | null>) => {
-      state.contextMenuPosition = action.payload
-    },
-    setIsContextMenuOpen: (state, action: PayloadAction<boolean>) => {
-      state.isContextMenuOpen = action.payload
+    setPannelClickedPosition: (state, action: PayloadAction<{ x: number; y: number } | null>) => {
+      state.pannelClickedPosition = action.payload
     },
   },
 })

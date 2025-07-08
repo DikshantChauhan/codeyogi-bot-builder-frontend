@@ -1,7 +1,7 @@
 import { FC, memo, useCallback, useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
 import { CiSaveDown2 } from 'react-icons/ci'
-import { Panel } from '@xyflow/react'
+import { Panel, PanelPosition } from '@xyflow/react'
 import { Link } from 'react-router-dom'
 import { BiHome } from 'react-icons/bi'
 import { connect } from 'react-redux'
@@ -16,9 +16,10 @@ import { toast } from 'react-toastify'
 type Props = {
   updateFlow: typeof flowActions.flowUpdateTry
   selectedFlow: Flow | null
+  position: PanelPosition
 }
 
-const MenuBar: FC<Props> = ({ updateFlow, selectedFlow }) => {
+const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, position }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSave = useCallback(() => {
@@ -47,14 +48,14 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow }) => {
   }, [selectedFlow, updateFlow])
 
   return (
-    <Panel className="bg-white rounded-md shadow-lg">
+    <Panel className="bg-white rounded-md shadow-lg" position={position}>
       <div className="relative">
         <button className="p-2 hover:bg-gray-100 rounded-md transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <IoMenu className="w-5 h-5 text-gray-600" />
         </button>
 
         {isOpen && (
-          <div className="absolute bottom-0-0 left-0 mt-2 bg-white rounded-md shadow-lg z-10 border">
+          <div className="absolute right-0 mt-2 bg-white rounded-md shadow-lg z-10 border">
             <Link to="/" className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 min-w-max">
               <BiHome className="w-5 h-5 mr-3" />
               <span className="flex-grow">Home</span>

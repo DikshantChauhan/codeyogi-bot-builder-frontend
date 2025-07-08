@@ -4,9 +4,7 @@ import { selectedFlowSelector } from './flow.selector'
 
 export const selectedNodeRefSelector = createSelector(uiSelector, (ui) => ui.selectedNodeRef)
 
-export const contextMenuPositionSelector = createSelector(uiSelector, (ui) => ui.contextMenuPosition)
-
-export const isContextMenuOpenSelector = createSelector(uiSelector, (ui) => ui.isContextMenuOpen)
+export const pannelClickedPositionSelector = createSelector(uiSelector, (ui) => ui.pannelClickedPosition)
 
 export const selectedNodeSelector = createSelector([selectedNodeRefSelector, selectedFlowSelector], (selectedNodeRef, selectedFlow) => {
   if (!selectedNodeRef || !selectedFlow) return undefined

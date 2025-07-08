@@ -164,9 +164,6 @@ const useFlowPageData = () => {
       } else {
         dispatch(uiActions.setSelectedNode({ id: node.id }))
       }
-      // Close context menu when clicking on a node
-      dispatch(uiActions.setIsContextMenuOpen(false))
-      dispatch(uiActions.setContextMenuPosition(null))
     },
     [dispatch]
   )
@@ -190,6 +187,14 @@ const useFlowPageData = () => {
       })
     },
     [selectedEdges, selectedFlow, selectedNodes, pushToHistory]
+  )
+
+  const onPaneClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      dispatch(uiActions.setPannelClickedPosition({ x: e.clientX, y: e.clientY }))
+    },
+    [dispatch]
   )
 
   useEffect(() => {
@@ -216,8 +221,6 @@ const useFlowPageData = () => {
       //escape
       if (e.key === 'Escape') {
         dispatch(uiActions.setSelectedNode(null))
-        dispatch(uiActions.setIsContextMenuOpen(false))
-        dispatch(uiActions.setContextMenuPosition(null))
       }
 
       //undo
@@ -255,6 +258,7 @@ const useFlowPageData = () => {
     onNodeClick,
     updateLoading,
     onNodeDelete,
+    onPaneClick,
   }
 }
 

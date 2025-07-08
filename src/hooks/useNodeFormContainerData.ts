@@ -1,4 +1,4 @@
-import { contextMenuPositionSelector, selectedNodeRefSelector } from '../store/selectors/ui.selector'
+import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectedNodeSelector } from '../store/selectors/ui.selector'
 import { uiActions } from '../store/slices/UI.slice'
@@ -17,18 +17,12 @@ const useNodeFormContainerData = <T extends FormikValues>(
 ) => {
   const selectedNode = useSelector(selectedNodeSelector)
   const selectedNodeRef = useSelector(selectedNodeRefSelector)
-  const contextMenuPosition = useSelector(contextMenuPositionSelector)
   const slectedFlow = useSelector(selectedFlowSelector)
   const dispatch = useDispatch()
   const [selectedNudge, setSelectedNudge] = useState<SubFlowValue>('inherit')
 
   const closeSideBar = useCallback(() => {
     dispatch(uiActions.setSelectedNode(null))
-    dispatch(uiActions.setContextMenuPosition(null))
-  }, [dispatch])
-
-  const clearContextMenuPosition = useCallback(() => {
-    dispatch(uiActions.setContextMenuPosition(null))
   }, [dispatch])
 
   const setFlow = useCallback(
@@ -38,33 +32,15 @@ const useNodeFormContainerData = <T extends FormikValues>(
     [dispatch]
   )
 
-  const { getViewport, screenToFlowPosition } = useReactFlow()
+  const { getViewport } = useReactFlow()
 
-  // Use context menu position if available, otherwise fall back to center
-  const nodePosition = useMemo(() => {
-    if (contextMenuPosition) {
-      if (contextMenuPosition.flowX !== undefined && contextMenuPosition.flowY !== undefined) {
-        // Use the pre-calculated flow position
-        return {
-          x: contextMenuPosition.flowX,
-          y: contextMenuPosition.flowY,
-        }
-      } else {
-        // Fallback to screen position conversion
-        return screenToFlowPosition({
-          x: contextMenuPosition.x,
-          y: contextMenuPosition.y,
-        })
-      }
-    }
-
-    // Fallback to center position
+  const centerPosition = useMemo(() => {
     const viewport = getViewport()
     return {
       x: (viewport.x * -1 + window.innerWidth / 2 - 150) / viewport.zoom,
       y: (viewport.y * -1 + window.innerHeight / 2 - 50) / viewport.zoom,
     }
-  }, [contextMenuPosition, screenToFlowPosition, getViewport])
+  }, [getViewport])
 
   const type = (selectedNodeRef && 'type' in selectedNodeRef ? selectedNodeRef.type : selectedNode?.type) || null
 
@@ -83,7 +59,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
           id,
           data: data,
           type,
-          position: oldNode?.position || nodePosition,
+          position: oldNode?.position || centerPosition,
           dragHandle: '.drag-handle__custom',
           nudge: selectedNudge,
         } as AppNode
@@ -94,13 +70,12 @@ const useNodeFormContainerData = <T extends FormikValues>(
           nodes[nodeIndex] = node
         }
         setFlow({ ...slectedFlow!, data: { ...slectedFlow!.data, nodes } })
-        clearContextMenuPosition() // Clear position after using it
         closeSideBar()
       } catch (error) {
         toast.error(String(error))
       }
     },
-    [nodePosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type, selectedNudge, closeSideBar, setFlow]
+    [centerPosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type, selectedNudge, closeSideBar, setFlow]
   )
 
   return { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge }
