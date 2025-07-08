@@ -10,9 +10,8 @@ interface ContextMenuProps {
   position: { x: number; y: number } | null
   isOpen: boolean
   allowedNodes: AppNodeKeys[]
-  setNodeToAdd: (nodeToAdd: AppNodeKeys | null) => void
+  setSelectedNode: typeof uiActions.setSelectedNode
   setIsContextMenuOpen: (isOpen: boolean) => void
-  setSelectedNodeId: (selectedNodeId: string | null) => void
   setContextMenuPosition: (position: { x: number; y: number } | null) => void
 }
 
@@ -20,9 +19,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   position,
   isOpen,
   allowedNodes,
-  setNodeToAdd,
+  setSelectedNode,
   setIsContextMenuOpen,
-  setSelectedNodeId,
   setContextMenuPosition,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null)
@@ -38,12 +36,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
   const handleNodeSelect = useCallback(
     (nodeType: AppNodeKeys) => {
-      setNodeToAdd(nodeType)
-      setSelectedNodeId(null)
+      setSelectedNode({ type: nodeType })
       setIsContextMenuOpen(false)
       // Don't clear context menu position here - let the node form container use it first
     },
-    [setNodeToAdd, setSelectedNodeId, setIsContextMenuOpen]
+    [setSelectedNode, setIsContextMenuOpen]
   )
 
   const handleClose = useCallback(() => {
@@ -147,9 +144,8 @@ const mapStateToProps = (state: AppState) => ({
 })
 
 const mapDispatchToProps = {
-  setNodeToAdd: uiActions.setNodeToAdd,
+  setSelectedNode: uiActions.setSelectedNode,
   setIsContextMenuOpen: uiActions.setIsContextMenuOpen,
-  setSelectedNodeId: uiActions.setSelectedNodeId,
   setContextMenuPosition: uiActions.setContextMenuPosition,
 }
 

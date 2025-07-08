@@ -7,22 +7,22 @@ import { END_NODE_KEY } from '../nodes/customs/end/type'
 import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { connect } from 'react-redux'
 import { AppState } from '../store/store'
-import { selectedNodeIdSelector } from '../store/selectors/ui.selector'
+import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
 
 interface Props {
   nodeId: string
   nodeType: AppNodeKeys
   options?: [string, string][]
   children?: React.ReactNode
-  selectedNodeId: string | null
+  selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
 }
 
-const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeId }: Props) => {
+const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Props) => {
   const { color, Icon } = nodesRegistry[nodeType]
   return (
     <div
       className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative ${
-        selectedNodeId === nodeId ? ' scale-105 shadow-md shadow-gray-500' : ''
+        selectedNodeRef && 'id' in selectedNodeRef && selectedNodeRef.id === nodeId ? ' scale-105 shadow-md shadow-gray-500' : ''
       }`}
     >
       <div className="flex items-center mb-1 px-2 relative justify-between">
@@ -59,7 +59,7 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeId }: Props
 
 const mapStateToProps = (state: AppState) => {
   return {
-    selectedNodeId: selectedNodeIdSelector(state),
+    selectedNodeRef: selectedNodeRefSelector(state),
   }
 }
 

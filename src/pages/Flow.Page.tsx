@@ -4,7 +4,7 @@ import ToolSidePanel from '../components/ToolSidePanel'
 import ContextMenu from '../components/ContextMenu'
 import MenuBar from '../components/MenuBar'
 import { DIRECTIONAL_EDGE_KEY } from '../edges/custom/directional/type'
-import React, { memo } from 'react'
+import { memo } from 'react'
 import Loading from '../components/Loading'
 import useFlowPageData from '../hooks/useFlowPageData'
 import Error from '../components/Error'
@@ -62,7 +62,7 @@ const FlowPage = () => {
           <ToolSidePanel />
           <Background color="white" />
           <MiniMap className="border border-gray-400" />
-          <Controls />
+          <Controls position="bottom-right" />
           {selectedFlowLoading && (
             <Panel position="top-left">
               <Loading message="Fetching flow" />

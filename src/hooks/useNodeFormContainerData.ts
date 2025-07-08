@@ -1,4 +1,4 @@
-import { nodeToAddSelector, contextMenuPositionSelector } from '../store/selectors/ui.selector'
+import { contextMenuPositionSelector, selectedNodeRefSelector } from '../store/selectors/ui.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectedNodeSelector } from '../store/selectors/ui.selector'
 import { uiActions } from '../store/slices/UI.slice'
@@ -16,15 +16,14 @@ const useNodeFormContainerData = <T extends FormikValues>(
   transFormNodeDataOrFail: (values: T, formikHelpers: FormikHelpers<T>) => AppNode['data']
 ) => {
   const selectedNode = useSelector(selectedNodeSelector)
-  const nodeToAdd = useSelector(nodeToAddSelector)
+  const selectedNodeRef = useSelector(selectedNodeRefSelector)
   const contextMenuPosition = useSelector(contextMenuPositionSelector)
   const slectedFlow = useSelector(selectedFlowSelector)
   const dispatch = useDispatch()
   const [selectedNudge, setSelectedNudge] = useState<SubFlowValue>('inherit')
 
   const closeSideBar = useCallback(() => {
-    dispatch(uiActions.setSelectedNodeId(null))
-    dispatch(uiActions.setNodeToAdd(null))
+    dispatch(uiActions.setSelectedNode(null))
     dispatch(uiActions.setContextMenuPosition(null))
   }, [dispatch])
 
@@ -67,7 +66,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
     }
   }, [contextMenuPosition, screenToFlowPosition, getViewport])
 
-  const type = selectedNode?.type || nodeToAdd
+  const type = (selectedNodeRef && 'type' in selectedNodeRef ? selectedNodeRef.type : selectedNode?.type) || null
 
   const handleSubmit = useCallback(
     (values: T, formikHelpers: FormikHelpers<T>) => {

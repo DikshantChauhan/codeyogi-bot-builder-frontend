@@ -3,21 +3,19 @@ import { memo, useMemo } from 'react'
 import { camelCase } from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
-import { uiActions } from '../store/slices/UI.slice'
-import { nodeToAddSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
+import { selectedNodeRefSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
 import { AppState } from '../store/store'
 import { AppNode, AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.selector'
 
 interface ToolSidePanelProps {
-  nodeToAdd: AppNodeKeys | null
-  setNodeToAdd: (nodeToAdd: AppNodeKeys | null) => void
+  selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
   selectedNode?: AppNode
   allowedNodesKey: AppNodeKeys[]
 }
 
-const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ nodeToAdd, selectedNode, allowedNodesKey }) => {
-  const pickedTool = nodeToAdd || selectedNode?.type
+const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNodeRef, selectedNode, allowedNodesKey }) => {
+  const pickedTool = (selectedNodeRef && 'type' in selectedNodeRef ? selectedNodeRef.type : selectedNode?.type) || null
 
   const ToolForm = useMemo(() => {
     if (!pickedTool || !(pickedTool in nodesRegistry) || !allowedNodesKey.includes(pickedTool as AppNodeKeys)) return null
@@ -49,13 +47,9 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ nodeToAdd, selectedNode, 
 }
 
 const mapStateToProps = (state: AppState) => ({
-  nodeToAdd: nodeToAddSelector(state),
+  selectedNodeRef: selectedNodeRefSelector(state),
   selectedNode: selectedNodeSelector(state),
   allowedNodesKey: selectedFlowAllowedNodesSelector(state),
 })
 
-const mapDispatchToProps = {
-  setNodeToAdd: uiActions.setNodeToAdd,
-}
-
-export default memo(connect(mapStateToProps, mapDispatchToProps)(ToolSidePanel))
+export default memo(connect(mapStateToProps)(ToolSidePanel))

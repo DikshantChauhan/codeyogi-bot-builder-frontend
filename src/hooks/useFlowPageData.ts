@@ -25,14 +25,14 @@ import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
 import { getRandomId, getSourceHandleConnection } from '../utils'
 import { uiActions } from '../store/slices/UI.slice'
-import { selectedNodeIdSelector } from '../store/selectors/ui.selector'
+import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
 
 const useFlowPageData = () => {
   const selectedFlow = useSelector(selectedFlowSelector)
   const selectedFlowLoading = useSelector(selectedFlowLoadingSelector)
   const selectedFlowError = useSelector(selectedFlowErrorSelector)
   const updateLoading = useSelector(flowUpdateLoadingSeletor)
-  const selectedNodeId = useSelector(selectedNodeIdSelector)
+  const selectedNodeRef = useSelector(selectedNodeRefSelector)
 
   const [reconnectingEdge, setReconnectingEdge] = useState<AppEdge | null>(null)
 
@@ -160,9 +160,9 @@ const useFlowPageData = () => {
     (e: React.MouseEvent, node: AppNode) => {
       //capture shift + click to select multiple nodes
       if (e.shiftKey) {
-        dispatch(uiActions.setSelectedNodeId(node.id))
+        dispatch(uiActions.setSelectedNode({ id: node.id }))
       } else {
-        dispatch(uiActions.setSelectedNodeId(node.id))
+        dispatch(uiActions.setSelectedNode({ id: node.id }))
       }
       // Close context menu when clicking on a node
       dispatch(uiActions.setIsContextMenuOpen(false))
@@ -197,7 +197,7 @@ const useFlowPageData = () => {
       //ctrl + d
       if ((e.ctrlKey && e.key === 'd') || (e.ctrlKey && e.key === 'D')) {
         e.preventDefault()
-        const selectedNode = selectedNodeId && selectedNodes.find((node) => node.id === selectedNodeId)
+        const selectedNode = selectedNodeRef && 'id' in selectedNodeRef && selectedNodes.find((node) => node.id === selectedNodeRef.id)
         if (selectedNode) {
           const newNode = { ...selectedNode, id: getRandomId(), position: { x: selectedNode.position.x + 20, y: selectedNode.position.y + 20 } }
           const updatedFlow = {
@@ -209,14 +209,13 @@ const useFlowPageData = () => {
           // Track history for node duplication
           pushToHistory(updatedFlow)
 
-          dispatch(uiActions.setSelectedNodeId(newNode.id))
+          dispatch(uiActions.setSelectedNode({ id: newNode.id }))
         }
       }
 
       //escape
       if (e.key === 'Escape') {
-        dispatch(uiActions.setSelectedNodeId(null))
-        dispatch(uiActions.setNodeToAdd(null))
+        dispatch(uiActions.setSelectedNode(null))
         dispatch(uiActions.setIsContextMenuOpen(false))
         dispatch(uiActions.setContextMenuPosition(null))
       }
@@ -238,7 +237,7 @@ const useFlowPageData = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [selectedNodeId, selectedNodes, selectedFlow, pushToHistory, undo, redo])
+  }, [selectedNodeRef, selectedNodes, selectedFlow, pushToHistory, undo, redo])
 
   return {
     nodes: selectedFlow?.data.nodes || [],
