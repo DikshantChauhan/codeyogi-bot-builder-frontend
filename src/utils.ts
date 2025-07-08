@@ -1,5 +1,6 @@
 import { AppEdge } from './models/Edge.model'
 import { Flow } from './models/Flow.model'
+import { AppNode, nodesRegistry } from './models/Node.model'
 
 export const getRandomId = () => Math.random().toString(36).substring(7)
 
@@ -35,4 +36,16 @@ export const shouldUpdateFlow = (flow: Flow): boolean => {
   }
 
   return JSON.stringify(flow) === JSON.stringify(localFlow)
+}
+
+export const parseNodeString = (nodeString: string): AppNode | null => {
+  try {
+    const node = JSON.parse(nodeString) as AppNode
+    if (node.type && node.data && node.position && node.id) {
+      return node
+    }
+    return null
+  } catch (error) {
+    return null
+  }
 }

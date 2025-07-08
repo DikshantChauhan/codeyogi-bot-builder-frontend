@@ -19,20 +19,23 @@ import {
   OnEdgesChange,
   OnReconnect,
   reconnectEdge,
+  useReactFlow,
 } from '@xyflow/react'
 import { OnNodesChange } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
-import { getRandomId, getSourceHandleConnection } from '../utils'
+import { getRandomId, getSourceHandleConnection, parseNodeString } from '../utils'
 import { uiActions } from '../store/slices/UI.slice'
-import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
+import { pannelClickedPositionSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
+import { toast } from 'react-toastify'
 
 const useFlowPageData = () => {
   const selectedFlow = useSelector(selectedFlowSelector)
   const selectedFlowLoading = useSelector(selectedFlowLoadingSelector)
   const selectedFlowError = useSelector(selectedFlowErrorSelector)
   const updateLoading = useSelector(flowUpdateLoadingSeletor)
-  const selectedNodeRef = useSelector(selectedNodeRefSelector)
+  const selectedNode = useSelector(selectedNodeSelector)
+  const pannelClickedPosition = useSelector(pannelClickedPositionSelector)
 
   const [reconnectingEdge, setReconnectingEdge] = useState<AppEdge | null>(null)
 
@@ -41,84 +44,51 @@ const useFlowPageData = () => {
 
   // Initialize history hook
   const { pushToHistory, undo, redo } = useHistory()
+  const { screenToFlowPosition } = useReactFlow()
 
+  // Wrapper function that combines setFlow and pushToHistory
   const setFlow = useCallback(
-    (flow: Flow) => {
-      dispatch(flowActions.setFlow({ flow }))
+    (updated: Flow) => {
+      dispatch(flowActions.setFlow({ flow: updated }))
+      pushToHistory(updated)
     },
-    [dispatch]
-  )
-
-  const setNodes = useCallback(
-    (nodes: AppNode[]) => {
-      setFlow({ ...selectedFlow!, data: { ...selectedFlow!.data, nodes } })
-    },
-    [setFlow, selectedFlow]
-  )
-
-  const setEdges = useCallback(
-    (edges: AppEdge[]) => {
-      setFlow({ ...selectedFlow!, data: { ...selectedFlow!.data, edges } })
-    },
-    [setFlow, selectedFlow]
+    [dispatch, pushToHistory]
   )
 
   const onNodesChange: OnNodesChange<AppNode> = useCallback(
     (changes) => {
       const nodes = applyNodeChanges(changes, selectedNodes)
-      setNodes(nodes)
-
-      // Only track history for non-position changes
-      const hasNonPositionChanges = changes.some((change) => change.type !== 'position' && change.type !== 'select')
-
-      if (hasNonPositionChanges && selectedFlow) {
-        const updatedFlow = { ...selectedFlow, data: { ...selectedFlow.data, nodes } }
-        pushToHistory(updatedFlow)
-      }
+      const updatedFlow = { ...selectedFlow!, data: { ...selectedFlow!.data, nodes } }
+      setFlow(updatedFlow)
     },
-    [setNodes, selectedNodes, selectedFlow, pushToHistory]
+    [selectedNodes, selectedFlow, setFlow]
   )
 
   const onEdgesChange: OnEdgesChange<AppEdge> = useCallback(
     (changes) => {
       const edges = applyEdgeChanges(changes, selectedEdges)
-      setEdges(edges)
-
-      // Track history for all edge changes
-      if (selectedFlow) {
-        const updatedFlow = { ...selectedFlow, data: { ...selectedFlow.data, edges } }
-        pushToHistory(updatedFlow)
-      }
+      const updatedFlow = { ...selectedFlow!, data: { ...selectedFlow!.data, edges } }
+      setFlow(updatedFlow)
     },
-    [setEdges, selectedEdges, selectedFlow, pushToHistory]
+    [selectedEdges, selectedFlow, setFlow]
   )
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
       const edges = addEdge(connection, selectedEdges)
-      setEdges(edges)
-
-      // Track history for edge connections
-      if (selectedFlow) {
-        const updatedFlow = { ...selectedFlow, data: { ...selectedFlow.data, edges } }
-        pushToHistory(updatedFlow)
-      }
+      const updatedFlow = { ...selectedFlow!, data: { ...selectedFlow!.data, edges } }
+      setFlow(updatedFlow)
     },
-    [setEdges, selectedEdges, selectedFlow, pushToHistory]
+    [selectedEdges, selectedFlow, setFlow]
   )
 
   const onReconnect: OnReconnect<AppEdge> = useCallback(
     (edge, connection) => {
       const newEdges = reconnectEdge(edge, connection, selectedEdges)
-      setEdges(newEdges)
-
-      // Track history for edge reconnections
-      if (selectedFlow) {
-        const updatedFlow = { ...selectedFlow, data: { ...selectedFlow.data, edges: newEdges } }
-        pushToHistory(updatedFlow)
-      }
+      const updatedFlow = { ...selectedFlow!, data: { ...selectedFlow!.data, edges: newEdges } }
+      setFlow(updatedFlow)
     },
-    [setEdges, selectedEdges, selectedFlow, pushToHistory]
+    [selectedEdges, selectedFlow, setFlow]
   )
 
   const onReconnectStart = useCallback(
@@ -142,7 +112,7 @@ const useFlowPageData = () => {
 
       //no multiple connections to the source handle
       const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, selectedEdges)
-      console.log(reconnectingEdge)
+      // console.log(reconnectingEdge)
       if (handleConnections.length !== 0) return false
 
       return true
@@ -180,21 +150,24 @@ const useFlowPageData = () => {
           },
         }
 
-        dispatch(flowActions.setFlow({ flow: updatedFlow }))
-
-        // Track history for node deletion
-        pushToHistory(updatedFlow)
+        setFlow(updatedFlow)
       })
     },
-    [selectedEdges, selectedFlow, selectedNodes, pushToHistory]
+    [selectedEdges, selectedFlow, selectedNodes, setFlow]
   )
 
   const onPaneClick = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
-      dispatch(uiActions.setPannelClickedPosition({ x: e.clientX, y: e.clientY }))
+      const bounds = e.currentTarget.getBoundingClientRect()
+      const clientX = e.clientX - bounds.left
+      const clientY = e.clientY - bounds.top
+
+      // Convert screen coords to flow coords
+      const flowPoint = screenToFlowPosition({ x: clientX, y: clientY })
+      dispatch(uiActions.setPannelClickedPosition({ x: flowPoint.x, y: flowPoint.y }))
     },
-    [dispatch]
+    [dispatch, screenToFlowPosition]
   )
 
   useEffect(() => {
@@ -202,17 +175,13 @@ const useFlowPageData = () => {
       //ctrl + d
       if ((e.ctrlKey && e.key === 'd') || (e.ctrlKey && e.key === 'D')) {
         e.preventDefault()
-        const selectedNode = selectedNodeRef && 'id' in selectedNodeRef && selectedNodes.find((node) => node.id === selectedNodeRef.id)
         if (selectedNode) {
           const newNode = { ...selectedNode, id: getRandomId(), position: { x: selectedNode.position.x + 20, y: selectedNode.position.y + 20 } }
           const updatedFlow = {
             ...selectedFlow!,
             data: { ...selectedFlow!.data, nodes: [...selectedFlow!.data.nodes, newNode] },
           }
-          dispatch(flowActions.setFlow({ flow: updatedFlow }))
-
-          // Track history for node duplication
-          pushToHistory(updatedFlow)
+          setFlow(updatedFlow)
 
           dispatch(uiActions.setSelectedNode({ id: newNode.id }))
         }
@@ -234,13 +203,46 @@ const useFlowPageData = () => {
         e.preventDefault()
         redo()
       }
+
+      //ctrl + c
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault()
+        if (selectedNode) {
+          navigator.clipboard.writeText(JSON.stringify(selectedNode))
+          toast.success('Node copied to clipboard')
+        }
+      }
+
+      //ctrl + v
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+        e.preventDefault()
+        navigator.clipboard.readText().then((text) => {
+          const node = parseNodeString(text)
+          if (!node) {
+            toast.error('Invalid node data')
+            return
+          }
+          if (!pannelClickedPosition) {
+            toast.error('No position to paste node, click on the canvas to set position')
+            return
+          }
+
+          const newNode = { ...node, id: getRandomId(), position: { x: pannelClickedPosition.x, y: pannelClickedPosition.y } }
+          const updatedFlow = {
+            ...selectedFlow!,
+            data: { ...selectedFlow!.data, nodes: [...selectedFlow!.data.nodes, newNode] },
+          }
+          setFlow(updatedFlow)
+          dispatch(uiActions.setSelectedNode({ id: newNode.id }))
+        })
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [selectedNodeRef, selectedNodes, selectedFlow, pushToHistory, undo, redo])
+  }, [selectedNode, selectedNodes, selectedFlow, setFlow, undo, redo])
 
   return {
     nodes: selectedFlow?.data.nodes || [],

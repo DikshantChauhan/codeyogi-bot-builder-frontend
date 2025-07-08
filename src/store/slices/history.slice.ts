@@ -37,6 +37,21 @@ const historySlice = createSlice({
       state.future = []
     },
 
+    replaceLastHistoryEntry: (state, action: PayloadAction<Flow>) => {
+      // Replace the last entry in past with the new flow
+      if (state.past.length > 0) {
+        // Remove the last entry and add the new one
+        state.past.pop()
+        state.past.push(action.payload as any)
+      }
+
+      // Update present state
+      state.present = action.payload as any
+
+      // Clear future when new operation is pushed
+      state.future = []
+    },
+
     undo: (state) => {
       if (state.past.length === 0) return
 
@@ -57,21 +72,6 @@ const historySlice = createSlice({
       state.past = state.present ? [...state.past, state.present] : state.past
       state.present = next
       state.future = newFuture
-    },
-
-    clearHistory: (state) => {
-      state.past = []
-      state.present = null
-      state.future = []
-    },
-
-    setMaxHistorySize: (state, action: PayloadAction<number>) => {
-      state.maxHistorySize = action.payload
-
-      // Trim past if it exceeds new max size
-      if (state.past.length > state.maxHistorySize) {
-        state.past = state.past.slice(-state.maxHistorySize)
-      }
     },
   },
 })
