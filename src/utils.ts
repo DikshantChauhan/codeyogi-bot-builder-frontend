@@ -9,7 +9,7 @@ export const getRandomId = (length?: number) =>
     .substring(length || 7)
 
 export const getSourceHandleConnection = (sourceNodeId: string, handleName: string, edges: AppEdge[]) => {
-  const connections = edges.filter((edge) => edge.source === sourceNodeId && edge.sourceHandle === handleName)
+  const connections = edges.filter((edge) => edge.source === sourceNodeId && (edge.sourceHandle ? edge.sourceHandle === handleName : true))
   return connections
 }
 

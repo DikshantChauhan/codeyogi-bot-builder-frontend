@@ -111,9 +111,9 @@ const useFlowPageData = () => {
       if (connection.source === connection.target) return false
 
       //no multiple connections to the source handle
-      const handleConnections = getSourceHandleConnection(sourceId, sourceHandleName!, selectedEdges)
+      const sourceHandleConnection = getSourceHandleConnection(sourceId, sourceHandleName!, selectedEdges)
       // console.log(reconnectingEdge)
-      if (handleConnections.length !== 0) return false
+      if (sourceHandleConnection.length !== 0) return false
 
       return true
     },
@@ -149,24 +149,6 @@ const useFlowPageData = () => {
       }
     },
     [dispatch, selectedEdges, selectedNodeRef]
-  )
-
-  const onNodeDelete = useCallback(
-    (nodes: AppNode[]) => {
-      nodes.forEach((node) => {
-        const updatedFlow = {
-          ...selectedFlow!,
-          data: {
-            ...selectedFlow!.data,
-            nodes: selectedNodes.filter((n) => n.id !== node.id),
-            edges: selectedEdges.filter((edge) => edge.source !== node.id && edge.target !== node.id),
-          },
-        }
-
-        setFlow(updatedFlow)
-      })
-    },
-    [selectedEdges, selectedFlow, selectedNodes, setFlow]
   )
 
   const onPaneClick = useCallback(
@@ -274,6 +256,19 @@ const useFlowPageData = () => {
             )
           })
         }
+
+        //Delete && Backspace
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          e.preventDefault()
+          const updatedNodes = selectedNodes.filter((node) => !selection.nodes.some((n) => n.id === node.id))
+          const updatedEdges = selectedEdges.filter((edge) => !selection.edges.some((e) => e.id === edge.id))
+          const updatedFlow = {
+            ...selectedFlow!,
+            data: { ...selectedFlow!.data, nodes: updatedNodes, edges: updatedEdges },
+          }
+          setFlow(updatedFlow)
+          dispatch(uiActions.setSelectedNode(null))
+        }
       }
     }
 
@@ -298,7 +293,6 @@ const useFlowPageData = () => {
     nodeTypes,
     onNodeClick,
     updateLoading,
-    onNodeDelete,
     onPaneClick,
   }
 }

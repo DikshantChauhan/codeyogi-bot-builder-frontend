@@ -25,7 +25,6 @@ const FlowPage = () => {
     nodeTypes,
     onNodeClick,
     updateLoading,
-    onNodeDelete,
     onPaneClick,
   } = useFlowPageData()
 
@@ -46,13 +45,11 @@ const FlowPage = () => {
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           selectNodesOnDrag={false}
-          deleteKeyCode={['Backspace', 'Delete']}
           isValidConnection={isConnnectionValid}
           onReconnectStart={onReconnectStart}
           onReconnectEnd={onReconnectEnd}
           onReconnect={onReconnect}
           defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
-          onNodesDelete={onNodeDelete}
           nodesDraggable
         >
           <MenuBar position="top-right" />

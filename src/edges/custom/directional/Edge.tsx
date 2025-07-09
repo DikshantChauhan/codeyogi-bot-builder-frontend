@@ -1,8 +1,6 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from '@xyflow/react'
-import { Dispatch, memo } from 'react'
+import { memo } from 'react'
 import { connect } from 'react-redux'
-import { AppNode } from '../../../models/Node.model'
-import { uiActions } from '../../../store/slices/UI.slice'
 import { AppState } from '../../../store/store'
 
 function CustomEdge({
