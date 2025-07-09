@@ -2,7 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppNodeKeys } from '../../models/Node.model'
 
 type UiState = {
-  selectedNodeRef: { type: AppNodeKeys } | { id: string } | null
+  selectedNodeRef:
+    | { type: AppNodeKeys }
+    | { id: string }
+    | {
+        selection: {
+          nodesIds: string[]
+          edgesIds: string[]
+        }
+      }
+    | null
   pannelClickedPosition: { x: number; y: number } | null
 }
 

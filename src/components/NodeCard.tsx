@@ -19,10 +19,14 @@ interface Props {
 
 const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Props) => {
   const { color, Icon } = nodesRegistry[nodeType]
+  const isSelected =
+    selectedNodeRef &&
+    (('id' in selectedNodeRef && selectedNodeRef.id === nodeId) ||
+      ('selection' in selectedNodeRef && selectedNodeRef.selection.nodesIds.includes(nodeId)))
   return (
     <div
       className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative ${
-        selectedNodeRef && 'id' in selectedNodeRef && selectedNodeRef.id === nodeId ? ' scale-105 shadow-md shadow-gray-500' : ''
+        isSelected ? ' scale-105 shadow-md shadow-gray-500' : ''
       }`}
     >
       <div className="flex items-center mb-1 px-2 relative justify-between">

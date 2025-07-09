@@ -24,9 +24,9 @@ import {
 import { OnNodesChange } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
-import { getRandomId, getSourceHandleConnection, parseNodeString } from '../utils'
+import { cloneSelectionNodeData, getOffsetFromCentroid, getSourceHandleConnection, parseNodeSelectionString } from '../utils'
 import { uiActions } from '../store/slices/UI.slice'
-import { pannelClickedPositionSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
+import { pannelClickedPositionSelector, selectedNodeRefSelector } from '../store/selectors/ui.selector'
 import { toast } from 'react-toastify'
 
 const useFlowPageData = () => {
@@ -34,7 +34,7 @@ const useFlowPageData = () => {
   const selectedFlowLoading = useSelector(selectedFlowLoadingSelector)
   const selectedFlowError = useSelector(selectedFlowErrorSelector)
   const updateLoading = useSelector(flowUpdateLoadingSeletor)
-  const selectedNode = useSelector(selectedNodeSelector)
+  const selectedNodeRef = useSelector(selectedNodeRefSelector)
   const pannelClickedPosition = useSelector(pannelClickedPositionSelector)
 
   const [reconnectingEdge, setReconnectingEdge] = useState<AppEdge | null>(null)
@@ -128,14 +128,27 @@ const useFlowPageData = () => {
 
   const onNodeClick = useCallback(
     (e: React.MouseEvent, node: AppNode) => {
-      //capture shift + click to select multiple nodes
-      if (e.shiftKey) {
-        dispatch(uiActions.setSelectedNode({ id: node.id }))
+      //capture click to select multiple nodes
+      if (e.ctrlKey || e.metaKey) {
+        let existingNodeIds: string[] = []
+        if (selectedNodeRef && 'selection' in selectedNodeRef) {
+          existingNodeIds = selectedNodeRef.selection.nodesIds
+        } else if (selectedNodeRef && 'id' in selectedNodeRef) {
+          existingNodeIds = [selectedNodeRef.id]
+        }
+
+        // Add new node ID if not already present
+        const nodesIds = existingNodeIds.includes(node.id) ? existingNodeIds : [...existingNodeIds, node.id]
+
+        // Filter edges that connect only the selected nodes
+        const edgesIds = selectedEdges.filter((edge) => nodesIds.includes(edge.source) && nodesIds.includes(edge.target)).map((edge) => edge.id)
+
+        dispatch(uiActions.setSelectedNode({ selection: { nodesIds, edgesIds } }))
       } else {
         dispatch(uiActions.setSelectedNode({ id: node.id }))
       }
     },
-    [dispatch]
+    [dispatch, selectedEdges, selectedNodeRef]
   )
 
   const onNodeDelete = useCallback(
@@ -172,69 +185,95 @@ const useFlowPageData = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      //ctrl + d
-      if ((e.ctrlKey && e.key === 'd') || (e.ctrlKey && e.key === 'D')) {
-        e.preventDefault()
-        if (selectedNode) {
-          const newNode = { ...selectedNode, id: getRandomId(), position: { x: selectedNode.position.x + 20, y: selectedNode.position.y + 20 } }
-          const updatedFlow = {
-            ...selectedFlow!,
-            data: { ...selectedFlow!.data, nodes: [...selectedFlow!.data.nodes, newNode] },
-          }
-          setFlow(updatedFlow)
-
-          dispatch(uiActions.setSelectedNode({ id: newNode.id }))
-        }
-      }
-
       //escape
       if (e.key === 'Escape') {
         dispatch(uiActions.setSelectedNode(null))
+        return
       }
 
       //undo
       if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
         e.preventDefault()
         undo()
+        return
       }
 
       //redo
       if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
         e.preventDefault()
         redo()
+        return
       }
 
-      //ctrl + c
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
-        e.preventDefault()
-        if (selectedNode) {
-          navigator.clipboard.writeText(JSON.stringify(selectedNode))
-          toast.success('Node copied to clipboard')
+      const selectionIds =
+        selectedNodeRef && 'selection' in selectedNodeRef
+          ? selectedNodeRef.selection
+          : selectedNodeRef && 'id' in selectedNodeRef
+          ? { nodesIds: [selectedNodeRef.id], edgesIds: [] }
+          : null
+
+      if (selectionIds) {
+        const selection = {
+          nodes: selectionIds.nodesIds.map((id) => selectedNodes.find((node) => node.id === id)).filter((node) => node !== undefined),
+          edges: selectionIds.edgesIds.map((id) => selectedEdges.find((edge) => edge.id === id)).filter((edge) => edge !== undefined),
         }
-      }
-
-      //ctrl + v
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
-        e.preventDefault()
-        navigator.clipboard.readText().then((text) => {
-          const node = parseNodeString(text)
-          if (!node) {
-            toast.error('Invalid node data')
-            return
-          }
-          if (!pannelClickedPosition) {
-            toast.error('No position to paste node, click on the canvas to set position')
-            return
-          }
-
-          const newNode = { ...node, id: getRandomId(), position: { x: pannelClickedPosition.x, y: pannelClickedPosition.y } }
+        if ((e.ctrlKey && e.key === 'd') || (e.ctrlKey && e.key === 'D')) {
+          //ctrl + d
+          e.preventDefault()
+          const { nodes: clonedNodes, edges: clonedEdges } = cloneSelectionNodeData(selection, { x: 20, y: 20 }, true)
+          const updatedNodes = [...selectedFlow!.data.nodes.map((node) => ({ ...node, selected: false })), ...clonedNodes]
+          const updatedEdges = [...selectedFlow!.data.edges, ...clonedEdges]
           const updatedFlow = {
             ...selectedFlow!,
-            data: { ...selectedFlow!.data, nodes: [...selectedFlow!.data.nodes, newNode] },
+            data: { ...selectedFlow!.data, nodes: updatedNodes, edges: updatedEdges },
           }
+
           setFlow(updatedFlow)
-          dispatch(uiActions.setSelectedNode({ id: newNode.id }))
-        })
+          dispatch(
+            uiActions.setSelectedNode({ selection: { nodesIds: clonedNodes.map((node) => node.id), edgesIds: clonedEdges.map((edge) => edge.id) } })
+          )
+        }
+
+        //ctrl + c
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+          e.preventDefault()
+          navigator.clipboard.writeText(JSON.stringify(selection))
+          toast.success('Node copied to clipboard')
+        }
+
+        //ctrl + v
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+          e.preventDefault()
+          navigator.clipboard.readText().then((text) => {
+            const nodeSelection = parseNodeSelectionString(text)
+            if (!nodeSelection) {
+              toast.error('Invalid node selection data')
+              return
+            }
+            if (!pannelClickedPosition) {
+              toast.error('No position to paste node, click on the canvas to set position')
+              return
+            }
+
+            const { nodes: clonedNodes, edges: clonedEdges } = cloneSelectionNodeData(
+              nodeSelection,
+              getOffsetFromCentroid(nodeSelection.nodes, pannelClickedPosition),
+              true
+            )
+            const updatedFlow = {
+              ...selectedFlow!,
+              data: {
+                ...selectedFlow!.data,
+                nodes: [...selectedFlow!.data.nodes.map((node) => ({ ...node, selected: false })), ...clonedNodes],
+                edges: [...selectedFlow!.data.edges, ...clonedEdges],
+              },
+            }
+            setFlow(updatedFlow)
+            dispatch(
+              uiActions.setSelectedNode({ selection: { nodesIds: clonedNodes.map((node) => node.id), edgesIds: clonedEdges.map((edge) => edge.id) } })
+            )
+          })
+        }
       }
     }
 
@@ -242,7 +281,7 @@ const useFlowPageData = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [selectedNode, selectedNodes, selectedFlow, setFlow, undo, redo])
+  }, [selectedNodes, selectedEdges, selectedFlow, setFlow, undo, redo, dispatch, pannelClickedPosition, selectedNodeRef])
 
   return {
     nodes: selectedFlow?.data.nodes || [],

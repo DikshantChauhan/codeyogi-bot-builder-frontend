@@ -1,6 +1,21 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from '@xyflow/react'
+import { Dispatch, memo } from 'react'
+import { connect } from 'react-redux'
+import { AppNode } from '../../../models/Node.model'
+import { uiActions } from '../../../store/slices/UI.slice'
+import { AppState } from '../../../store/store'
 
-function CustomEdge({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd = 'url(#arrow)' }: EdgeProps) {
+function CustomEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  markerEnd = 'url(#arrow)',
+  selectedNodeRef,
+}: EdgeProps & { selectedNodeRef: AppState['ui']['selectedNodeRef'] }) {
   const [path] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -9,6 +24,7 @@ function CustomEdge({ sourceX, sourceY, targetX, targetY, sourcePosition, target
     targetY,
     targetPosition,
   })
+  const isSelected = selectedNodeRef && 'selection' in selectedNodeRef && selectedNodeRef.selection.edgesIds.includes(id)
 
   return (
     <>
@@ -17,9 +33,15 @@ function CustomEdge({ sourceX, sourceY, targetX, targetY, sourcePosition, target
           <path d="M 0 0 L 10 5 L 0 10 z" fill="blue" />
         </marker>
       </defs>
-      <BaseEdge path={path} markerEnd={markerEnd} />
+      <BaseEdge path={path} markerEnd={markerEnd} style={{ stroke: isSelected ? 'red' : 'blue' }} />
     </>
   )
 }
 
-export default CustomEdge
+const mapStateToProps = (state: AppState) => ({
+  selectedNodeRef: state.ui.selectedNodeRef,
+})
+
+const mapDispatchToProps = {}
+
+export default memo(connect(mapStateToProps, mapDispatchToProps)(CustomEdge))

@@ -53,6 +53,7 @@ const FlowPage = () => {
           onReconnect={onReconnect}
           defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
           onNodesDelete={onNodeDelete}
+          nodesDraggable
         >
           <MenuBar position="top-right" />
           <ToolSidePanel />

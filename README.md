@@ -56,4 +56,3 @@ Learn:
 
 *//TODOS:*
 2. Add templating feature
-4. undo-redo
