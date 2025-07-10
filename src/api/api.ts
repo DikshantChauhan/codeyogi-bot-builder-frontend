@@ -34,6 +34,7 @@ export const updateCampaignAPI = async (campaignId: string, campaign: CampaignUp
 export const fetchFlowAPI = async (flowId: string): Promise<Flow> => {
   const url = `${API_BASE_URL}/flow/${flowId}`
   const response = await axios.get<Flow>(url)
+  response.data.data.nodes = response.data.data.nodes.map((node) => ({ ...node, type: node.type === 'message' ? 'whatsapp-message' : node.type }))
   return response.data
 }
 

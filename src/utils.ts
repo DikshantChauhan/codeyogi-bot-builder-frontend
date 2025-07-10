@@ -45,7 +45,7 @@ export const shouldUpdateFlow = (flow: Flow): boolean => {
 export const parseNodeSelectionString = (nodeSelectionString: string): { nodes: AppNode[]; edges: AppEdge[] } | null => {
   try {
     const nodeSelection = JSON.parse(nodeSelectionString) as { nodes: AppNode[]; edges: AppEdge[] }
-    if (nodeSelection.nodes.length > 0 && nodeSelection.edges.length > 0) {
+    if (nodeSelection.nodes.length > 0) {
       return nodeSelection
     }
     return null

@@ -167,6 +167,8 @@ const useFlowPageData = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return
+
       //escape
       if (e.key === 'Escape') {
         dispatch(uiActions.setSelectedNode(null))
@@ -223,40 +225,6 @@ const useFlowPageData = () => {
           toast.success('Node copied to clipboard')
         }
 
-        //ctrl + v
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
-          e.preventDefault()
-          navigator.clipboard.readText().then((text) => {
-            const nodeSelection = parseNodeSelectionString(text)
-            if (!nodeSelection) {
-              toast.error('Invalid node selection data')
-              return
-            }
-            if (!pannelClickedPosition) {
-              toast.error('No position to paste node, click on the canvas to set position')
-              return
-            }
-
-            const { nodes: clonedNodes, edges: clonedEdges } = cloneSelectionNodeData(
-              nodeSelection,
-              getOffsetFromCentroid(nodeSelection.nodes, pannelClickedPosition),
-              true
-            )
-            const updatedFlow = {
-              ...selectedFlow!,
-              data: {
-                ...selectedFlow!.data,
-                nodes: [...selectedFlow!.data.nodes.map((node) => ({ ...node, selected: false })), ...clonedNodes],
-                edges: [...selectedFlow!.data.edges, ...clonedEdges],
-              },
-            }
-            setFlow(updatedFlow)
-            dispatch(
-              uiActions.setSelectedNode({ selection: { nodesIds: clonedNodes.map((node) => node.id), edgesIds: clonedEdges.map((edge) => edge.id) } })
-            )
-          })
-        }
-
         //Delete && Backspace
         if (e.key === 'Delete' || e.key === 'Backspace') {
           e.preventDefault()
@@ -269,6 +237,40 @@ const useFlowPageData = () => {
           setFlow(updatedFlow)
           dispatch(uiActions.setSelectedNode(null))
         }
+      }
+
+      //ctrl + v
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+        e.preventDefault()
+        navigator.clipboard.readText().then((text) => {
+          const nodeSelection = parseNodeSelectionString(text)
+          if (!nodeSelection) {
+            toast.error('Invalid node selection data')
+            return
+          }
+          if (!pannelClickedPosition) {
+            toast.error('No position to paste node, click on the canvas to set position')
+            return
+          }
+
+          const { nodes: clonedNodes, edges: clonedEdges } = cloneSelectionNodeData(
+            nodeSelection,
+            getOffsetFromCentroid(nodeSelection.nodes, pannelClickedPosition),
+            true
+          )
+          const updatedFlow = {
+            ...selectedFlow!,
+            data: {
+              ...selectedFlow!.data,
+              nodes: [...selectedFlow!.data.nodes.map((node) => ({ ...node, selected: false })), ...clonedNodes],
+              edges: [...selectedFlow!.data.edges, ...clonedEdges],
+            },
+          }
+          setFlow(updatedFlow)
+          dispatch(
+            uiActions.setSelectedNode({ selection: { nodesIds: clonedNodes.map((node) => node.id), edgesIds: clonedEdges.map((edge) => edge.id) } })
+          )
+        })
       }
     }
 
