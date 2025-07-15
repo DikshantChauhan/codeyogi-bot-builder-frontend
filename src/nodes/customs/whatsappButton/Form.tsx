@@ -20,7 +20,7 @@ type FormData = {
   buttons: string[]
   footer: string
   header: {
-    type: MessageHeader['type']
+    type: MessageHeader['type'] | ''
     text: string
     imageId: string
     imageLink: string
@@ -71,7 +71,7 @@ const Form = ({ node }: Props) => {
       buttons: data?.buttons || [''],
       footer: data?.footer || '',
       header: {
-        type: data?.header?.type || 'text',
+        type: data?.header?.type || '',
         text: data?.header?.text || '',
         imageId: getMediaValue(data?.header?.image, 'id'),
         imageLink: getMediaValue(data?.header?.image, 'link'),
@@ -103,27 +103,27 @@ const Form = ({ node }: Props) => {
       throw new Error('All buttons must be unique')
     }
 
-    // Header validation
-    if (value.header?.type === 'text' && !value.header.text?.trim()) {
-      throw new Error('Header text is required when header type is text')
-    }
+    // Header validation - only validate if header type is selected and not 'text'
+    if (value.header?.type && value.header.type !== 'text') {
+      const mediaValidations: Record<MediaType, { idField: keyof FormData['header']; linkField: keyof FormData['header'] }> = {
+        image: { idField: 'imageId', linkField: 'imageLink' },
+        video: { idField: 'videoId', linkField: 'videoLink' },
+        document: { idField: 'documentId', linkField: 'documentLink' },
+      }
 
-    const mediaValidations: Record<MediaType, { idField: keyof FormData['header']; linkField: keyof FormData['header'] }> = {
-      image: { idField: 'imageId', linkField: 'imageLink' },
-      video: { idField: 'videoId', linkField: 'videoLink' },
-      document: { idField: 'documentId', linkField: 'documentLink' },
-    }
-
-    const currentMediaType = value.header?.type
-    if (currentMediaType && currentMediaType !== 'text') {
-      const mediaType = currentMediaType as MediaType
-      const { idField, linkField } = mediaValidations[mediaType]
+      const currentMediaType = value.header.type as MediaType
+      const { idField, linkField } = mediaValidations[currentMediaType]
       const hasId = value.header[idField]?.trim()
       const hasLink = value.header[linkField]?.trim()
 
       if (!hasId && !hasLink) {
-        throw new Error(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} ID or Link is required`)
+        throw new Error(`${currentMediaType.charAt(0).toUpperCase() + currentMediaType.slice(1)} ID or Link is required`)
       }
+    }
+
+    // Header validation for text type
+    if (value.header?.type === 'text' && !value.header.text?.trim()) {
+      throw new Error('Header text is required when header type is text')
     }
 
     // Transform to WhatsappButtonNodeData
@@ -133,23 +133,24 @@ const Form = ({ node }: Props) => {
       footer: value.footer?.trim() || undefined,
     }
 
-    if (value.header) {
+    // Only add header if it has a valid type and content
+    if (value.header?.type) {
       const header: MessageHeader = { type: value.header.type }
 
-      if (value.header.type === 'text') {
+      if (value.header.type === 'text' && value.header.text?.trim()) {
         header.text = value.header.text.trim()
-      } else {
-        const mediaType = currentMediaType as MediaType
+        result.header = header
+      } else if (value.header.type !== 'text') {
+        const mediaType = value.header.type as MediaType
         const mediaObject = createMediaObject(
           value.header[`${mediaType}Id` as keyof FormData['header']] as string,
           value.header[`${mediaType}Link` as keyof FormData['header']] as string
         )
         if (mediaObject) {
           header[mediaType] = mediaObject
+          result.header = header
         }
       }
-
-      result.header = header
     }
 
     return result
@@ -203,6 +204,7 @@ const Form = ({ node }: Props) => {
           <div className="space-y-2">
             <label className="text-sm font-medium">Header Type</label>
             <Field as="select" name="header.type" className="w-full rounded-md border px-3 py-2">
+              <option value="">No Header</option>
               <option value="text">Text</option>
               <option value="image">Image</option>
               <option value="video">Video</option>

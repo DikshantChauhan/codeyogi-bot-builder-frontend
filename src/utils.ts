@@ -117,3 +117,11 @@ export const getOffsetFromCentroid = (nodes: AppNode[], pastePosition: XYPositio
     y: pastePosition.y - centroid.y,
   }
 }
+
+export const sanitizeEdges = (edges: AppEdge[], nodes: AppNode[]): AppEdge[] => {
+  return edges.filter((edge) => {
+    const isTargetPresent = nodes.find((node) => node.id === edge.target)
+    const isSourcePresent = nodes.find((node) => node.id === edge.source)
+    return isTargetPresent && isSourcePresent
+  })
+}

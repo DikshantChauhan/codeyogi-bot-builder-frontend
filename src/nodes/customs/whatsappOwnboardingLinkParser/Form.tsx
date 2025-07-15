@@ -1,15 +1,27 @@
 import { memo, useMemo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappOwnboardingLinkParserNodeData, WhatsappOwnboardingLinkParserNodePaths, WhatsappOwnboardingLinkParserNodeType } from './type'
+import Field from '../../../components/Field'
 
 interface Props {
   node?: WhatsappOwnboardingLinkParserNodeType
 }
 
-const Form: React.FC<Props> = ({}) => {
-  const data = useMemo(
+const info = `Parse the provided link and choose the path for Student, Teacher or Unknown.
+
+For passing keys wrap them with '*' and for key/value pairs use ':'. 
+Example: *District id: 123*
+         *Dise code: 123*
+
+For choosing Student provide: Dise code.
+This will set the user's dise-code.
+
+For choosing Teacher provide: District id.`
+
+const Form: React.FC<Props> = ({ node }) => {
+  const initialValues = useMemo(
     () => ({
-      link: '${chat.input}',
+      link: node?.data.link || '',
       paths: WhatsappOwnboardingLinkParserNodePaths,
     }),
     []
@@ -20,16 +32,8 @@ const Form: React.FC<Props> = ({}) => {
   }
 
   return (
-    <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail}>
-      <p className="font-bold">Link</p>
-      <p>{data.link}</p>
-
-      <div className="mt-4">
-        <p className="font-bold">Paths</p>
-        {data.paths.map((path) => (
-          <p>{path}</p>
-        ))}
-      </div>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={info}>
+      <Field name="link" label="Link" as="textarea" rows={5} placeholder="${chat.input}" />
     </NodeFormContainer>
   )
 }

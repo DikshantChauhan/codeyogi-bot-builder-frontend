@@ -66,10 +66,7 @@ import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY, WhatsappValidateDiseCodeNodeType 
 import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseCode/Node'
 import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
 import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
-import WhatsappConfirmSchoolNode from '../nodes/customs/whatsappConfirmSchool/Node'
 import { GrValidate } from 'react-icons/gr'
-import { WHATSAPP_CONFIRM_SCHOOL_NODE_KEY, WhatsappConfirmSchoolNodeType } from '../nodes/customs/whatsappConfirmSchool/type'
-import { GiConfirmed } from 'react-icons/gi'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -104,7 +101,6 @@ export type AppNode =
       | WhatsappUserUpdateNodeType
       | WhatsappOwnboardingLinkParserNodeType
       | WhatsappValidateDiseCodeNodeType
-      | WhatsappConfirmSchoolNodeType
       | WhatsappCtaUrlNodeType
     ) & { nudge: SubFlowValue; validator: SubFlowValue }
 
@@ -134,6 +130,5 @@ export const nodesRegistry = {
   [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, color: 'bg-blue-600', Icon: IoMdPerson },
   [WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOwnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
   [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: { node: WhatsappValidateDiseCodeNode, color: 'bg-yellow-600', Icon: GrValidate },
-  [WHATSAPP_CONFIRM_SCHOOL_NODE_KEY]: { node: WhatsappConfirmSchoolNode, color: 'bg-amber-600', Icon: GiConfirmed },
   [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, color: 'bg-lime-500', Icon: IoIosLink },
 } satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>

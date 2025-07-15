@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Flow } from '../../models/Flow.model'
 import { createFlowAPI, updateFlowAPI } from '../../api/api'
-import { getLocalFlow, setLocalFlow } from '../../utils'
+import { getLocalFlow, sanitizeEdges, setLocalFlow } from '../../utils'
 
 interface FlowState {
   flowsById: { [id: string]: Flow }
@@ -55,11 +55,12 @@ const flowSlice = createSlice({
     setFlow: (state, action: PayloadAction<{ flow: Flow; loading?: boolean; error?: string | null }>) => {
       const { flow, loading, error } = action.payload
       const flowId = flow.id
+      const sanitizedFlow = { ...flow, data: { ...flow.data, edges: sanitizeEdges(flow.data.edges, flow.data.nodes) } }
 
-      state.flowsById[flowId] = flow as any
+      state.flowsById[flowId] = sanitizedFlow as any
       state.flowsLoading[flowId] = loading ?? state.flowsLoading[flowId]
       state.flowsError[flowId] = error ?? state.flowsError[flowId]
-      setLocalFlow(flow)
+      setLocalFlow(sanitizedFlow)
     },
     setFlowLoading: (state, action: PayloadAction<{ flowId: string; loading: boolean }>) => {
       const { flowId, loading } = action.payload

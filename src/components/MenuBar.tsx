@@ -25,25 +25,22 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, position }) => {
   const handleSave = useCallback(() => {
     if (!selectedFlow) return
     const nodes = selectedFlow.data.nodes
-    const edges = selectedFlow.data.edges
 
     //validate start and end nodes
-    const startNode = nodes.find((node) => node.type === START_NODE_KEY)
+    const startNodes = nodes.filter((node) => node.type === START_NODE_KEY)
     const endNode = nodes.find((node) => node.type === END_NODE_KEY)
 
-    if (!startNode || !endNode) {
+    if (!startNodes || !endNode) {
       toast.error('Start and end nodes are required for a flow')
       return
     }
 
-    const senetizedEdges = edges.filter((edge) => {
-      const isTargetPresent = nodes.find((node) => node.id === edge.target)
-      const isSourcePresent = nodes.find((node) => node.id === edge.source)
+    if (startNodes.length > 1) {
+      toast.error('Only one start node is allowed')
+      return
+    }
 
-      return isTargetPresent && isSourcePresent
-    })
-
-    updateFlow({ id: selectedFlow.id, data: { ...selectedFlow, data: { ...selectedFlow.data, edges: senetizedEdges } } })
+    updateFlow({ id: selectedFlow.id, data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type } })
     setIsOpen(false)
   }, [selectedFlow, updateFlow])
 

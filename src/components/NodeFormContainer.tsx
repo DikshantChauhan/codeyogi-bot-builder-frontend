@@ -4,18 +4,18 @@ import Button from './Button'
 import { AppNode } from '../models/Node.model'
 import useNodeFormContainerData from '../hooks/useNodeFormContainerData'
 import NodeSubFlowForm from './NodeSubFlowForm'
-
-
+import InfoCard from './InfoCard'
 
 interface FormProps<T extends FormikValues> {
   initialValues: T
   transFormNodeDataOrFail: TransFormNodeDataOrFail<T>
   children: React.ReactNode | ((props: FormikProps<T>) => React.ReactNode)
+  info?: string
 }
 
 export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
 
-const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues }: FormProps<T>) => {
+const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues, info }: FormProps<T>) => {
   const { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge } = useNodeFormContainerData(transFormNodeDataOrFail)
 
   if (!type) return <div>No node to add</div>
@@ -25,8 +25,10 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
       <Formik<T> initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
         {(formikProps) => (
           <Form className="flex flex-col flex-1 max-h-full gap-3 p-4">
-            <h2 className="text-xl font-bold">{type}</h2>
-
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">{type}</h2>
+              {info && <InfoCard position='bottom' info={info} />}
+            </div>
             <div className="flex-1 overflow-auto">{typeof children === 'function' ? children(formikProps) : children}</div>
 
             {slectedFlow?.type === 'level' && <NodeSubFlowForm selectedNudge={selectedNudge} setSelectedNudge={setSelectedNudge} />}
