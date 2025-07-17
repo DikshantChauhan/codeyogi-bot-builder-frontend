@@ -60,13 +60,14 @@ import { PiPathBold } from 'react-icons/pi'
 import { NamedExoticComponent } from 'react'
 import { WHATSAPP_USER_UPDATE_NODE_KEY, WhatsappUserUpdateNodeType } from '../nodes/customs/whatsappUserUpdate/type'
 import WhatsappUserUpdateNode from '../nodes/customs/whatsappUserUpdate/Node'
-import { WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY, WhatsappOwnboardingLinkParserNodeType } from '../nodes/customs/whatsappOwnboardingLinkParser/type'
-import WhatsappOwnboardingLinkParserNode from '../nodes/customs/whatsappOwnboardingLinkParser/Node'
+import { WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY, WhatsappOnboardingLinkParserNodeType } from '../nodes/customs/whatsappOnboardingLinkParser/type'
+import WhatsappOnboardingLinkParserNode from '../nodes/customs/whatsappOnboardingLinkParser/Node'
 import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY, WhatsappValidateDiseCodeNodeType } from '../nodes/customs/whatsappValidateDiseCode/type'
 import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseCode/Node'
 import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
 import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
 import { GrValidate } from 'react-icons/gr'
+import { Node } from '@xyflow/react'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -77,6 +78,8 @@ export interface MessageHeader {
   video?: { id: string } | { link: string }
   document?: { id: string } | { link: string }
 }
+
+export type NodeOrientation = 'vertical' | 'horizontal'
 
 export type AppNode =
   | (
@@ -99,10 +102,10 @@ export type AppNode =
       | DelayNodeType
       | EndNodeType
       | WhatsappUserUpdateNodeType
-      | WhatsappOwnboardingLinkParserNodeType
+      | WhatsappOnboardingLinkParserNodeType
       | WhatsappValidateDiseCodeNodeType
       | WhatsappCtaUrlNodeType
-    ) & { nudge: SubFlowValue; validator: SubFlowValue }
+    ) & { nudge: SubFlowValue; validator: SubFlowValue; orientation?: NodeOrientation }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
 
@@ -128,7 +131,7 @@ export const nodesRegistry = {
   [DELAY_NODE_KEY]: { node: DelayNode, color: 'bg-gray-500', Icon: IoMdTime },
   [END_NODE_KEY]: { node: EndNode, color: 'bg-slate-700', Icon: IoMdSquare },
   [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, color: 'bg-blue-600', Icon: IoMdPerson },
-  [WHATSAPP_OWNBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOwnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
+  [WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
   [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: { node: WhatsappValidateDiseCodeNode, color: 'bg-yellow-600', Icon: GrValidate },
   [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, color: 'bg-lime-500', Icon: IoIosLink },
 } satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>

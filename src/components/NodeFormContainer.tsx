@@ -5,6 +5,7 @@ import { AppNode } from '../models/Node.model'
 import useNodeFormContainerData from '../hooks/useNodeFormContainerData'
 import NodeSubFlowForm from './NodeSubFlowForm'
 import InfoCard from './InfoCard'
+import { FaArrowsAltH, FaArrowsAltV } from 'react-icons/fa'
 
 interface FormProps<T extends FormikValues> {
   initialValues: T
@@ -16,7 +17,8 @@ interface FormProps<T extends FormikValues> {
 export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
 
 const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, children, initialValues, info }: FormProps<T>) => {
-  const { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge } = useNodeFormContainerData(transFormNodeDataOrFail)
+  const { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge, orientaion, setOrientation } =
+    useNodeFormContainerData(transFormNodeDataOrFail)
 
   if (!type) return <div>No node to add</div>
 
@@ -27,7 +29,18 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
           <Form className="flex flex-col flex-1 max-h-full gap-3 p-4">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold">{type}</h2>
-              {info && <InfoCard position='bottom' info={info} />}
+              {info && <InfoCard position="bottom" info={info} />}
+              {true && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOrientation(orientaion === 'horizontal' ? 'vertical' : 'horizontal')
+                  }}
+                  className="text-primary-500"
+                >
+                  {orientaion === 'horizontal' ? <FaArrowsAltH /> : <FaArrowsAltV />}
+                </button>
+              )}
             </div>
             <div className="flex-1 overflow-auto">{typeof children === 'function' ? children(formikProps) : children}</div>
 

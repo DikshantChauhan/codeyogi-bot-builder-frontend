@@ -2,7 +2,7 @@ import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectedNodeSelector } from '../store/selectors/ui.selector'
 import { uiActions } from '../store/slices/UI.slice'
-import { AppNode, SubFlowValue } from '../models/Node.model'
+import { AppNode, NodeOrientation, SubFlowValue } from '../models/Node.model'
 import { useCallback, useMemo, useState } from 'react'
 import { useReactFlow } from '@xyflow/react'
 import { FormikHelpers, FormikValues } from 'formik'
@@ -20,6 +20,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
   const slectedFlow = useSelector(selectedFlowSelector)
   const dispatch = useDispatch()
   const [selectedNudge, setSelectedNudge] = useState<SubFlowValue>('inherit')
+  const [orientaion, setOrientation] = useState<NodeOrientation>(selectedNode?.orientation || 'horizontal')
 
   const closeSideBar = useCallback(() => {
     dispatch(uiActions.setSelectedNode(null))
@@ -62,6 +63,7 @@ const useNodeFormContainerData = <T extends FormikValues>(
           position: oldNode?.position || centerPosition,
           dragHandle: '.drag-handle__custom',
           nudge: selectedNudge,
+          orientation: orientaion,
         } as AppNode
 
         if (!oldNode) {
@@ -75,10 +77,10 @@ const useNodeFormContainerData = <T extends FormikValues>(
         toast.error(String(error))
       }
     },
-    [centerPosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type, selectedNudge, closeSideBar, setFlow]
+    [centerPosition, selectedNode, slectedFlow, transFormNodeDataOrFail, type, selectedNudge, closeSideBar, setFlow, orientaion]
   )
 
-  return { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge }
+  return { selectedNode, handleSubmit, type, slectedFlow, selectedNudge, setSelectedNudge, orientaion, setOrientation }
 }
 
 export default useNodeFormContainerData

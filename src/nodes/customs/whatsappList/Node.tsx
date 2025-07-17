@@ -3,7 +3,8 @@ import { WhatsappListNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappListNode: FC<NodeProps<WhatsappListNodeType>> = ({ id, data }) => {
+const WhatsappListNode: FC<NodeProps<WhatsappListNodeType>> = (node) => {
+  const { data, id } = node
   const listOptions = (data.buttons || []).map((item) => ['', item] as [string, string])
   return (
     <NodeCard nodeId={id} nodeType="whatsapp-list" options={listOptions}>

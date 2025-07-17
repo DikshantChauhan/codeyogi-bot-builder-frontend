@@ -31,6 +31,9 @@ const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setSelectedNode }
         <div className="grid grid-cols-1 gap-1">
           {allowedNodes.sort().map((nodeType) => {
             const nodeInfo = nodesRegistry[nodeType]
+            if (!nodeInfo) {
+              console.log(nodeType)
+            }
             const Icon = nodeInfo.Icon
 
             return (

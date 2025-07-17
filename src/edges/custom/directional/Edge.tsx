@@ -13,6 +13,7 @@ function CustomEdge({
   targetPosition,
   markerEnd = 'url(#arrow)',
   selectedNodeRef,
+  selected,
 }: EdgeProps & { selectedNodeRef: AppState['ui']['selectedNodeRef'] }) {
   const [path] = getSmoothStepPath({
     sourceX,
@@ -22,7 +23,7 @@ function CustomEdge({
     targetY,
     targetPosition,
   })
-  const isSelected = selectedNodeRef && 'selection' in selectedNodeRef && selectedNodeRef.selection.edgesIds.includes(id)
+  const isSelected = (selectedNodeRef && 'selection' in selectedNodeRef && selectedNodeRef.selection.edgesIds.includes(id)) || selected
 
   return (
     <>

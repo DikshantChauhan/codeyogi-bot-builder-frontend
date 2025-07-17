@@ -4,6 +4,7 @@ import { NormalizedCampaign } from '../models/Campaign.model'
 import { Entity } from '../models/Entity.model'
 import { Flow } from '../models/Flow.model'
 import axios from 'axios'
+import { AppNode } from '../models/Node.model'
 
 export const fetchCampaignslistAPI = async (): Promise<NormalizedCampaign[]> => {
   const url = `${API_BASE_URL}/campaigns`
@@ -34,6 +35,12 @@ export const updateCampaignAPI = async (campaignId: string, campaign: CampaignUp
 export const fetchFlowAPI = async (flowId: string): Promise<Flow> => {
   const url = `${API_BASE_URL}/flow/${flowId}`
   const response = await axios.get<Flow>(url)
+  response.data.data.nodes = response.data.data.nodes.map((node) => {
+    if (node.type === ('whatsapp-ownboarding-link-parser' as any)) {
+      return { ...node, type: 'whatsapp-onboarding-link-parser' } as AppNode
+    }
+    return node
+  })
   return response.data
 }
 

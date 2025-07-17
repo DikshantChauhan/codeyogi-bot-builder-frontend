@@ -8,6 +8,8 @@ import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { connect } from 'react-redux'
 import { AppState } from '../store/store'
 import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
+import { selectedFlowSelector } from '../store/selectors/flow.selector'
+import { Flow } from '../models/Flow.model'
 
 interface Props {
   nodeId: string
@@ -15,14 +17,20 @@ interface Props {
   options?: [string, string][]
   children?: React.ReactNode
   selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
+  selectedFlow: Flow | null
 }
 
-const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Props) => {
+const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef, selectedFlow }: Props) => {
   const { color, Icon } = nodesRegistry[nodeType]
   const isSelected =
     selectedNodeRef &&
     (('id' in selectedNodeRef && selectedNodeRef.id === nodeId) ||
       ('selection' in selectedNodeRef && selectedNodeRef.selection.nodesIds.includes(nodeId)))
+
+  //TODO: not the optimum way change typings for orientation and move it in base node
+  const node = selectedFlow?.data.nodes.find(({ id }) => id === nodeId)
+  const orientation = node?.orientation
+
   return (
     <div
       className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative ${
@@ -30,7 +38,13 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Prop
       }`}
     >
       <div className="flex items-center mb-1 px-2 relative justify-between">
-        {nodeType !== START_NODE_KEY && <Handle type="target" position={Position.Left} />}
+        {nodeType !== START_NODE_KEY && (
+          <Handle
+            type="target"
+            className={orientation === 'vertical' ? '-top-2 w-3 h-1' : ''}
+            position={orientation === 'vertical' ? Position.Top : Position.Left}
+          />
+        )}
         <div className="flex items-center mr-2">
           <Icon className={`p-1 w-5 h-5 text-white rounded ${color}`} />
           <p className="text-center ml-2">{nodeType}</p>
@@ -55,7 +69,11 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Prop
             ))}
           </div>
         ) : (
-          <Handle type="source" position={Position.Right} />
+          <Handle
+            type="source"
+            className={orientation === 'vertical' ? 'w-3 h-1' : ''}
+            position={orientation === 'vertical' ? Position.Bottom : Position.Right}
+          />
         ))}
     </div>
   )
@@ -64,6 +82,7 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef }: Prop
 const mapStateToProps = (state: AppState) => {
   return {
     selectedNodeRef: selectedNodeRefSelector(state),
+    selectedFlow: selectedFlowSelector(state),
   }
 }
 

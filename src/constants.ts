@@ -22,6 +22,7 @@ export const VARIABLE_NAMES = [
   'user.total_score',
   'user.current_level_score',
   'user.prompt_input',
-  'user.ownboarding_dise_code',
-  'user.ownboarding_school_name',
+  'user.onboarding_dise_code',
+  'user.onboarding_school_name',
+  'user.onboarding_course',
 ] as const
