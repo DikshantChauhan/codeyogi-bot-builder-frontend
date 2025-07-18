@@ -1,7 +1,7 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { campaignActions } from '../slices/campaign.slice'
 import { PathMatch } from 'react-router-dom'
-import { createCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, fetchFlowAPI, updateCampaignAPI } from '../../api/api'
+import { createCampaignAPI, deleteCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, fetchFlowAPI, updateCampaignAPI } from '../../api/api'
 import { ROUTE_CAMPAIGN_DETAILS } from '../../constants'
 import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'
@@ -94,7 +94,24 @@ export function* fetchCampaignDetailsSaga(match: PathMatch<typeof ROUTE_CAMPAIGN
   }
 }
 
+function* deleteCampaignSaga({ payload }: ReturnType<typeof campaignActions.campaignDeleteTry>): Generator {
+  try {
+    yield put(campaignActions.campaignDeleteLoading(true))
+
+    yield call(deleteCampaignAPI, payload)
+
+    yield put(campaignActions.removeCampaign(payload))
+    toast.success('Campaign deleted successfully')
+  } catch (error) {
+    console.error(error)
+    toast.error('Campaign deletion failed')
+  } finally {
+    yield put(campaignActions.campaignDeleteLoading(false))
+  }
+}
+
 export function* watchCampaignSaga(): Generator {
   yield takeLatest(campaignActions.campaignAddTry.type, createCampaignSaga)
   yield takeLatest(campaignActions.campaignUpdateTry.type, updateCampaignSaga)
+  yield takeLatest(campaignActions.campaignDeleteTry.type, deleteCampaignSaga)
 }

@@ -61,3 +61,14 @@ export const updateFlowAPI = async ({ id, data }: { id: string; data: FlowAddOrU
   const response = await axios.put<Flow>(url, data)
   return response.data
 }
+
+export const deleteCampaignAPI = async (campaignId: string) => {
+  const url = `${API_BASE_URL}/campaign/${campaignId}`
+  await axios.delete(url)
+}
+
+export const deleteFlowAPI = async (campaignId: string, flowId: string): Promise<NormalizedCampaign> => {
+  const url = `${API_BASE_URL}/campaign/${campaignId}/flow/${flowId}`
+  const response = await axios.delete<NormalizedCampaign>(url)
+  return response.data
+}

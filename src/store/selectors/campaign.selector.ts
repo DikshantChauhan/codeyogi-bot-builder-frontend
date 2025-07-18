@@ -37,3 +37,5 @@ export const campaignAddErrorSelector = createSelector([campaignsSelector], (cam
 export const campaignUpdateLoadingSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignUpdateLoading)
 
 export const campaignUpdateErrorSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignUpdateError)
+
+export const campaignDeleteLoadingSelector = createSelector([campaignsSelector], (campaignsState) => campaignsState.campaignDeleteLoading)

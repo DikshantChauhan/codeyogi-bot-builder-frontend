@@ -51,3 +51,5 @@ export const flowUpdateLoadingSeletor = createSelector(flowsSelector, (state) =>
 export const nudgeFlowsLoadingSelector = createSelector(flowsSelector, (state) => state.nudgeFlowsLoading)
 
 export const nudgeFlowsErrorSelector = createSelector(flowsSelector, (state) => state.nudgeFlowsError)
+
+export const flowDeleteLoadingSelector = createSelector(flowsSelector, (state) => state.flowDeleteLoading)

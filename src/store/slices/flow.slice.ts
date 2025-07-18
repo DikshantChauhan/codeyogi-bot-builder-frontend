@@ -18,6 +18,8 @@ interface FlowState {
 
   nudgeFlowsLoading: boolean
   nudgeFlowsError: string | null
+
+  flowDeleteLoading: { [flowId: string]: boolean }
 }
 
 const initialState: FlowState = {
@@ -43,6 +45,8 @@ const initialState: FlowState = {
 
   nudgeFlowsLoading: false,
   nudgeFlowsError: null,
+
+  flowDeleteLoading: {},
 }
 
 const flowSlice = createSlice({
@@ -94,6 +98,23 @@ const flowSlice = createSlice({
     },
     setNudgeFlowsError: (state, action: PayloadAction<string | null>) => {
       state.nudgeFlowsError = action.payload
+    },
+
+    flowDeleteTry: (_, __: PayloadAction<{ campaignId: string; flowId: string }>) => undefined,
+    setFlowDeleteLoading: (state, action: PayloadAction<{ flowId: string; loading: boolean }>) => {
+      const { flowId, loading } = action.payload
+      state.flowDeleteLoading[flowId] = loading
+    },
+    removeFlow: (state, { payload }: PayloadAction<string>) => {
+      const flowId = payload
+      delete state.flowsById[flowId]
+      delete state.flowsLoading[flowId]
+      delete state.flowsError[flowId]
+      if (state.selectedFlowId === flowId) {
+        state.selectedFlowId = null
+      }
+      // Remove from nudge flows if present
+      state.nudgeFlowsIds = state.nudgeFlowsIds.filter((id) => id !== flowId)
     },
   },
 })

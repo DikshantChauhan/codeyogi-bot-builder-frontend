@@ -4,9 +4,10 @@ import { flowActions } from '../slices/flow.slice'
 import { put, call, all, takeLatest } from 'redux-saga/effects'
 import { PathMatch } from 'react-router-dom'
 import { ROUTE_CAMPAIGN_DETAILS, ROUTE_LEVEL_FLOW, ROUTE_NUDGE_FLOW } from '../../constants'
-import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, updateFlowAPI } from '../../api/api'
+import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, updateFlowAPI, deleteFlowAPI } from '../../api/api'
 import { toast } from 'react-toastify'
 import { shouldUpdateFlow } from '../../utils'
+import { NormalizedCampaign } from '../../models/Campaign.model'
 
 function* fetchLevelFlowSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   const flowId = match.params.flow_id!
@@ -110,7 +111,26 @@ export function* fetchNudgeFlowSaga(match: PathMatch<typeof ROUTE_NUDGE_FLOW.dyn
   }
 }
 
+function* deleteFlowSaga({ payload }: ReturnType<typeof flowActions.flowDeleteTry>): Generator {
+  try {
+    yield put(flowActions.setFlowDeleteLoading({ flowId: payload.flowId, loading: true }))
+
+    const normalizedCampaign: NormalizedCampaign = yield call(deleteFlowAPI, payload.campaignId, payload.flowId)
+
+    yield put(campaignActions.setCampaign({ campaign: normalizedCampaign, error: null, loading: false }))
+    yield put(flowActions.removeFlow(payload.flowId))
+
+    toast.success('Flow deleted successfully')
+  } catch (error) {
+    console.error(error)
+    toast.error('Flow deletion failed')
+  } finally {
+    yield put(flowActions.setFlowDeleteLoading({ flowId: payload.flowId, loading: false }))
+  }
+}
+
 export function* watchFlowAddSaga(): Generator {
   yield takeLatest(flowActions.flowAddTry.type, flowAddSaga)
   yield takeLatest(flowActions.flowUpdateTry.type, flowUpdateSaga)
+  yield takeLatest(flowActions.flowDeleteTry.type, deleteFlowSaga)
 }

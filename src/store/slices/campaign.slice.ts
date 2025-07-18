@@ -13,6 +13,7 @@ interface CampaignState {
   campaignAddError: string | null
   campaignUpdateLoading: boolean
   campaignUpdateError: string | null
+  campaignDeleteLoading: boolean
 }
 
 const initialState: CampaignState = {
@@ -26,6 +27,7 @@ const initialState: CampaignState = {
   campaignAddError: null,
   campaignUpdateLoading: false,
   campaignUpdateError: null,
+  campaignDeleteLoading: false,
 }
 
 const campaignSlice = createSlice({
@@ -73,6 +75,21 @@ const campaignSlice = createSlice({
     },
     campaignUpdateError: (state, { payload }: PayloadAction<string | null>) => {
       state.campaignUpdateError = payload
+    },
+
+    // Delete Campaign
+    campaignDeleteTry: (_, __: PayloadAction<string>) => undefined,
+    campaignDeleteLoading: (state, { payload }: PayloadAction<boolean>) => {
+      state.campaignDeleteLoading = payload
+    },
+    removeCampaign: (state, { payload }: PayloadAction<string>) => {
+      const campaignId = payload
+      delete state.campaignsById[campaignId]
+      delete state.campaignsLoading[campaignId]
+      delete state.campaignsError[campaignId]
+      if (state.selectedCampaignId === campaignId) {
+        state.selectedCampaignId = null
+      }
     },
   },
 })
