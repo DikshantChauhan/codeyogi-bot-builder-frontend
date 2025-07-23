@@ -306,6 +306,15 @@ const useFlowPageData = () => {
           setFlow(updatedFlow)
         })
       }
+
+      //ctrl + A
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault()
+        setSelectedNode(
+          selectedNodes.map((node) => node.id),
+          selectedEdges.map((edge) => edge.id)
+        )
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
