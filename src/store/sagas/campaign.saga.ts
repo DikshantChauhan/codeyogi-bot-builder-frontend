@@ -8,11 +8,12 @@ import { toast } from 'react-toastify'
 import { selectedNormalizedCampaignSelector } from '../selectors/campaign.selector'
 import { flowActions } from '../slices/flow.slice'
 import { shouldUpdateFlow } from '../../utils'
+import { Flow } from '../../models/Flow.model'
 
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
   try {
     yield put(campaignActions.setCampaignsListFetching(true))
-    const response: NormalizedCampaign[] = yield call(fetchCampaignslistAPI)
+    const response = (yield call(fetchCampaignslistAPI)) as NormalizedCampaign[]
 
     for (const campaign of response) {
       yield put(campaignActions.setCampaign({ campaign, error: null, loading: false }))
@@ -30,7 +31,7 @@ function* createCampaignSaga(action: ReturnType<typeof campaignActions.campaignA
     yield put(campaignActions.campaignAddError(null))
     yield put(campaignActions.campaignAddLoading(true))
 
-    const response: NormalizedCampaign = yield call(createCampaignAPI, action.payload)
+    const response = (yield call(createCampaignAPI, action.payload)) as NormalizedCampaign
     yield put(campaignActions.setCampaign({ campaign: response }))
 
     toast.success('Campaign created successfully')
@@ -47,7 +48,7 @@ function* fetchCampaignSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynam
   try {
     yield put(campaignActions.setSelectedCampaignId(campaignId))
     yield put(campaignActions.setCampaignLoading({ campaignId, loading: true }))
-    const response: Awaited<ReturnType<typeof fetchCampaignAPI>> = yield call(fetchCampaignAPI, campaignId)
+    const response = (yield call(fetchCampaignAPI, campaignId)) as NormalizedCampaign
 
     yield put(
       campaignActions.setCampaign({
@@ -68,7 +69,7 @@ function* updateCampaignSaga({ payload }: ReturnType<typeof campaignActions.camp
     yield put(campaignActions.campaignUpdateLoading(true))
     yield put(campaignActions.campaignUpdateError(null))
 
-    const response: NormalizedCampaign = yield call(updateCampaignAPI, payload.id, payload.campaign)
+    const response = (yield call(updateCampaignAPI, payload.id, payload.campaign)) as NormalizedCampaign
     yield put(campaignActions.setCampaign({ campaign: response }))
 
     toast.success('Campaign updated successfully')
@@ -83,9 +84,9 @@ function* updateCampaignSaga({ payload }: ReturnType<typeof campaignActions.camp
 export function* fetchCampaignDetailsSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   yield call(fetchCampaignSaga, match)
 
-  const campaign: NormalizedCampaign = yield select(selectedNormalizedCampaignSelector)
+  const campaign = (yield select(selectedNormalizedCampaignSelector)) as NormalizedCampaign
 
-  const flows: Awaited<ReturnType<typeof fetchFlowAPI>>[] = yield all(campaign.levels.map(async (level) => await fetchFlowAPI(level)))
+  const flows = (yield all(campaign.levels.map(async (level) => await fetchFlowAPI(level)))) as Flow[]
 
   for (const flow of flows) {
     if (shouldUpdateFlow(flow)) {
