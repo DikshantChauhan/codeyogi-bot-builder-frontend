@@ -3,9 +3,9 @@ import { FC, memo } from 'react'
 import { WhatsappUserUpdateNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<WhatsappUserUpdateNodeType>> = ({ id, data }) => {
+const Node: FC<NodeProps<WhatsappUserUpdateNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-user-update">
+    <NodeCard nodeId={id} nodeType="whatsapp-user-update" isSelected={!!selected}>
       <div className="flex flex-col gap-2">
         {Object.entries(data)
           .filter(([_, value]) => value !== undefined)

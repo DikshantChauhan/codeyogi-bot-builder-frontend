@@ -87,6 +87,7 @@ export const cloneSelectionNodeData = (
       id: getRandomId(10),
       source: source.id,
       target: target.id,
+      selected,
     })
   })
 
@@ -119,9 +120,14 @@ export const getOffsetFromCentroid = (nodes: AppNode[], pastePosition: XYPositio
 }
 
 export const sanitizeEdges = (edges: AppEdge[], nodes: AppNode[]): AppEdge[] => {
-  return edges.filter((edge) => {
+  const sanitizeEdges: AppEdge[] = []
+  edges.forEach((edge) => {
     const isTargetPresent = nodes.find((node) => node.id === edge.target)
     const isSourcePresent = nodes.find((node) => node.id === edge.source)
-    return isTargetPresent && isSourcePresent
+    if (isTargetPresent && isSourcePresent) {
+      sanitizeEdges.push({ ...edge })
+    }
   })
+
+  return sanitizeEdges
 }

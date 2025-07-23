@@ -3,9 +3,9 @@ import { WhatsappReactionNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappReactionNode: FC<NodeProps<WhatsappReactionNodeType>> = ({ id, data }) => {
+const WhatsappReactionNode: FC<NodeProps<WhatsappReactionNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-reaction">
+    <NodeCard nodeId={id} nodeType="whatsapp-reaction" isSelected={!!selected}>
       <div className="flex items-center gap-2">
         <span className="text-2xl">{data.emoji}</span>
         {data.messageId && <span className="text-sm text-gray-500">to message: {data.messageId}</span>}

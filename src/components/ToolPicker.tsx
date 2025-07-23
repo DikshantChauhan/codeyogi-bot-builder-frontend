@@ -8,15 +8,15 @@ import { IoAdd } from 'react-icons/io5'
 
 interface ToolPickerProps {
   allowedNodes: AppNodeKeys[]
-  setSelectedNode: typeof uiActions.setSelectedNode
+  setNodeToAdd: typeof uiActions.setNodeToAdd
 }
 
-const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setSelectedNode }) => {
+const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setNodeToAdd }) => {
   const handleNodeSelect = useCallback(
     (nodeType: AppNodeKeys) => {
-      setSelectedNode({ type: nodeType })
+      setNodeToAdd(nodeType)
     },
-    [setSelectedNode]
+    [setNodeToAdd]
   )
 
   return (
@@ -31,9 +31,6 @@ const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setSelectedNode }
         <div className="grid grid-cols-1 gap-1">
           {allowedNodes.sort().map((nodeType) => {
             const nodeInfo = nodesRegistry[nodeType]
-            if (!nodeInfo) {
-              console.log(nodeType)
-            }
             const Icon = nodeInfo.Icon
 
             return (
@@ -70,7 +67,7 @@ const mapStateToProps = (state: AppState) => ({
 })
 
 const mapDispatchToProps = {
-  setSelectedNode: uiActions.setSelectedNode,
+  setNodeToAdd: uiActions.setNodeToAdd,
 }
 
 export default memo(connect(mapStateToProps, mapDispatchToProps)(ToolPicker))

@@ -1,4 +1,4 @@
-import { ReactFlow, Background, Controls, MiniMap, Panel } from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, Panel, SelectionMode } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import ToolSidePanel from '../components/ToolSidePanel'
 import MenuBar from '../components/MenuBar'
@@ -23,9 +23,11 @@ const FlowPage = () => {
     selectedFlowError,
     selectedFlowLoading,
     nodeTypes,
-    onNodeClick,
     updateLoading,
     onPaneClick,
+    onNodeClick,
+    onSelectionChange,
+    onSelectionEnd,
   } = useFlowPageData()
 
   if (selectedFlowError) return <Error message={selectedFlowError} />
@@ -42,7 +44,6 @@ const FlowPage = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
-          onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           selectNodesOnDrag={false}
           isValidConnection={isConnnectionValid}
@@ -51,6 +52,11 @@ const FlowPage = () => {
           onReconnect={onReconnect}
           defaultEdgeOptions={{ type: DIRECTIONAL_EDGE_KEY }}
           nodesDraggable
+          selectionMode={SelectionMode.Full}
+          elementsSelectable
+          onNodeClick={onNodeClick}
+          onSelectionChange={onSelectionChange}
+          onSelectionEnd={onSelectionEnd}
         >
           <MenuBar position="top-right" />
           <ToolSidePanel />

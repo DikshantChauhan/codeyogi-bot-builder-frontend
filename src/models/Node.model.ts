@@ -67,7 +67,6 @@ import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseC
 import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
 import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
 import { GrValidate } from 'react-icons/gr'
-import { Node } from '@xyflow/react'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 

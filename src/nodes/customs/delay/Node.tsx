@@ -18,9 +18,9 @@ const formatDuration = (seconds: number): string => {
   return parts.join(' ')
 }
 
-const Node: FC<NodeProps<DelayNodeType>> = ({ id, data }) => {
+const Node: FC<NodeProps<DelayNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="delay">
+    <NodeCard nodeId={id} nodeType="delay" isSelected={!!selected}>
       {formatDuration(data.delayInSecs)}
     </NodeCard>
   )

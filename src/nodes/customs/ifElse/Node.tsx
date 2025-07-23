@@ -3,7 +3,7 @@ import { IfElseNodeType } from './type'
 import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ id, data }) => {
+const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ id, data, selected }) => {
   const optionsList = useMemo(
     () =>
       [
@@ -17,7 +17,7 @@ const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ id, data }) => {
     [data]
   )
 
-  return <NodeCard nodeId={id} nodeType="if-else" options={optionsList} />
+  return <NodeCard nodeId={id} nodeType="if-else" options={optionsList} isSelected={!!selected} />
 }
 
 export default memo(IfElseNode)

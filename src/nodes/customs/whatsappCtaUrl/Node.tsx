@@ -3,7 +3,7 @@ import { WhatsappCtaUrlNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappCtaUrlNode: FC<NodeProps<WhatsappCtaUrlNodeType>> = ({ id, data }) => {
+const WhatsappCtaUrlNode: FC<NodeProps<WhatsappCtaUrlNodeType>> = ({ id, data, selected }) => {
   const getHeaderPreview = () => {
     if (!data.header) return null
 
@@ -22,7 +22,7 @@ const WhatsappCtaUrlNode: FC<NodeProps<WhatsappCtaUrlNodeType>> = ({ id, data })
   }
 
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-cta-url">
+    <NodeCard isSelected={!!selected} nodeId={id} nodeType="whatsapp-cta-url">
       <div className="flex items-start space-x-2 p-1 bg-gray-50 rounded border">
         {/* CTA URL Info */}
         <div className="flex-1 min-w-0">

@@ -3,22 +3,21 @@ import { memo, useMemo } from 'react'
 import { camelCase } from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
-import { selectedNodeRefSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
+import { nodeToAddSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
 import { AppState } from '../store/store'
 import { AppNode, AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.selector'
 import ToolPicker from './ToolPicker'
 
 interface ToolSidePanelProps {
-  selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
   selectedNode?: AppNode
   allowedNodesKey: AppNodeKeys[]
+  nodeToAdd: AppNodeKeys | null
 }
 
-const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNodeRef, selectedNode, allowedNodesKey }) => {
-  const pickedTool = (selectedNodeRef && 'type' in selectedNodeRef ? selectedNodeRef.type : selectedNode?.type) || null
-
+const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNode, allowedNodesKey, nodeToAdd }) => {
   const ToolForm = useMemo(() => {
+    const pickedTool = selectedNode?.type || nodeToAdd || null
     if (!pickedTool || !(pickedTool in nodesRegistry) || !allowedNodesKey.includes(pickedTool as AppNodeKeys)) return null
 
     // Convert kebab-case to camelCase for folder name
@@ -36,7 +35,7 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNodeRef, selected
         <FormComponent node={selectedNode} />
       </React.Suspense>
     )
-  }, [pickedTool, selectedNode, allowedNodesKey])
+  }, [nodeToAdd, selectedNode, allowedNodesKey])
 
   return (
     <Panel position="top-left" className="w-80 bottom-0 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border flex flex-col">
@@ -46,7 +45,7 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({ selectedNodeRef, selected
 }
 
 const mapStateToProps = (state: AppState) => ({
-  selectedNodeRef: selectedNodeRefSelector(state),
+  nodeToAdd: nodeToAddSelector(state),
   selectedNode: selectedNodeSelector(state),
   allowedNodesKey: selectedFlowAllowedNodesSelector(state),
 })

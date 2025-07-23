@@ -3,9 +3,9 @@ import { WhatsappDocumentNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappDocumentNode: FC<NodeProps<WhatsappDocumentNodeType>> = ({ id, data }) => {
+const WhatsappDocumentNode: FC<NodeProps<WhatsappDocumentNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-document">
+    <NodeCard nodeId={id} nodeType="whatsapp-document" isSelected={!!selected}>
       <div className="flex items-start space-x-2 p-1 bg-gray-50 rounded border">
         {/* Document Info */}
         <div className="flex-1 min-w-0">

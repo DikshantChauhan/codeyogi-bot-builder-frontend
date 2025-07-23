@@ -3,9 +3,9 @@ import { WhatsappAudioNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappAudioNode: FC<NodeProps<WhatsappAudioNodeType>> = ({ id, data }) => {
+const WhatsappAudioNode: FC<NodeProps<WhatsappAudioNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-audio">
+    <NodeCard nodeId={id} nodeType="whatsapp-audio" isSelected={!!selected}>
       {data.url && (
         <audio className="w-full h-6" controls>
           <source src={data.url} type="audio/mpeg" />

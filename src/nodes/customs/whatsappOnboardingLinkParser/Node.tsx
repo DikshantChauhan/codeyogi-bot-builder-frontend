@@ -3,10 +3,10 @@ import { WhatsappOnboardingLinkParserNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<WhatsappOnboardingLinkParserNodeType>> = ({ id, data }) => {
+const Node: FC<NodeProps<WhatsappOnboardingLinkParserNodeType>> = ({ id, data, selected }) => {
   const listOptions = (data.paths || []).map((item) => ['', item] as [string, string])
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-onboarding-link-parser" options={listOptions}>
+    <NodeCard nodeId={id} nodeType="whatsapp-onboarding-link-parser" options={listOptions} isSelected={!!selected}>
       <div>{data.link}</div>
     </NodeCard>
   )

@@ -3,9 +3,9 @@ import { WhatsappMessageNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<WhatsappMessageNodeType>> = ({ id, data }) => {
+const Node: FC<NodeProps<WhatsappMessageNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-message">
+    <NodeCard nodeId={id} nodeType="whatsapp-message" isSelected={!!selected}>
       <div>
         <div>{data.text}</div>
         {data.previewUrl && <div className="text-gray-500 mt-1">📎 URL preview enabled</div>}

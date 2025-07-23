@@ -7,25 +7,20 @@ import { END_NODE_KEY } from '../nodes/customs/end/type'
 import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { connect } from 'react-redux'
 import { AppState } from '../store/store'
-import { selectedNodeRefSelector } from '../store/selectors/ui.selector'
 import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { Flow } from '../models/Flow.model'
 
 interface Props {
   nodeId: string
   nodeType: AppNodeKeys
+  isSelected: boolean
   options?: [string, string][]
   children?: React.ReactNode
-  selectedNodeRef: ReturnType<typeof selectedNodeRefSelector>
   selectedFlow: Flow | null
 }
 
-const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef, selectedFlow }: Props) => {
+const NodeCard = ({ nodeId, nodeType, options, children, selectedFlow, isSelected }: Props) => {
   const { color, Icon } = nodesRegistry[nodeType]
-  const isSelected =
-    selectedNodeRef &&
-    (('id' in selectedNodeRef && selectedNodeRef.id === nodeId) ||
-      ('selection' in selectedNodeRef && selectedNodeRef.selection.nodesIds.includes(nodeId)))
 
   //TODO: not the optimum way change typings for orientation and move it in base node
   const node = selectedFlow?.data.nodes.find(({ id }) => id === nodeId)
@@ -81,7 +76,6 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedNodeRef, select
 
 const mapStateToProps = (state: AppState) => {
   return {
-    selectedNodeRef: selectedNodeRefSelector(state),
     selectedFlow: selectedFlowSelector(state),
   }
 }

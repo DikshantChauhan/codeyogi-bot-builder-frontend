@@ -1,29 +1,16 @@
 import { createSelector } from 'reselect'
-import { AppState } from '../store'
+import { historyStateSelector } from './app.selector'
 
-// Base selector for history state
-const historyStateSelector = (state: AppState) => state.history
+export const historyCurrentSnapshotIndexSelector = createSelector([historyStateSelector], (history) => history.currentSnapshotIndex)
 
-// Selectors for history state
-export const historyPastSelector = createSelector([historyStateSelector], (history) => history.past)
+export const historySnapshotsSelector = createSelector([historyStateSelector], (history) => history.snapshots)
 
-export const historyPresentSelector = createSelector([historyStateSelector], (history) => history.present)
+export const canUndoSelector = createSelector(
+  [historyCurrentSnapshotIndexSelector],
+  (currentSnapshotIndex) => currentSnapshotIndex !== 0 && currentSnapshotIndex !== null
+)
 
-export const historyFutureSelector = createSelector([historyStateSelector], (history) => history.future)
-
-export const historyMaxSizeSelector = createSelector([historyStateSelector], (history) => history.maxHistorySize)
-
-// Computed selectors
-export const canUndoSelector = createSelector([historyPastSelector], (past) => past.length > 0)
-
-export const canRedoSelector = createSelector([historyFutureSelector], (future) => future.length > 0)
-
-export const historyStatsSelector = createSelector(
-  [historyPastSelector, historyFutureSelector, historyPresentSelector, historyMaxSizeSelector],
-  (past, future, present, maxSize) => ({
-    pastCount: past.length,
-    futureCount: future.length,
-    hasPresent: !!present,
-    maxSize,
-  })
+export const canRedoSelector = createSelector(
+  [historyCurrentSnapshotIndexSelector, historySnapshotsSelector],
+  (currentSnapshotIndex, snapshots) => currentSnapshotIndex !== snapshots.length - 1 && currentSnapshotIndex !== null
 )

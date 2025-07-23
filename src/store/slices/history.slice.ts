@@ -2,76 +2,50 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Flow } from '../../models/Flow.model'
 
 interface HistoryState {
-  past: Flow[]
-  present: Flow | null
-  future: Flow[]
-  maxHistorySize: number
+  snapshots: Flow[]
+  currentSnapshotIndex: number | null
 }
 
 const initialState: HistoryState = {
-  past: [],
-  present: null,
-  future: [],
-  maxHistorySize: 50,
+  snapshots: [],
+  currentSnapshotIndex: null,
 }
 
 const historySlice = createSlice({
   name: 'history',
   initialState,
   reducers: {
-    pushToHistory: (state, action: PayloadAction<Flow>) => {
-      // Add current state to past if it exists
-      if (state.present) {
-        state.past.push(state.present)
-
-        // Limit history size
-        if (state.past.length > state.maxHistorySize) {
-          state.past = state.past.slice(-state.maxHistorySize)
-        }
+    push: (state, { payload }: PayloadAction<Flow>) => {
+      const isClearRedo = state.currentSnapshotIndex !== null && state.currentSnapshotIndex !== state.snapshots.length - 1
+      if (isClearRedo) {
+        state.snapshots = state.snapshots.slice(0, state.currentSnapshotIndex! + 1)
       }
 
-      // Update present state
-      state.present = action.payload as any
-
-      // Clear future when new operation is pushed
-      state.future = []
+      state.snapshots.push(payload as any)
+      state.currentSnapshotIndex = state.snapshots.length - 1
     },
 
-    replaceLastHistoryEntry: (state, action: PayloadAction<Flow>) => {
-      // Replace the last entry in past with the new flow
-      if (state.past.length > 0) {
-        // Remove the last entry and add the new one
-        state.past.pop()
-        state.past.push(action.payload as any)
+    replaceLast: (state, { payload }: PayloadAction<Flow>) => {
+      const isClearRedo = state.currentSnapshotIndex !== null && state.currentSnapshotIndex !== state.snapshots.length - 1
+      if (isClearRedo) {
+        state.snapshots = state.snapshots.slice(0, state.currentSnapshotIndex! + 1)
       }
 
-      // Update present state
-      state.present = action.payload as any
-
-      // Clear future when new operation is pushed
-      state.future = []
+      state.snapshots.pop()
+      state.snapshots.push(payload as any)
+      state.currentSnapshotIndex = state.snapshots.length - 1 
     },
 
     undo: (state) => {
-      if (state.past.length === 0) return
+      if (state.currentSnapshotIndex === 0 || state.currentSnapshotIndex === null) return
 
-      const previous = state.past[state.past.length - 1]
-      const newPast = state.past.slice(0, state.past.length - 1)
-
-      state.past = newPast
-      state.present = previous
-      state.future = state.present ? [state.present, ...state.future] : state.future
+      state.currentSnapshotIndex--
     },
 
     redo: (state) => {
-      if (state.future.length === 0) return
+      if (state.currentSnapshotIndex === state.snapshots.length - 1 || state.currentSnapshotIndex === null) return
 
-      const next = state.future[0]
-      const newFuture = state.future.slice(1)
-
-      state.past = state.present ? [...state.past, state.present] : state.past
-      state.present = next
-      state.future = newFuture
+      state.currentSnapshotIndex++
     },
   },
 })

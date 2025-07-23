@@ -7,7 +7,7 @@ const WhatsappListNode: FC<NodeProps<WhatsappListNodeType>> = (node) => {
   const { data, id } = node
   const listOptions = (data.buttons || []).map((item) => ['', item] as [string, string])
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-list" options={listOptions}>
+    <NodeCard isSelected={!!node.selected} nodeId={id} nodeType="whatsapp-list" options={listOptions}>
       <div>
         {data.header && <h3 className="font-medium">{data.header}</h3>}
         <p className="text-gray-600">{data.text}</p>

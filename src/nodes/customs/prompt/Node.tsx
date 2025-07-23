@@ -3,9 +3,9 @@ import { FC, memo } from 'react'
 import { PromptNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<PromptNodeType>> = ({ id, data }) => {
+const Node: FC<NodeProps<PromptNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="prompt">
+    <NodeCard nodeId={id} nodeType="prompt" isSelected={!!selected}>
       <div>
         <p>Type: {data.type}</p>
         {data.min !== undefined && <p>Min: {data.min}</p>}

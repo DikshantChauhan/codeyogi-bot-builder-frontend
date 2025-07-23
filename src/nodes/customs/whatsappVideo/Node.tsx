@@ -3,9 +3,9 @@ import { WhatsappVideoNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappVideoNode: FC<NodeProps<WhatsappVideoNodeType>> = ({ id, data }) => {
+const WhatsappVideoNode: FC<NodeProps<WhatsappVideoNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-video">
+    <NodeCard nodeId={id} nodeType="whatsapp-video" isSelected={!!selected}>
       {data.mediaType === 'link' && (
         <div className="space-y-2">
           <video className="w-full rounded-md" controls>

@@ -3,9 +3,9 @@ import { WhatsappImageNodeType } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappImageNode: FC<NodeProps<WhatsappImageNodeType>> = ({ id, data }) => {
+const WhatsappImageNode: FC<NodeProps<WhatsappImageNodeType>> = ({ id, data, selected }) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-image">
+    <NodeCard nodeId={id} nodeType="whatsapp-image" isSelected={!!selected}>
       <div className="flex items-start space-x-2 p-1 bg-gray-50 rounded border">
         {/* Image Info */}
         <div className="flex-1 min-w-0">

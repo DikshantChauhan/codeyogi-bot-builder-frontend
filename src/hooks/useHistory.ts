@@ -1,18 +1,11 @@
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { historyActions } from '../store/slices/history.slice'
-import {
-  canUndoSelector,
-  canRedoSelector,
-  historyStatsSelector,
-  historyPresentSelector,
-  historyPastSelector,
-  historyFutureSelector,
-} from '../store/selectors/history.selector'
+import { canUndoSelector, canRedoSelector, historyCurrentSnapshotIndexSelector, historySnapshotsSelector } from '../store/selectors/history.selector'
 import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { flowActions } from '../store/slices/flow.slice'
 import { Flow } from '../models/Flow.model'
-import { AppNode } from '../models/Node.model'
+import { toast } from 'react-toastify'
 
 const useHistory = () => {
   const dispatch = useDispatch()
@@ -20,115 +13,104 @@ const useHistory = () => {
   // Selectors
   const canUndo = useSelector(canUndoSelector)
   const canRedo = useSelector(canRedoSelector)
-  const stats = useSelector(historyStatsSelector)
-  const presentFlow = useSelector(historyPresentSelector)
   const selectedFlow = useSelector(selectedFlowSelector)
-  const historyPastFlows = useSelector(historyPastSelector)
-  const historyFutureFlows = useSelector(historyFutureSelector)
+  const currentSnapshotIndex = useSelector(historyCurrentSnapshotIndexSelector)
+  const snapshots = useSelector(historySnapshotsSelector)
 
   const undo = useCallback(() => {
-    if (canUndo) {
-      // Get the previous flow from the past before dispatching undo
-      const previousFlow = historyPastFlows[historyPastFlows.length - 1]
-
-      dispatch(historyActions.undo())
-
-      // Update the flow state with the previous flow
-      if (previousFlow) {
-        dispatch(flowActions.setFlow({ flow: previousFlow }))
-      }
+    if (!canUndo) {
+      toast.warn('No more history to undo', { toastId: 'undo warning' })
+      return
     }
-  }, [dispatch, canUndo, historyPastFlows])
+    // Get the previous flow from the past before dispatching undo
+    const previousFlow = snapshots[currentSnapshotIndex! - 1]
+
+    dispatch(historyActions.undo())
+
+    // Update the flow state with the previous flow
+    if (previousFlow) {
+      dispatch(flowActions.setFlow({ flow: previousFlow }))
+    }
+  }, [dispatch, canUndo, currentSnapshotIndex, snapshots])
 
   const redo = useCallback(() => {
-    if (canRedo) {
-      // Get the next flow from the future before dispatching redo
-      const nextFlow = historyFutureFlows[0]
+    if (!canRedo) {
+      toast.warn('No more history to redo', { toastId: 'redo warning' })
+      return
+    }
+    // Get the next flow from the future before dispatching redo
+    const nextFlow = snapshots[currentSnapshotIndex! + 1]
 
-      dispatch(historyActions.redo())
+    dispatch(historyActions.redo())
 
-      // Update the flow state with the next flow
-      if (nextFlow) {
-        dispatch(flowActions.setFlow({ flow: nextFlow }))
+    // Update the flow state with the next flow
+    if (nextFlow) {
+      dispatch(flowActions.setFlow({ flow: nextFlow }))
+    }
+  }, [dispatch, canRedo, currentSnapshotIndex, snapshots])
+
+  const isPositionChangeHistory = (prevFlow: Flow, currFlow: Flow): boolean => {
+    const prevNodes = prevFlow.data.nodes
+    const currNodes = currFlow.data.nodes
+    const prevEdges = prevFlow.data.edges
+    const currEdges = currFlow.data.edges
+
+    // 1. Ensure edges are exactly same (length, ids, props)
+    if (JSON.stringify(prevEdges) !== JSON.stringify(currEdges)) return false
+
+    // 2. Ensure nodes are same (same ids, same order)
+    const isSameStructure = prevNodes.length === currNodes.length && prevNodes.every((node, i) => node.id === currNodes[i].id)
+
+    if (!isSameStructure) return false
+
+    // 3. Ensure all node changes are only position changes
+    for (let i = 0; i < currNodes.length; i++) {
+      const prev = prevNodes[i]
+      const curr = currNodes[i]
+
+      const positionChanged = prev.position.x !== curr.position.x || prev.position.y !== curr.position.y
+
+      if (positionChanged) {
+        return true
       }
     }
-  }, [dispatch, canRedo, historyFutureFlows])
 
-  const isPositionChangeHistory = (prevFlow: Flow, currFlow: Flow) => {
-    const prevFlowNodes = prevFlow.data.nodes
-    const currFlowNodes = currFlow.data.nodes
-    const isSuspectToPositionChange =
-      prevFlowNodes.length === currFlowNodes.length && prevFlowNodes.every((node, index) => node.id === currFlowNodes[index].id)
-    if (!isSuspectToPositionChange) {
-      return false
-    }
-
-    let nodeChangedOriginal: AppNode | undefined
-    let nodeChangedNew: AppNode | undefined
-
-    currFlowNodes.forEach((node) => {
-      const prevNode = prevFlowNodes.find((n) => n.id === node.id)!
-      const isChanged = JSON.stringify(node) !== JSON.stringify(prevNode)
-      if (isChanged) {
-        nodeChangedOriginal = prevNode
-        nodeChangedNew = node
-      }
-    })
-
-    if (!nodeChangedOriginal || !nodeChangedNew) {
-      return false
-    }
-
-    // Fixed: Use OR instead of AND to detect position changes
-    const isPositionChange =
-      nodeChangedOriginal.position.x !== nodeChangedNew.position.x || nodeChangedOriginal.position.y !== nodeChangedNew.position.y
-
-    return isPositionChange
+    return false // All edges same, and all node changes are position-only
   }
 
   const pushToHistory = useCallback(
-    (currentFlow: Flow) => {
-      const prevFlow = presentFlow
+    (incommingFlow: Flow) => {
+      const currentFlow = currentSnapshotIndex && snapshots[currentSnapshotIndex]
 
-      if (!prevFlow) {
-        dispatch(historyActions.pushToHistory(currentFlow))
+      if (!currentFlow) {
+        dispatch(historyActions.push(incommingFlow))
         return
       }
 
-      const isFlowsSame = JSON.stringify(prevFlow) === JSON.stringify(currentFlow)
-      if (isFlowsSame) {
-        return
+      const isFlowsSame = JSON.stringify(incommingFlow) === JSON.stringify(currentFlow)
+      if (isFlowsSame) return
+
+      const isCurrentChangeOnlyPosition = isPositionChangeHistory(currentFlow, incommingFlow)
+      const preFlow = currentSnapshotIndex ? snapshots[currentSnapshotIndex - 1] : null
+      const wasPreviousAlsoJustPositionChange = preFlow && isPositionChangeHistory(preFlow, currentFlow)
+
+      if (isCurrentChangeOnlyPosition && wasPreviousAlsoJustPositionChange) {
+        // Replace if dragging still continuing
+        dispatch(historyActions.replaceLast(incommingFlow))
+      } else {
+        // Push full new change (non-position or first position change)
+        dispatch(historyActions.push(incommingFlow))
       }
-
-      const isPositionChange = isPositionChangeHistory(prevFlow, currentFlow)
-      if (!isPositionChange) {
-        dispatch(historyActions.pushToHistory(currentFlow))
-        return
-      }
-
-      const preFlowPrev = historyPastFlows[historyPastFlows.length - 2]
-
-      if (preFlowPrev && !isPositionChangeHistory(preFlowPrev, prevFlow)) {
-        dispatch(historyActions.pushToHistory(currentFlow))
-        return
-      }
-
-      // For position changes, replace the last history entry instead of pushing a new one
-      dispatch(historyActions.replaceLastHistoryEntry(currentFlow))
     },
-    [dispatch, presentFlow, historyPastFlows]
+    [dispatch, snapshots, currentSnapshotIndex]
   )
-
-  const getStats = useCallback(() => {
-    return stats
-  }, [stats])
 
   // Initialize history when a flow is selected
   useEffect(() => {
-    if (selectedFlow && !presentFlow) {
+    if (selectedFlow && snapshots.length === 0) {
       pushToHistory(selectedFlow)
     }
-  }, [selectedFlow, presentFlow, pushToHistory])
+  }, [selectedFlow, pushToHistory, snapshots])
 
   return {
     canUndo,
@@ -136,7 +118,6 @@ const useHistory = () => {
     undo,
     redo,
     pushToHistory,
-    getStats,
   }
 }
 
