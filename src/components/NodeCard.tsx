@@ -29,7 +29,7 @@ const NodeCard = ({ nodeId, nodeType, options, children, selectedFlow, isSelecte
   return (
     <div
       className={`bg-gray-200 rounded text-xs py-2 min-w-40 max-w-52 cursor-auto relative ${
-        isSelected ? ' scale-105 shadow-md shadow-gray-500' : ''
+        isSelected ? ' shadow-md shadow-red-400/50 border-2 border-red-500' : ''
       }`}
     >
       <div className="flex items-center mb-1 px-2 relative justify-between">

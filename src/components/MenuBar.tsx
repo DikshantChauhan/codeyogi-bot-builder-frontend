@@ -9,40 +9,41 @@ import { flowActions } from '../store/slices/flow.slice'
 import { AppState } from '../store/store'
 import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { Flow } from '../models/Flow.model'
-import { START_NODE_KEY } from '../nodes/customs/start/type'
-import { END_NODE_KEY } from '../nodes/customs/end/type'
 import { toast } from 'react-toastify'
+import { validateFlow } from '../utils'
 
 type Props = {
   updateFlow: typeof flowActions.flowUpdateTry
   selectedFlow: Flow | null
   position: PanelPosition
+  setFlow: typeof flowActions.setFlow
 }
 
-const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, position }) => {
+const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, position, setFlow }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSave = useCallback(() => {
     if (!selectedFlow) return
-    const nodes = selectedFlow.data.nodes
 
-    //validate start and end nodes
-    const startNodes = nodes.filter((node) => node.type === START_NODE_KEY)
-    const endNode = nodes.find((node) => node.type === END_NODE_KEY)
-
-    if (!startNodes || !endNode) {
-      toast.error('Start and end nodes are required for a flow')
-      return
+    const validationError = validateFlow(selectedFlow.data.nodes, selectedFlow.data.edges)
+    if (validationError) {
+      toast.error(validationError.error, { autoClose: false })
+      setFlow({
+        flow: {
+          ...selectedFlow,
+          data: {
+            ...selectedFlow.data,
+            nodes: selectedFlow.data.nodes.map((node) => ({ ...node, selected: validationError.cause?.nodeIds?.includes(node.id) || false })),
+            edges: selectedFlow.data.edges.map((edge) => ({ ...edge, selected: validationError.cause?.edgeIds?.includes(edge.id) || false })),
+          },
+        },
+      })
+    } else {
+      updateFlow({ id: selectedFlow.id, data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type } })
     }
 
-    if (startNodes.length > 1) {
-      toast.error('Only one start node is allowed')
-      return
-    }
-
-    updateFlow({ id: selectedFlow.id, data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type } })
     setIsOpen(false)
-  }, [selectedFlow, updateFlow])
+  }, [selectedFlow, updateFlow, setFlow])
 
   return (
     <Panel className="bg-white rounded-md shadow-lg" position={position}>
@@ -74,6 +75,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
   updateFlow: flowActions.flowUpdateTry,
+  setFlow: flowActions.setFlow,
 }
 
 export default memo(connect(mapStateToProps, mapDispatchToProps)(MenuBar))

@@ -2,6 +2,8 @@ import { XYPosition } from '@xyflow/react'
 import { AppEdge } from './models/Edge.model'
 import { Flow } from './models/Flow.model'
 import { AppNode } from './models/Node.model'
+import { START_NODE_KEY } from './nodes/customs/start/type'
+import { END_NODE_KEY } from './nodes/customs/end/type'
 
 export const getRandomId = (length?: number) =>
   Math.random()
@@ -130,4 +132,123 @@ export const sanitizeEdges = (edges: AppEdge[], nodes: AppNode[]): AppEdge[] => 
   })
 
   return sanitizeEdges
+}
+
+export function validateFlow(
+  nodes: AppNode[],
+  edges: AppEdge[]
+): {
+  error: string
+  cause: {
+    nodeIds?: string[]
+    edgeIds?: string[]
+  }
+} | null {
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]))
+
+  // 1. Find start node
+  const startNodes = nodes.filter((n) => n.type === START_NODE_KEY)
+  if (startNodes.length !== 1) {
+    return {
+      error: 'Flow must contain exactly one start node.',
+      cause: { nodeIds: startNodes.map((n) => n.id) },
+    }
+  }
+
+  const startNode = startNodes[0]
+
+  const getOutgoingEdges = (nodeId: string): AppEdge[] => edges.filter((e) => e.source === nodeId)
+
+  const getExpectedOutgoingCount = (node: AppNode): number => {
+    if (!node.data || typeof node.data !== 'object') return 0
+
+    return Object.values(node.data).reduce((count, value) => {
+      return Array.isArray(value) ? count + value.length : count
+    }, 0)
+  }
+
+  const isEndNode = (node: AppNode) => node.type === END_NODE_KEY
+
+  // 2. Check each node has correct number of outgoing edges
+  for (const node of nodes) {
+    const expectedCount = getExpectedOutgoingCount(node)
+    const actualCount = getOutgoingEdges(node.id).length
+
+    if (actualCount < expectedCount) {
+      return {
+        error: `Node "${node.id}" has ${actualCount} outgoing edges, expected ${expectedCount}.`,
+        cause: { nodeIds: [node.id] },
+      }
+    }
+  }
+
+  // 3. Check every edge connects existing nodes
+  for (const edge of edges) {
+    if (!nodeMap.has(edge.source) || !nodeMap.has(edge.target)) {
+      return {
+        error: `Edge "${edge.id}" has invalid source or target.`,
+        cause: { edgeIds: [edge.id] },
+      }
+    }
+  }
+
+  // 4. Traverse from start node: check reachability
+  const visitedFromStart = new Set<string>()
+  const dfsFromStart = (nodeId: string) => {
+    if (visitedFromStart.has(nodeId)) return
+    visitedFromStart.add(nodeId)
+
+    for (const edge of getOutgoingEdges(nodeId)) {
+      dfsFromStart(edge.target)
+    }
+  }
+  dfsFromStart(startNode.id)
+
+  for (const node of nodes) {
+    if (!visitedFromStart.has(node.id)) {
+      return {
+        error: `Node "${node.id}" is not reachable from the start node.`,
+        cause: { nodeIds: [node.id] },
+      }
+    }
+  }
+
+  // 5. Ensure each node (except end) has path to an end node
+  const endNodeIds = new Set(nodes.filter((n) => isEndNode(n)).map((n) => n.id))
+
+  const hasPathToEnd = (nodeId: string, visited = new Set<string>()): boolean => {
+    if (visited.has(nodeId)) return false
+    visited.add(nodeId)
+
+    if (endNodeIds.has(nodeId)) return true
+
+    const nextEdges = getOutgoingEdges(nodeId)
+    for (const edge of nextEdges) {
+      if (hasPathToEnd(edge.target, visited)) return true
+    }
+
+    return false
+  }
+
+  for (const node of nodes) {
+    if (isEndNode(node)) {
+      if (!visitedFromStart.has(node.id)) {
+        return {
+          error: `End node "${node.id}" is not reachable from the start node.`,
+          cause: { nodeIds: [node.id] },
+        }
+      }
+      continue
+    }
+
+    const canReachEnd = hasPathToEnd(node.id)
+    if (!canReachEnd) {
+      return {
+        error: `Node "${node.id}" cannot reach any end node.`,
+        cause: { nodeIds: [node.id] },
+      }
+    }
+  }
+
+  return null // ✅ All validations passed
 }
