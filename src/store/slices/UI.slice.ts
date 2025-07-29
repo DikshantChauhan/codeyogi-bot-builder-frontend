@@ -4,11 +4,13 @@ import { AppNodeKeys } from '../../models/Node.model'
 type UiState = {
   pannelClickedPosition: { x: number; y: number } | null
   nodeToAdd: AppNodeKeys | null
+  isToolbarSidePannelExpanded: boolean
 }
 
 const initialState: UiState = {
   pannelClickedPosition: null,
   nodeToAdd: null,
+  isToolbarSidePannelExpanded: true,
 }
 
 const uiSlice = createSlice({
@@ -20,6 +22,9 @@ const uiSlice = createSlice({
     },
     setNodeToAdd: (state, action: PayloadAction<AppNodeKeys | null>) => {
       state.nodeToAdd = action.payload
+    },
+    setIsToolbarSidePannelExpanded: (state, action: PayloadAction<boolean>) => {
+      state.isToolbarSidePannelExpanded = action.payload
     },
   },
 })

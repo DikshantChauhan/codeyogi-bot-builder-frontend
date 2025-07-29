@@ -4,14 +4,17 @@ import { AppState } from '../store/store'
 import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.selector'
 import { uiActions } from '../store/slices/UI.slice'
+import { MdArrowBackIosNew } from 'react-icons/md'
 import { IoAdd } from 'react-icons/io5'
+import { isToolbarSidePannelExpandedSelector } from '../store/selectors/ui.selector'
 
 interface ToolPickerProps {
   allowedNodes: AppNodeKeys[]
   setNodeToAdd: typeof uiActions.setNodeToAdd
+  setIsToolbarSidePannelExpanded: typeof uiActions.setIsToolbarSidePannelExpanded
 }
 
-const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setNodeToAdd }) => {
+const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setNodeToAdd, setIsToolbarSidePannelExpanded }) => {
   const handleNodeSelect = useCallback(
     (nodeType: AppNodeKeys) => {
       setNodeToAdd(nodeType)
@@ -23,7 +26,9 @@ const ToolPicker: React.FC<ToolPickerProps> = ({ allowedNodes, setNodeToAdd }) =
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full">
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b border-gray-200 flex-shrink-0">
         <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-          <IoAdd className="w-4 h-4 text-blue-600" />
+          <button onClick={() => setIsToolbarSidePannelExpanded(false)}>
+            <MdArrowBackIosNew className="w-4 h-4 text-blue-600" />
+          </button>
           Add Node
         </h3>
       </div>
@@ -68,6 +73,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
   setNodeToAdd: uiActions.setNodeToAdd,
+  setIsToolbarSidePannelExpanded: uiActions.setIsToolbarSidePannelExpanded,
 }
 
 export default memo(connect(mapStateToProps, mapDispatchToProps)(ToolPicker))

@@ -26,8 +26,17 @@ const Form: React.FC<Props> = ({ node }) => {
     return value
   }
 
+  const Info = useMemo(() => {
+    return (
+      <div>
+        <img src="/public/assets/wa_video_info.png" alt="whatsapp-video" />
+        <p>Note: 16 mb limit for media id</p>
+      </div>
+    )
+  }, [])
+
   return (
-    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Media Type</label>

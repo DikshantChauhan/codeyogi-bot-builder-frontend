@@ -7,6 +7,24 @@ interface Props {
   node?: WhatsappUserUpdateNodeType
 }
 
+const info = `
+🔹 Update User Fields Node
+
+- Allows updating one or more fields in the user object.
+
+🔹 Special Behaviors:
+- If only the \`campaignId\` is updated but not \`levelId\` and \`nodeId\`:
+  - The user's level will automatically be set to the **first level** of the campaign.
+  - The \`nodeId\` will automatically be set to the **start node** of that level.
+
+- If only the \`levelId\` is updated but not \`campaignId\` and \`nodeId\`:
+  - It must belong to the user's current campaign.
+  - The \`nodeId\` will automatically be set to the **start node** of that level.
+
+- If only the \`nodeId\` is updated but not \`campaignId\` and \`levelId\`:
+  - It must exist within the user's **current level**.
+`
+
 const Form: FC<Props> = ({ node }) => {
   const data = node?.data || {
     node_id: undefined,
@@ -36,7 +54,7 @@ const Form: FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail} info={info}>
       <SuggestionField name="name" as="input" label="Name" />
       <SuggestionField name="age" as="input" label="Age" />
       <SuggestionField name="campaign_id" as="input" label="Campaign ID" />

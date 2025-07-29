@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { IoInformationCircle } from 'react-icons/io5'
 
 interface InfoCardProps {
-  info: string
+  info: string | React.ReactNode
   className?: string
   position?: 'top' | 'bottom' | 'left' | 'right'
 }

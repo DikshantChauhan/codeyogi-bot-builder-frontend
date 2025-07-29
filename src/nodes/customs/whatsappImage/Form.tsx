@@ -41,8 +41,16 @@ const Form: React.FC<Props> = ({ node }) => {
     { value: 'link', label: 'Image Link' },
   ]
 
+  const Info = useMemo(() => {
+    return (
+      <div>
+        <img src="/public/assets/wa_image_info.png" alt="whatsapp-image" />
+      </div>
+    )
+  }, [])
+
   return (
-    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       <div className="space-y-4">
         <DropDown
           name="imageType"

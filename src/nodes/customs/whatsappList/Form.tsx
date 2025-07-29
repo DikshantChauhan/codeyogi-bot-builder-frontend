@@ -32,8 +32,17 @@ const Form: React.FC<Props> = ({ node }) => {
     return value
   }
 
+  const Info = useMemo(() => {
+    return (
+      <div>
+        <img src="/public/assets/wa_list_info.png" alt="whatsapp-list" />
+        <p>Note: We use list as a quiz node, so the user can select the correct option from the list</p>
+      </div>
+    )
+  }, [])
+
   return (
-    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       {({ setFieldValue, values }) => (
         <div className="space-y-4">
           <div className="space-y-2">

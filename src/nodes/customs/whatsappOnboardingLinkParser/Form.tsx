@@ -7,17 +7,29 @@ interface Props {
   node?: WhatsappOnboardingLinkParserNodeType
 }
 
-const info = `Parse the provided link and choose the path for Student, Teacher or Unknown.
+const info = `
+🔹 Link Parser Node
 
-For passing keys wrap them with '*' and for key/value pairs use ':'. 
-Example: *District id: 123*
-          *Dise code: 123*
-          *Course: Coding*
+- Parses the provided link and determines the path based on the user type: **Student**, **Teacher**, or **Unknown**.
 
-For choosing Student you must provide 'Dise code'. Course is optional, which you can use further in flow building.
-This will set the user's dise-code and course (if provided).
+🔹 Input Format
+- To pass key/value pairs, wrap them in \`*\` and use \`:\` between key and value.
+  Example:
+    *District id: 123*
+    *Dise code: 123*
+    *Course: Coding*
 
-For choosing Teacher provide: District id.`
+🔹 Conditions
+- To select the **Student** path:
+  - You **must** provide \`Dise code\`.
+  - \`Course\` is optional and can be used further in the flow.
+  - This sets the user's \`dise-code\` and optionally the \`course\`.
+
+- To select the **Teacher** path:
+  - Provide \`District id\` only.
+
+- If neither condition is met, the flow will follow the **Unknown** path.
+`
 
 const Form: React.FC<Props> = ({ node }) => {
   const initialValues = useMemo(

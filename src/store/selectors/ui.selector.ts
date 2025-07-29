@@ -27,3 +27,5 @@ export const selectedNodeSelector = createSelector([flowSelectionSelector], (flo
 
   return
 })
+
+export const isToolbarSidePannelExpandedSelector = createSelector(uiSelector, (ui) => ui.isToolbarSidePannelExpanded)

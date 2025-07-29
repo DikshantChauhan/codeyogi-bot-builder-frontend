@@ -194,12 +194,19 @@ const Form = ({ node }: Props) => {
     )
   }
 
+  const Info = useMemo(() => {
+    return (
+      <div>
+        <img src="/public/assets/wa_cta_url_info.png" alt="whatsapp-cta-url" />
+      </div>
+    )
+  }, [])
+
   return (
-    <NodeFormContainer<FormData> initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer<FormData> initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       {({ values }) => (
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Header Type</label>
             <DropDown
               name="header.type"
               label="Header Type"

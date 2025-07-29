@@ -160,6 +160,7 @@ const useFlowPageData = () => {
             edges: selectedEdges.map((edge) => ({ ...edge, selected: false })),
           },
         })
+        dispatch(uiActions.setIsToolbarSidePannelExpanded(true))
       }
     },
     [setFlow, selectedEdges, selectedNodes, selectedFlow]

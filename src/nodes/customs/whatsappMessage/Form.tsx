@@ -1,4 +1,4 @@
-import { FC, memo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { WhatsappMessageNodeData, WhatsappMessageNodeType } from './type'
 import SuggestionField from '../../../components/Field'
@@ -19,8 +19,17 @@ const WhatsappMessageForm: FC<Props> = ({ node }) => {
     return value
   }
 
+  const Info = useMemo(() => {
+    return (
+      <div>
+        <img src="/public/assets/wa_message_info.png" alt="whatsapp-message" />
+        <p>Note: By default the preview url is disabled, you can enable it by checking the preview url checkbox</p>
+      </div>
+    )
+  }, [])
+
   return (
-    <NodeFormContainer initialValues={data || { text: '', previewUrl: false }} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={data || { text: '', previewUrl: false }} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       <div className="space-y-4">
         <div>
           <SuggestionField

@@ -7,6 +7,15 @@ interface Props {
   node?: PromptNodeType
 }
 
+const info = `🔹 Prompt Node Behavior
+
+- Used to take user input during the flow.
+- You can configure input validation options. If validation fails, the user will receive an error and will be re-prompted to enter the input again.
+- When the flow reaches a Prompt node, it pauses and waits for the user's input.
+- The inputted (prompted) value can be used later in the flow via the variable dropdown.
+- This prompted value is preserved and available until the flow reaches the next Prompt node.
+`
+
 const Form: FC<Props> = ({ node }) => {
   const initialValues = useMemo(() => {
     return {
@@ -22,7 +31,7 @@ const Form: FC<Props> = ({ node }) => {
   }
 
   return (
-    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail}>
+    <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={info}>
       {({ values, setFieldValue }) => (
         <div className="space-y-4">
           <div>

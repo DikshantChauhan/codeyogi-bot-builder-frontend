@@ -11,7 +11,7 @@ interface FormProps<T extends FormikValues> {
   initialValues: T
   transFormNodeDataOrFail: TransFormNodeDataOrFail<T>
   children: React.ReactNode | ((props: FormikProps<T>) => React.ReactNode)
-  info?: string
+  info?: string | React.ReactNode
 }
 
 export type TransFormNodeDataOrFail<S extends FormikValues> = (values: S, formikHelpers: FormikHelpers<S>) => AppNode['data']
@@ -27,10 +27,10 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
       <Formik<T> initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
         {(formikProps) => (
           <Form className="flex flex-col flex-1 max-h-full gap-3 p-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-between">
               <h2 className="text-xl font-bold">{type}</h2>
-              {info && <InfoCard position="bottom" info={info} />}
-              {true && (
+              <div className="flex justify-end items-center gap-2">
+                {info && <InfoCard position="bottom" info={info} />}
                 <button
                   type="button"
                   onClick={() => {
@@ -40,7 +40,7 @@ const FormContainer = <T extends FormikValues>({ transFormNodeDataOrFail, childr
                 >
                   {orientaion === 'horizontal' ? <FaArrowsAltH /> : <FaArrowsAltV />}
                 </button>
-              )}
+              </div>
             </div>
             <div className="flex-1 overflow-auto">{typeof children === 'function' ? children(formikProps) : children}</div>
 

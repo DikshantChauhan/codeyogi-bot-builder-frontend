@@ -7,7 +7,6 @@ import { WHATSAPP_STICKER_NODE_KEY, WhatsappStickerNodeType } from '../nodes/cus
 import { WHATSAPP_VIDEO_NODE_KEY, WhatsappVideoNodeType } from '../nodes/customs/whatsappVideo/type'
 import { WHATSAPP_BUTTON_NODE_KEY, WhatsappButtonNodeType } from '../nodes/customs/whatsappButton/type'
 import { WHATSAPP_LIST_NODE_KEY, WhatsappListNodeType } from '../nodes/customs/whatsappList/type'
-import { WHATSAPP_LINK_BUTTON_NODE_KEY, WhatsappLinkButtonNodeType } from '../nodes/customs/whatsappLinkButton/type'
 import { WHATSAPP_IMAGE_NODE_KEY, WhatsappImageNodeType } from '../nodes/customs/whatsappImage/type'
 import { WHATSAPP_DOCUMENT_NODE_KEY, WhatsappDocumentNodeType } from '../nodes/customs/whatsappDocument/type'
 import { WHATSAPP_AUDIO_NODE_KEY, WhatsappAudioNodeType } from '../nodes/customs/whatsappAudio/type'
@@ -26,7 +25,6 @@ import StartNode from '../nodes/customs/start/Node'
 import WhatsappAudioNode from '../nodes/customs/whatsappAudio/Node'
 import WhatsappDocumentNode from '../nodes/customs/whatsappDocument/Node'
 import WhatsappImageNode from '../nodes/customs/whatsappImage/Node'
-import WhatsappLinkButtonNode from '../nodes/customs/whatsappLinkButton/Node'
 import WhatsappListNode from '../nodes/customs/whatsappList/Node'
 import WhatsappButtonNode from '../nodes/customs/whatsappButton/Node'
 import WhatsappVideoNode from '../nodes/customs/whatsappVideo/Node'
@@ -92,7 +90,6 @@ export type AppNode =
       | WhatsappAudioNodeType
       | WhatsappDocumentNodeType
       | WhatsappImageNodeType
-      | WhatsappLinkButtonNodeType
       | WhatsappListNodeType
       | WhatsappButtonNodeType
       | WhatsappVideoNodeType
@@ -121,7 +118,6 @@ export const nodesRegistry = {
   [WHATSAPP_AUDIO_NODE_KEY]: { node: WhatsappAudioNode, color: 'bg-blue-500', Icon: IoIosMusicalNotes },
   [WHATSAPP_DOCUMENT_NODE_KEY]: { node: WhatsappDocumentNode, color: 'bg-purple-500', Icon: IoIosDocument },
   [WHATSAPP_IMAGE_NODE_KEY]: { node: WhatsappImageNode, color: 'bg-pink-500', Icon: IoIosImage },
-  [WHATSAPP_LINK_BUTTON_NODE_KEY]: { node: WhatsappLinkButtonNode, color: 'bg-green-500', Icon: IoIosLink },
   [WHATSAPP_LIST_NODE_KEY]: { node: WhatsappListNode, color: 'bg-orange-500', Icon: IoIosList },
   [WHATSAPP_BUTTON_NODE_KEY]: { node: WhatsappButtonNode, color: 'bg-teal-500', Icon: IoIosRadioButtonOn },
   [WHATSAPP_VIDEO_NODE_KEY]: { node: WhatsappVideoNode, color: 'bg-red-500', Icon: IoIosVideocam },
