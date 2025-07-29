@@ -5,12 +5,14 @@ type UiState = {
   pannelClickedPosition: { x: number; y: number } | null
   nodeToAdd: AppNodeKeys | null
   isToolbarSidePannelExpanded: boolean
+  isShortcutMenuOpen: boolean
 }
 
 const initialState: UiState = {
   pannelClickedPosition: null,
   nodeToAdd: null,
   isToolbarSidePannelExpanded: true,
+  isShortcutMenuOpen: false,
 }
 
 const uiSlice = createSlice({
@@ -25,6 +27,9 @@ const uiSlice = createSlice({
     },
     setIsToolbarSidePannelExpanded: (state, action: PayloadAction<boolean>) => {
       state.isToolbarSidePannelExpanded = action.payload
+    },
+    setIsShortcutMenuOpen: (state, action: PayloadAction<boolean>) => {
+      state.isShortcutMenuOpen = action.payload
     },
   },
 })

@@ -316,6 +316,12 @@ const useFlowPageData = () => {
           selectedEdges.map((edge) => edge.id)
         )
       }
+
+      //shift + k
+      if (e.shiftKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault()
+        dispatch(uiActions.setIsShortcutMenuOpen(true))
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)

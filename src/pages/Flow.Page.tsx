@@ -8,6 +8,7 @@ import Loading from '../components/Loading'
 import useFlowPageData from '../hooks/useFlowPageData'
 import Error from '../components/Error'
 import { edgeTypes } from '../models/Edge.model'
+import ShortcutsPopup from '../components/ShortcutsPopup'
 
 const FlowPage = () => {
   const {
@@ -73,6 +74,11 @@ const FlowPage = () => {
               <Loading message="updating flow" />
             </Panel>
           )}
+          <Panel position="bottom-center">
+            <p className="text-gray-200 text-sm bg-gray-600 px-2 py-1 rounded-md">shift + k to open shortcut menu</p>
+          </Panel>
+
+          <ShortcutsPopup />
         </ReactFlow>
       </div>
     </div>

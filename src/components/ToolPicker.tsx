@@ -6,7 +6,6 @@ import { selectedFlowAllowedNodesSelector } from '../store/selectors/flow.select
 import { uiActions } from '../store/slices/UI.slice'
 import { MdArrowBackIosNew } from 'react-icons/md'
 import { IoAdd } from 'react-icons/io5'
-import { isToolbarSidePannelExpandedSelector } from '../store/selectors/ui.selector'
 
 interface ToolPickerProps {
   allowedNodes: AppNodeKeys[]
