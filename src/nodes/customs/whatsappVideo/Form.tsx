@@ -10,18 +10,17 @@ interface Props {
 
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
-  const initialValues = useMemo(
+  const initialValues: WhatsappVideoNodeData = useMemo(
     () => ({
-      media: data?.media || '',
-      mediaType: data?.mediaType || 'id',
+      media: { wa_media_url: data?.media.wa_media_url || '', wa_media_id: data?.media.wa_media_id || undefined },
       caption: data?.caption || '',
     }),
     [data]
   )
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappVideoNodeData> = (value) => {
-    if (!value.media) {
-      throw new Error('Video media is required')
+    if (!value.media.wa_media_url) {
+      throw new Error('Video media url is required')
     }
     return value
   }
@@ -38,14 +37,7 @@ const Form: React.FC<Props> = ({ node }) => {
   return (
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Media Type</label>
-          <Field as="select" name="mediaType" className="w-full rounded-md border px-3 py-2">
-            <option value="id">Video ID</option>
-            <option value="link">Video URL</option>
-          </Field>
-        </div>
-        <SuggestionField name="media" placeholder="Enter WhatsApp video ID or URL" as="input" label="Media" />
+        <Field name="media.wa_media_url" placeholder="Enter WhatsApp video URL" as="input" label="Video URL" disableSuggestion />
         <SuggestionField name="caption" placeholder="Enter video caption" as="textarea" label="Caption (optional)" />
       </div>
     </NodeFormContainer>

@@ -4,7 +4,7 @@ import { MessageHeader } from '../../../models/Node.model'
 export const WHATSAPP_CTA_URL_NODE_KEY = 'whatsapp-cta-url'
 
 export type WhatsappCtaUrlNodeData = {
-  header: MessageHeader
+  header?: MessageHeader
   bodyText: string
   buttonText: string
   buttonUrl: string

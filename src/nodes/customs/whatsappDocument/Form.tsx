@@ -1,8 +1,7 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { WhatsappDocumentNodeData, WhatsappDocumentNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import Field from '../../../components/Field'
-import DropDown from '../../../components/DropDown'
 
 interface Props {
   node?: WhatsappDocumentNodeType
@@ -11,19 +10,9 @@ interface Props {
 const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
 
-  // Determine initial selection type based on existing data
-  const getInitialSelectionType = () => {
-    if (data?.id) return 'id'
-    if (data?.link) return 'link'
-    return 'id' // default to id
-  }
-
-  const [selectionType, setSelectionType] = useState<'id' | 'link'>(getInitialSelectionType())
-
-  const initialValues = useMemo(
+  const initialValues: WhatsappDocumentNodeData = useMemo(
     () => ({
-      id: data?.id || undefined,
-      link: data?.link || undefined,
+      media: data?.media || { wa_media_id: '', wa_media_url: '' },
       caption: data?.caption || undefined,
       filename: data?.filename || undefined,
     }),
@@ -31,16 +20,11 @@ const Form: React.FC<Props> = ({ node }) => {
   )
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappDocumentNodeData> = (value) => {
-    if (!value.id && !value.link) {
-      throw new Error('Either Document ID or Link is required')
+    if (!value.media.wa_media_url || !value.media.wa_media_id) {
+      throw new Error('Document URL and ID is required')
     }
     return value
   }
-
-  const documentTypeOptions = [
-    { value: 'id', label: 'Document ID (recommended)' },
-    { value: 'link', label: 'Document Link' },
-  ]
 
   const Info = useMemo(() => {
     return (
@@ -53,26 +37,9 @@ const Form: React.FC<Props> = ({ node }) => {
   return (
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       <div className="space-y-4">
-        <DropDown
-          name="documentType"
-          label="Document Type"
-          options={documentTypeOptions}
-          placeholder="Select document type"
-          value={selectionType}
-          onChange={(value) => setSelectionType(value as 'id' | 'link')}
-        />
+        <Field name="media.wa_media_id" placeholder="Enter WhatsApp document ID" as="input" label="Document ID" disableSuggestion />
 
-        {selectionType === 'id' && (
-          <div className="space-y-2">
-            <Field name="id" placeholder="Enter WhatsApp document ID" as="input" label="Document ID" disableSuggestion />
-          </div>
-        )}
-
-        {selectionType === 'link' && (
-          <div className="space-y-2">
-            <Field name="link" placeholder="Enter WhatsApp document URL" as="input" label="Document Link" disableSuggestion />
-          </div>
-        )}
+        <Field name="media.wa_media_url" placeholder="Enter WhatsApp document URL" as="input" label="Document URL" disableSuggestion />
 
         <div className="space-y-2">
           <Field name="caption" placeholder="Enter document caption" as="textarea" label="Caption" />

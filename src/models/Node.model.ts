@@ -68,12 +68,15 @@ import { GrValidate } from 'react-icons/gr'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
+export type WhatsappMedia = { wa_media_id: string; wa_media_url: string }
+
+export const MEDIA_TYPES = ['image', 'video', 'document', 'audio', 'text'] as const
+export type MediaTypes = (typeof MEDIA_TYPES)[number]
+
 export interface MessageHeader {
-  type: 'text' | 'image' | 'video' | 'document'
+  type: MediaTypes
   text?: string
-  image?: { id: string } | { link: string }
-  video?: { id: string } | { link: string }
-  document?: { id: string } | { link: string }
+  media?: WhatsappMedia
 }
 
 export type NodeOrientation = 'vertical' | 'horizontal'
