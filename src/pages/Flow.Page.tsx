@@ -9,6 +9,7 @@ import useFlowPageData from '../hooks/useFlowPageData'
 import Error from '../components/Error'
 import { edgeTypes } from '../models/Edge.model'
 import ShortcutsPopup from '../components/ShortcutsPopup'
+import MediaUploadPopup from '../components/MediaUploadPopup'
 
 const FlowPage = () => {
   const {
@@ -79,6 +80,7 @@ const FlowPage = () => {
           </Panel>
 
           <ShortcutsPopup />
+          <MediaUploadPopup />
         </ReactFlow>
       </div>
     </div>

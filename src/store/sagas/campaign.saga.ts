@@ -1,7 +1,7 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { campaignActions } from '../slices/campaign.slice'
 import { PathMatch } from 'react-router-dom'
-import { createCampaignAPI, deleteCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, fetchFlowAPI, updateCampaignAPI } from '../../api/api'
+import { createCampaignAPI, deleteCampaignAPI, fetchCampaignAPI, fetchCampaignslistAPI, updateCampaignAPI } from '../../api/api'
 import { ROUTE_CAMPAIGN_DETAILS } from '../../constants'
 import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'

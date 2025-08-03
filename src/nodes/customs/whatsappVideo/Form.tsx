@@ -12,7 +12,7 @@ const Form: React.FC<Props> = ({ node }) => {
   const data = node?.data
   const initialValues: WhatsappVideoNodeData = useMemo(
     () => ({
-      media: { wa_media_url: data?.media.wa_media_url || '', wa_media_id: data?.media.wa_media_id || undefined },
+      media: { wa_media_url: data?.media.wa_media_url || '', wa_media_id: data?.media.wa_media_id || '' },
       caption: data?.caption || '',
     }),
     [data]

@@ -1,6 +1,6 @@
 import { memo, FC, useState, useCallback } from 'react'
 import { connect } from 'react-redux'
-import { FiEye, FiPlus } from 'react-icons/fi'
+import { FiEye, FiPlus, FiUpload } from 'react-icons/fi'
 import { AppState } from '../store/store'
 import {
   campaignAddErrorSelector,
@@ -16,6 +16,7 @@ import CampaignAddOrUpdatePopup, { CampaignAddOrUpdateFormData } from '../compon
 import { campaignActions } from '../store/slices/campaign.slice'
 import CampaignCard from '../components/CampaignCard'
 import FlowAddPopup from '../components/FlowAddPopup'
+import MediaUploadPopup from '../components/MediaUploadPopup'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_NUDGES_LIST } from '../constants'
 import Button from '../components/Button'
@@ -40,6 +41,7 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
 }) => {
   const [isCampaignAddPopupOpen, setIsCampaignAddPopupOpen] = useState(false)
   const [isNudgeAddPopupOpen, setIsNudgeAddPopupOpen] = useState(false)
+  const [isMediaUploadPopupOpen, setIsMediaUploadPopupOpen] = useState(false)
   const navigate = useNavigate()
 
   const handleCreateCampaign = useCallback(
@@ -65,6 +67,9 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <Button variant="secondary" Icon={FiEye} onClick={() => navigate(ROUTE_NUDGES_LIST)}>
               View Nudges
+            </Button>
+            <Button variant="secondary" Icon={FiUpload} onClick={() => setIsMediaUploadPopupOpen(true)}>
+              Upload Media
             </Button>
             <Button variant="primary" Icon={FiPlus} onClick={() => setIsNudgeAddPopupOpen(true)}>
               New Nudge
@@ -107,6 +112,7 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
       )}
 
       {isNudgeAddPopupOpen && <FlowAddPopup isOpen={isNudgeAddPopupOpen} onClose={() => setIsNudgeAddPopupOpen(false)} type="nudge" />}
+      {isMediaUploadPopupOpen && <MediaUploadPopup />}
     </main>
   )
 }

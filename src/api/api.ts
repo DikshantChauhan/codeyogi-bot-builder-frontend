@@ -72,3 +72,26 @@ export const deleteFlowAPI = async (campaignId: string, flowId: string): Promise
   const response = await axios.delete<NormalizedCampaign>(url)
   return response.data
 }
+
+// WhatsApp Media Upload API
+export interface WhatsAppMediaUploadPayload {
+  campaign_id: string
+  type: 'image' | 'video' | 'document'
+  content: string // Base64 encoded content
+  filename: string
+  contentType: string
+}
+
+export interface WhatsAppMediaUploadResponse {
+  whatsapp_media_id: string
+  s3_url: string
+  filename: string
+  type: 'image' | 'video' | 'document'
+  campaign_id: string
+}
+
+export const uploadWhatsAppMediaAPI = async (payload: WhatsAppMediaUploadPayload): Promise<WhatsAppMediaUploadResponse> => {
+  const url = `${API_BASE_URL}/flow/media`
+  const response = await axios.post<WhatsAppMediaUploadResponse>(url, payload)
+  return response.data
+}

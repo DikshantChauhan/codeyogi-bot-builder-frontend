@@ -19,6 +19,7 @@ const ShortcutsPopup: React.FC<ShortcutsPopupProps> = ({ isShortcutMenuOpen, set
     { key: 'Ctrl + C', description: 'Copy selected nodes to clipboard' },
     { key: 'Ctrl + V', description: 'Paste nodes from clipboard' },
     { key: 'Ctrl + A', description: 'Select all nodes and edges' },
+    { key: 'Ctrl + M', description: 'Open media upload popup' },
     { key: 'Delete / Backspace', description: 'Delete selected nodes and edges' },
     { key: 'ctrl + mouse click', description: 'Select multiple nodes one by one' },
     { key: 'shift + mouse move', description: 'Select multiple nodes with selection box' },
