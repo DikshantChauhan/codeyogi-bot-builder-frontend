@@ -9,7 +9,9 @@ import { toast } from 'react-toastify'
 import { shouldUpdateFlow } from '../../utils'
 import { NormalizedCampaign } from '../../models/Campaign.model'
 
-function* fetchLevelFlowSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
+export function* fetchLevelFlowSaga(
+  match: Pick<PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>, 'params'>
+): Generator {
   const flowId = match.params.flow_id!
   const campaignId = match.params.campaign_id!
   try {

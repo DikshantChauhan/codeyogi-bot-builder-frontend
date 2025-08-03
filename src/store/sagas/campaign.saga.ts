@@ -6,9 +6,7 @@ import { ROUTE_CAMPAIGN_DETAILS } from '../../constants'
 import { NormalizedCampaign } from '../../models/Campaign.model'
 import { toast } from 'react-toastify'
 import { selectedNormalizedCampaignSelector } from '../selectors/campaign.selector'
-import { flowActions } from '../slices/flow.slice'
-import { shouldUpdateFlow } from '../../utils'
-import { Flow } from '../../models/Flow.model'
+import { fetchLevelFlowSaga } from './flow.saga'
 
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
   try {
@@ -82,16 +80,14 @@ function* updateCampaignSaga({ payload }: ReturnType<typeof campaignActions.camp
 }
 
 export function* fetchCampaignDetailsSaga(match: PathMatch<typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
-  yield call(fetchCampaignSaga, match)
+  try {
+    yield call(fetchCampaignSaga, match)
 
-  const campaign = (yield select(selectedNormalizedCampaignSelector)) as NormalizedCampaign
+    const campaign = (yield select(selectedNormalizedCampaignSelector)) as NormalizedCampaign
 
-  const flows = (yield all(campaign.levels.map(async (level) => await fetchFlowAPI(level)))) as Flow[]
-
-  for (const flow of flows) {
-    if (shouldUpdateFlow(flow)) {
-      yield put(flowActions.setFlow({ flow, error: null, loading: false }))
-    }
+    yield all(campaign.levels.map((level) => call(fetchLevelFlowSaga, { params: { campaign_id: campaign.id, flow_id: level } })))
+  } catch (error) {
+    console.error('Error fetching campaign details:', error)
   }
 }
 
