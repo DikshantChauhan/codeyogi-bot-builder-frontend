@@ -1,5 +1,5 @@
 import { FlowAddOrUpdateFormData } from '../components/FlowAddPopup'
-import { API_BASE_URL } from '../constants'
+import { ADMIN_API_BASE_URL, API_BASE_URL } from '../constants'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import { Entity } from '../models/Entity.model'
 import { Flow } from '../models/Flow.model'
@@ -33,7 +33,7 @@ export const updateCampaignAPI = async (campaignId: string, campaign: CampaignUp
 }
 
 export const fetchFlowAPI = async (flowId: string): Promise<Flow> => {
-  const url = `${API_BASE_URL}/flow/${flowId}`
+  const url = `${ADMIN_API_BASE_URL}/flow/${flowId}`
   const response = await axios.get<Flow>(url)
   response.data.data.nodes = response.data.data.nodes.map((node) => {
     if (node.type === ('whatsapp-ownboarding-link-parser' as any)) {
@@ -45,19 +45,19 @@ export const fetchFlowAPI = async (flowId: string): Promise<Flow> => {
 }
 
 export const fetchNudgeFlowsListAPI = async (): Promise<Flow[]> => {
-  const url = `${API_BASE_URL}/flow/nudge/all`
+  const url = `${ADMIN_API_BASE_URL}/flow/nudge/all`
   const response = await axios.get<Flow[]>(url)
   return response.data
 }
 
 export const createFlowAPI = async (data: { flow_data: FlowAddOrUpdateFormData; campaign_id?: string; level_number?: number }) => {
-  const url = `${API_BASE_URL}/flow`
+  const url = `${ADMIN_API_BASE_URL}/flow`
   const response = await axios.post<{ flow: Flow; campaign?: NormalizedCampaign }>(url, data)
   return response.data
 }
 
 export const updateFlowAPI = async ({ id, data }: { id: string; data: FlowAddOrUpdateFormData }) => {
-  const url = `${API_BASE_URL}/flow/${id}`
+  const url = `${ADMIN_API_BASE_URL}/flow/${id}`
   const response = await axios.put<Flow>(url, data)
   return response.data
 }
@@ -68,16 +68,17 @@ export const deleteCampaignAPI = async (campaignId: string) => {
 }
 
 export const deleteFlowAPI = async (campaignId: string, flowId: string): Promise<NormalizedCampaign> => {
-  const url = `${API_BASE_URL}/campaign/${campaignId}/flow/${flowId}`
+  const url = `${ADMIN_API_BASE_URL}/campaign/${campaignId}/flow/${flowId}`
   const response = await axios.delete<NormalizedCampaign>(url)
   return response.data
 }
 
-// WhatsApp Media Upload API
+export type WhatsAppMediaUploadType = 'image' | 'video' | 'document'
+
 export interface WhatsAppMediaUploadPayload {
   campaign_id: string
-  type: 'image' | 'video' | 'document'
-  content: string // Base64 encoded content
+  type: WhatsAppMediaUploadType
+  s3_url: string
   filename: string
   contentType: string
 }
@@ -86,12 +87,12 @@ export interface WhatsAppMediaUploadResponse {
   whatsapp_media_id: string
   s3_url: string
   filename: string
-  type: 'image' | 'video' | 'document'
+  type: WhatsAppMediaUploadType
   campaign_id: string
 }
 
 export const uploadWhatsAppMediaAPI = async (payload: WhatsAppMediaUploadPayload): Promise<WhatsAppMediaUploadResponse> => {
-  const url = `${API_BASE_URL}/flow/media`
+  const url = `${ADMIN_API_BASE_URL}/flow/media`
   const response = await axios.post<WhatsAppMediaUploadResponse>(url, payload)
   return response.data
 }

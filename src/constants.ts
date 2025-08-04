@@ -13,6 +13,8 @@ ROUTE_LEVEL_FLOW.dynamicKey = 'flow_id' as const
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+export const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL
+
 export const VARIABLE_NAMES = [
   'user.name',
   'user.current_level_id',

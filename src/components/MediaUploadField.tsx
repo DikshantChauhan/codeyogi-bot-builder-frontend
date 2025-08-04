@@ -1,16 +1,14 @@
 import React, { useState, useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { MediaUploadResponse } from './MediaUpload'
 import MediaUpload from './MediaUpload'
 import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
 import { AppState } from '../store/store'
 import Button from './Button'
 import { FiEdit3 } from 'react-icons/fi'
-
-export type MediaType = 'image' | 'video' | 'document'
+import { WhatsAppMediaUploadResponse, WhatsAppMediaUploadType } from '../api/api'
 
 interface MediaUploadFieldProps {
-  mediaType: MediaType
+  mediaType: WhatsAppMediaUploadType
   mediaId: string
   mediaUrl: string
   onMediaChange: (mediaId: string, mediaUrl: string) => void
@@ -21,11 +19,10 @@ const MediaUploadField: React.FC<MediaUploadFieldProps> = ({ mediaType, mediaId,
   const [showMediaUpload, setShowMediaUpload] = useState(false)
   const selectedCampaign = useSelector((state: AppState) => selectedNormalizedCampaignSelector(state))
 
-  // Check if media is already set
   const hasExistingMedia = mediaId && mediaUrl
 
   const handleUploadSuccess = useCallback(
-    (response: MediaUploadResponse) => {
+    (response: WhatsAppMediaUploadResponse) => {
       onMediaChange(response.whatsapp_media_id, response.s3_url)
       setShowMediaUpload(false)
     },

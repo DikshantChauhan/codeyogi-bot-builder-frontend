@@ -5,25 +5,17 @@ import { IoMdClose } from 'react-icons/io'
 import { FiCopy, FiCheck } from 'react-icons/fi'
 import Button from './Button'
 import Loading from './Loading'
-import { uploadWhatsAppMediaAPI, WhatsAppMediaUploadPayload } from '../api/api'
-
-export type MediaType = 'image' | 'video' | 'document'
-
-export interface MediaUploadResponse {
-  whatsapp_media_id: string
-  s3_url: string
-  filename: string
-  type: MediaType
-  campaign_id: string
-}
+import { uploadWhatsAppMediaAPI, WhatsAppMediaUploadPayload, WhatsAppMediaUploadResponse, WhatsAppMediaUploadType } from '../api/api'
+import { S3Service } from '../services/S3Service'
+import { toast } from 'react-toastify'
 
 interface MediaUploadProps {
   campaignId: string
-  onUploadSuccess?: (response: MediaUploadResponse) => void
+  onUploadSuccess?: (response: WhatsAppMediaUploadResponse) => void
   onUploadError?: (error: string) => void
   className?: string
-  acceptedTypes?: MediaType[]
-  maxFileSize?: number // in bytes
+  acceptedTypes?: WhatsAppMediaUploadType[]
+  maxFileSize?: number
 }
 
 const MediaUpload: React.FC<MediaUploadProps> = ({
@@ -35,7 +27,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   maxFileSize = 16 * 1024 * 1024, // 16MB default
 }) => {
   const [uploading, setUploading] = useState(false)
-  const [uploadedFile, setUploadedFile] = useState<MediaUploadResponse | null>(null)
+  const [uploadedFile, setUploadedFile] = useState<WhatsAppMediaUploadResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
@@ -49,7 +41,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   }
 
   const getAcceptedMimeTypes = useMemo(() => {
-    const mimeTypes: Record<MediaType, string[]> = {
+    const mimeTypes: Record<WhatsAppMediaUploadType, string[]> = {
       image: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
       video: ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'],
       document: [
@@ -67,7 +59,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
     return acceptedTypes.flatMap((type) => mimeTypes[type])
   }, [acceptedTypes])
 
-  const getFileType = (file: File): MediaType => {
+  const getFileType = (file: File): WhatsAppMediaUploadType => {
     if (file.type.startsWith('image/')) return 'image'
     if (file.type.startsWith('video/')) return 'video'
     return 'document'
@@ -79,25 +71,28 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
         setUploading(true)
         setError(null)
 
-        // Convert file to base64
-        const base64Content = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => {
-            const result = reader.result as string
-            // Remove data URL prefix to get just the base64 content
-            const base64 = result.split(',')[1]
-            resolve(base64)
-          }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-
         const fileType = getFileType(file)
 
+        // Convert file to Uint8Array for S3 upload
+        const buffer = await new Promise<Uint8Array>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => {
+            const result = reader.result as ArrayBuffer
+            resolve(new Uint8Array(result))
+          }
+          reader.onerror = reject
+          reader.readAsArrayBuffer(file)
+        })
+
+        // Upload to S3 first
+        const s3Url = await S3Service.uploadFile(campaignId, fileType, buffer, file.type, file.name)
+
+        toast.success('File uploaded to S3')
+        // Call API with S3 URL
         const payload: WhatsAppMediaUploadPayload = {
           campaign_id: campaignId,
           type: fileType,
-          content: base64Content,
+          s3_url: s3Url,
           filename: file.name,
           contentType: file.type,
         }
@@ -158,7 +153,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
     }
   }, [])
 
-  const getFileIcon = (type: MediaType) => {
+  const getFileIcon = (type: WhatsAppMediaUploadType) => {
     switch (type) {
       case 'image':
         return <AiOutlinePicture className="h-6 w-6 text-blue-500" />
