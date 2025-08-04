@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import { WhatsappDocumentNodeData, WhatsappDocumentNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import Field from '../../../components/Field'
+import MediaUploadField from '../../../components/MediaUploadField'
 
 interface Props {
   node?: WhatsappDocumentNodeType
@@ -36,18 +37,25 @@ const Form: React.FC<Props> = ({ node }) => {
 
   return (
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
-      <div className="space-y-4">
-        <Field name="media.wa_media_id" placeholder="Enter WhatsApp document ID" as="input" label="Document ID" disableSuggestion />
-
-        <Field name="media.wa_media_url" placeholder="Enter WhatsApp document URL" as="input" label="Document URL" disableSuggestion />
-
-        <div className="space-y-2">
-          <Field name="caption" placeholder="Enter document caption" as="textarea" label="Caption" />
+      {({ values, setFieldValue }) => (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Field name="caption" placeholder="Enter document caption" as="textarea" label="Caption" />
+          </div>
+          <div className="space-y-2">
+            <Field name="filename" disableSuggestion placeholder="Enter document filename" as="input" label="Filename" />
+          </div>
+          <MediaUploadField
+            mediaType="document"
+            mediaId={values.media?.wa_media_id || ''}
+            mediaUrl={values.media?.wa_media_url || ''}
+            onMediaChange={(mediaId, mediaUrl) => {
+              setFieldValue('media.wa_media_id', mediaId)
+              setFieldValue('media.wa_media_url', mediaUrl)
+            }}
+          />
         </div>
-        <div className="space-y-2">
-          <Field name="filename" disableSuggestion placeholder="Enter document filename" as="input" label="Filename" />
-        </div>
-      </div>
+      )}
     </NodeFormContainer>
   )
 }

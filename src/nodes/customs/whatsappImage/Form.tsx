@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import { WhatsappImageNodeData, WhatsappImageNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import Field from '../../../components/Field'
+import MediaUploadField from '../../../components/MediaUploadField'
 
 interface Props {
   node?: WhatsappImageNodeType
@@ -35,14 +36,22 @@ const Form: React.FC<Props> = ({ node }) => {
 
   return (
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
-      <div className="space-y-4">
-        <Field name="media.wa_media_id" placeholder="Enter WhatsApp image ID" as="input" label="Image ID" disableSuggestion />
-        <Field name="media.wa_media_url" placeholder="Enter WhatsApp image URL" as="input" label="Image URL" disableSuggestion />
-
-        <div className="space-y-2">
-          <Field name="caption" placeholder="Enter image caption" as="textarea" label="Caption" />
+      {({ values, setFieldValue }) => (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Field name="caption" placeholder="Enter image caption" as="textarea" label="Caption" />
+          </div>
+          <MediaUploadField
+            mediaType="image"
+            mediaId={values.media?.wa_media_id || ''}
+            mediaUrl={values.media?.wa_media_url || ''}
+            onMediaChange={(mediaId, mediaUrl) => {
+              setFieldValue('media.wa_media_id', mediaId)
+              setFieldValue('media.wa_media_url', mediaUrl)
+            }}
+          />
         </div>
-      </div>
+      )}
     </NodeFormContainer>
   )
 }

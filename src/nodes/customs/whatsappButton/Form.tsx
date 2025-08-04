@@ -68,7 +68,7 @@ const Form = ({ node }: Props) => {
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       {({ values, setFieldValue }) => (
         <div className="space-y-4">
-          <NodeHeaderForm type={values.header?.type} setFieldValue={setFieldValue} />
+          <NodeHeaderForm header={values.header} setFieldValue={setFieldValue} />
 
           <div className="space-y-2">
             <SuggestionField name="text" placeholder="Enter button message text" as="textarea" label="Button message text" characterLimit={1024} />

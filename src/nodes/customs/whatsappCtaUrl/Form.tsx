@@ -63,7 +63,7 @@ const Form = ({ node }: Props) => {
     <NodeFormContainer initialValues={initialValues} transFormNodeDataOrFail={transFormNodeDataOrFail} info={Info}>
       {({ values, setFieldValue }) => (
         <div className="space-y-4">
-          <NodeHeaderForm type={values.header?.type} setFieldValue={setFieldValue} />
+          <NodeHeaderForm setFieldValue={setFieldValue} header={values.header} />
 
           <div className="space-y-2">
             <Field name="bodyText" placeholder="Enter body text (max 1024 characters)" as="textarea" label="Body Text *" characterLimit={1024} />

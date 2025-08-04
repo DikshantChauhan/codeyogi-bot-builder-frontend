@@ -6,7 +6,6 @@ type UiState = {
   nodeToAdd: AppNodeKeys | null
   isToolbarSidePannelExpanded: boolean
   isShortcutMenuOpen: boolean
-  isMediaUploadPopupOpen: boolean
 }
 
 const initialState: UiState = {
@@ -14,7 +13,6 @@ const initialState: UiState = {
   nodeToAdd: null,
   isToolbarSidePannelExpanded: true,
   isShortcutMenuOpen: false,
-  isMediaUploadPopupOpen: false,
 }
 
 const uiSlice = createSlice({
@@ -32,9 +30,6 @@ const uiSlice = createSlice({
     },
     setIsShortcutMenuOpen: (state, action: PayloadAction<boolean>) => {
       state.isShortcutMenuOpen = action.payload
-    },
-    setIsMediaUploadPopupOpen: (state, action: PayloadAction<boolean>) => {
-      state.isMediaUploadPopupOpen = action.payload
     },
   },
 })

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { AiOutlineUpload, AiOutlineFile, AiOutlinePicture, AiOutlineVideoCamera } from 'react-icons/ai'
 import { IoMdClose } from 'react-icons/io'
+import { FiCopy, FiCheck } from 'react-icons/fi'
 import Button from './Button'
 import Loading from './Loading'
 import { uploadWhatsAppMediaAPI, WhatsAppMediaUploadPayload } from '../api/api'
@@ -34,8 +35,9 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   maxFileSize = 16 * 1024 * 1024, // 16MB default
 }) => {
   const [uploading, setUploading] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<MediaUploadResponse[]>([])
+  const [uploadedFile, setUploadedFile] = useState<MediaUploadResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   // Validate campaignId is provided
   if (!campaignId) {
@@ -102,7 +104,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
 
         const uploadResponse = await uploadWhatsAppMediaAPI(payload)
 
-        setUploadedFiles((prev) => [...prev, uploadResponse])
+        setUploadedFile(uploadResponse)
         onUploadSuccess?.(uploadResponse)
 
         return uploadResponse
@@ -120,9 +122,9 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      for (const file of acceptedFiles) {
+      if (acceptedFiles.length > 0) {
         try {
-          await uploadFile(file)
+          await uploadFile(acceptedFiles[0])
         } catch (error) {
           // Error is already handled in uploadFile
           console.error('Upload failed:', error)
@@ -139,11 +141,21 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
       return acc
     }, {} as Record<string, string[]>),
     maxSize: maxFileSize,
-    multiple: true,
+    multiple: false,
   })
 
-  const removeFile = useCallback((index: number) => {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
+  const removeFile = useCallback(() => {
+    setUploadedFile(null)
+  }, [])
+
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000) // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err)
+    }
   }, [])
 
   const getFileIcon = (type: MediaType) => {
@@ -207,25 +219,32 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
         </div>
       )}
 
-      {/* Uploaded Files List */}
-      {uploadedFiles.length > 0 && (
+      {/* Uploaded File */}
+      {uploadedFile && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-700">Uploaded Files</h3>
-          <div className="space-y-2">
-            {uploadedFiles.map((file, index) => (
-              <div key={`${file.filename}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  {getFileIcon(file.type)}
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{file.filename}</p>
-                    <p className="text-xs text-gray-500">{file.s3_url}</p>
-                  </div>
+          <h3 className="text-sm font-medium text-gray-700">Uploaded File</h3>
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-3 flex-1">
+              {getFileIcon(uploadedFile.type)}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{uploadedFile.filename}</p>
+                <div
+                  className="flex items-center space-x-2 cursor-pointer group"
+                  onClick={() => copyToClipboard(uploadedFile.s3_url)}
+                  title="Click to copy S3 URL"
+                >
+                  <p className="text-xs text-gray-500 truncate">{uploadedFile.s3_url}</p>
+                  {copied ? (
+                    <FiCheck className="h-3 w-3 text-green-500 flex-shrink-0" />
+                  ) : (
+                    <FiCopy className="h-3 w-3 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
+                  )}
                 </div>
-                <Button variant="tertiary" onClick={() => removeFile(index)} className="p-1">
-                  <IoMdClose className="h-4 w-4" />
-                </Button>
               </div>
-            ))}
+            </div>
+            <Button variant="tertiary" onClick={removeFile} className="p-1 ml-2">
+              <IoMdClose className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}

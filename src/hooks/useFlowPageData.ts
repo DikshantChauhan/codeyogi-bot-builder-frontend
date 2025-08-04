@@ -322,12 +322,6 @@ const useFlowPageData = () => {
         e.preventDefault()
         dispatch(uiActions.setIsShortcutMenuOpen(true))
       }
-
-      //ctrl + m
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'm' || e.key === 'M')) {
-        e.preventDefault()
-        dispatch(uiActions.setIsMediaUploadPopupOpen(true))
-      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
