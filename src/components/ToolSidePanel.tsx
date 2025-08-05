@@ -1,6 +1,5 @@
 import { Panel } from '@xyflow/react'
 import { memo, useMemo } from 'react'
-import { camelCase } from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
 import { isToolbarSidePannelExpandedSelector, nodeToAddSelector, selectedNodeSelector } from '../store/selectors/ui.selector'
@@ -30,22 +29,8 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({
     const pickedTool = selectedNode?.type || nodeToAdd || null
     if (!pickedTool || !(pickedTool in nodesRegistry) || !allowedNodesKey.includes(pickedTool as AppNodeKeys)) return null
 
-    // Convert kebab-case to camelCase for folder name
-    const folderName = camelCase(pickedTool)
-
-    // Dynamic import of the Form component
-    const FormComponent = React.lazy(() =>
-      import(`../nodes/customs/${folderName}/Form`).then((module) => ({
-        default: module.default as React.ComponentType<{ node?: AppNode }>,
-      }))
-    )
-
-    return (
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <FormComponent node={selectedNode} />
-      </React.Suspense>
-    )
-  }, [nodeToAdd, selectedNode, allowedNodesKey])
+    return nodesRegistry[pickedTool].Form
+  }, [nodeToAdd, selectedNode?.type, allowedNodesKey])
 
   return (
     <Panel
@@ -56,7 +41,7 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({
     >
       {isToolbarSidePannelExpanded ? (
         ToolForm ? (
-          ToolForm
+          <ToolForm node={selectedNode as any} />
         ) : (
           <ToolPicker />
         )

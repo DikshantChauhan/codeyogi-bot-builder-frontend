@@ -65,6 +65,28 @@ import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseC
 import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
 import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
 import { GrValidate } from 'react-icons/gr'
+import PromptForm from '../nodes/customs/prompt/Form'
+import WhatsappMessageForm from '../nodes/customs/whatsappMessage/Form'
+import IfElseForm from '../nodes/customs/ifElse/Form'
+import QuizForm from '../nodes/customs/quiz/Form'
+import YoutubeSortsForm from '../nodes/customs/youtubeSorts/Form'
+import NativeSortsForm from '../nodes/customs/nativeSorts/Form'
+import StartForm from '../nodes/customs/start/Form'
+import WhatsappAudioForm from '../nodes/customs/whatsappAudio/Form'
+import WhatsappDocumentForm from '../nodes/customs/whatsappDocument/Form'
+import WhatsappImageForm from '../nodes/customs/whatsappImage/Form'
+import WhatsappListForm from '../nodes/customs/whatsappList/Form'
+import WhatsappButtonForm from '../nodes/customs/whatsappButton/Form'
+import WhatsappVideoForm from '../nodes/customs/whatsappVideo/Form'
+import WhatsappReactionForm from '../nodes/customs/whatsappReaction/Form'
+import DelayForm from '../nodes/customs/delay/Form'
+import EndForm from '../nodes/customs/end/Form'
+import WhatsappUserUpdateForm from '../nodes/customs/whatsappUserUpdate/Form'
+import WhatsappOnboardingLinkParserForm from '../nodes/customs/whatsappOnboardingLinkParser/Form'
+import WhatsappValidateDiseCodeForm from '../nodes/customs/whatsappValidateDiseCode/Form'
+import WhatsappCtaUrlForm from '../nodes/customs/whatsappCtaUrl/Form'
+import WhatsappStickerForm from '../nodes/customs/whatsappSticker/Form'
+import { NodeProps } from '@xyflow/react'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -110,26 +132,43 @@ export type AppNodeKeys = Exclude<AppNode['type'], undefined>
 
 export type AppNodeData = Pick<AppNode, 'data'>['data']
 
-export const nodesRegistry = {
-  [PROMPT_NODE_KEY]: { node: PromptNode, color: 'bg-sky-500', Icon: IoMdChatboxes },
-  [WHATSAPP_MESSAGE_NODE_KEY]: { node: WhatsappMessageNode, color: 'bg-emerald-500', Icon: IoMdMail },
-  [IF_ELSE_NODE_KEY]: { node: IfElseNode, color: 'bg-amber-500', Icon: IoMdGitBranch },
-  [QUIZ_NODE_KEY]: { node: QuizNode, color: 'bg-violet-500', Icon: IoMdHelp },
-  [YOUTUBE_SORTS_NODE_KEY]: { node: YoutubeSortsNode, color: 'bg-rose-500', Icon: IoLogoYoutube },
-  [NATIVE_SORTS_NODE_KEY]: { node: NativeSortsNode, color: 'bg-amber-400', Icon: IoMdCode },
-  [START_NODE_KEY]: { node: StartNode, color: 'bg-slate-500', Icon: IoMdFlag },
-  [WHATSAPP_AUDIO_NODE_KEY]: { node: WhatsappAudioNode, color: 'bg-blue-500', Icon: IoIosMusicalNotes },
-  [WHATSAPP_DOCUMENT_NODE_KEY]: { node: WhatsappDocumentNode, color: 'bg-purple-500', Icon: IoIosDocument },
-  [WHATSAPP_IMAGE_NODE_KEY]: { node: WhatsappImageNode, color: 'bg-pink-500', Icon: IoIosImage },
-  [WHATSAPP_LIST_NODE_KEY]: { node: WhatsappListNode, color: 'bg-orange-500', Icon: IoIosList },
-  [WHATSAPP_BUTTON_NODE_KEY]: { node: WhatsappButtonNode, color: 'bg-teal-500', Icon: IoIosRadioButtonOn },
-  [WHATSAPP_VIDEO_NODE_KEY]: { node: WhatsappVideoNode, color: 'bg-red-500', Icon: IoIosVideocam },
-  [WHATSAPP_REACTION_NODE_KEY]: { node: WhatsappReactionNode, color: 'bg-yellow-500', Icon: IoIosHappy },
-  [WHATSAPP_STICKER_NODE_KEY]: { node: WhatsappStickerNode, color: 'bg-cyan-500', Icon: IoIosImages },
-  [DELAY_NODE_KEY]: { node: DelayNode, color: 'bg-gray-500', Icon: IoMdTime },
-  [END_NODE_KEY]: { node: EndNode, color: 'bg-slate-700', Icon: IoMdSquare },
-  [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, color: 'bg-blue-600', Icon: IoMdPerson },
-  [WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY]: { node: WhatsappOnboardingLinkParserNode, color: 'bg-pink-600', Icon: PiPathBold },
-  [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: { node: WhatsappValidateDiseCodeNode, color: 'bg-yellow-600', Icon: GrValidate },
-  [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, color: 'bg-lime-500', Icon: IoIosLink },
-} satisfies Record<AppNodeKeys, { node: NamedExoticComponent<any>; color: `bg-${string}-${number}`; Icon: IconType }>
+type NodeRegistryEntry<T extends AppNodeKeys> = {
+  node: NamedExoticComponent<NodeProps<Extract<AppNode, { type: T }>>>
+  Form: NamedExoticComponent<{ node?: Extract<AppNode, { type: T }> }>
+  color: `bg-${string}-${number}`
+  Icon: IconType
+}
+
+export const nodesRegistry: Record<AppNodeKeys, NodeRegistryEntry<AppNodeKeys>> = {
+  [PROMPT_NODE_KEY]: { node: PromptNode, Form: PromptForm, color: 'bg-sky-500', Icon: IoMdChatboxes },
+  [WHATSAPP_MESSAGE_NODE_KEY]: { node: WhatsappMessageNode, Form: WhatsappMessageForm, color: 'bg-emerald-500', Icon: IoMdMail },
+  [IF_ELSE_NODE_KEY]: { node: IfElseNode, Form: IfElseForm, color: 'bg-amber-500', Icon: IoMdGitBranch },
+  [QUIZ_NODE_KEY]: { node: QuizNode, Form: QuizForm, color: 'bg-violet-500', Icon: IoMdHelp },
+  [YOUTUBE_SORTS_NODE_KEY]: { node: YoutubeSortsNode, Form: YoutubeSortsForm, color: 'bg-rose-500', Icon: IoLogoYoutube },
+  [NATIVE_SORTS_NODE_KEY]: { node: NativeSortsNode, Form: NativeSortsForm, color: 'bg-amber-400', Icon: IoMdCode },
+  [START_NODE_KEY]: { node: StartNode, Form: StartForm, color: 'bg-slate-500', Icon: IoMdFlag },
+  [WHATSAPP_AUDIO_NODE_KEY]: { node: WhatsappAudioNode, Form: WhatsappAudioForm, color: 'bg-blue-500', Icon: IoIosMusicalNotes },
+  [WHATSAPP_DOCUMENT_NODE_KEY]: { node: WhatsappDocumentNode, Form: WhatsappDocumentForm, color: 'bg-purple-500', Icon: IoIosDocument },
+  [WHATSAPP_IMAGE_NODE_KEY]: { node: WhatsappImageNode, Form: WhatsappImageForm, color: 'bg-pink-500', Icon: IoIosImage },
+  [WHATSAPP_LIST_NODE_KEY]: { node: WhatsappListNode, Form: WhatsappListForm, color: 'bg-orange-500', Icon: IoIosList },
+  [WHATSAPP_BUTTON_NODE_KEY]: { node: WhatsappButtonNode, Form: WhatsappButtonForm, color: 'bg-teal-500', Icon: IoIosRadioButtonOn },
+  [WHATSAPP_VIDEO_NODE_KEY]: { node: WhatsappVideoNode, Form: WhatsappVideoForm, color: 'bg-red-500', Icon: IoIosVideocam },
+  [WHATSAPP_REACTION_NODE_KEY]: { node: WhatsappReactionNode, Form: WhatsappReactionForm, color: 'bg-yellow-500', Icon: IoIosHappy },
+  [WHATSAPP_STICKER_NODE_KEY]: { node: WhatsappStickerNode, Form: WhatsappStickerForm, color: 'bg-cyan-500', Icon: IoIosImages },
+  [DELAY_NODE_KEY]: { node: DelayNode, Form: DelayForm, color: 'bg-gray-500', Icon: IoMdTime },
+  [END_NODE_KEY]: { node: EndNode, Form: EndForm, color: 'bg-slate-700', Icon: IoMdSquare },
+  [WHATSAPP_USER_UPDATE_NODE_KEY]: { node: WhatsappUserUpdateNode, Form: WhatsappUserUpdateForm, color: 'bg-blue-600', Icon: IoMdPerson },
+  [WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY]: {
+    node: WhatsappOnboardingLinkParserNode,
+    Form: WhatsappOnboardingLinkParserForm,
+    color: 'bg-pink-600',
+    Icon: PiPathBold,
+  },
+  [WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY]: {
+    node: WhatsappValidateDiseCodeNode,
+    Form: WhatsappValidateDiseCodeForm,
+    color: 'bg-yellow-600',
+    Icon: GrValidate,
+  },
+  [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, Form: WhatsappCtaUrlForm, color: 'bg-lime-500', Icon: IoIosLink },
+}
