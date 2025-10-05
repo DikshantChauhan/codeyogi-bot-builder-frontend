@@ -39,3 +39,7 @@ export class S3Service {
     return `https://${this.bucketName}.s3.amazonaws.com/${key}`
   }
 }
+
+
+// Buckets seprtations and Auto assets migration when flow passed (4 hr)
+// minor ui changes and collapsable tool picker (1 hr)
