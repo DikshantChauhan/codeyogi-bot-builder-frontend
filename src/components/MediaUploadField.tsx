@@ -4,8 +4,9 @@ import MediaUpload from './MediaUpload'
 import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
 import { AppState } from '../store/store'
 import Button from './Button'
-import { FiEdit3 } from 'react-icons/fi'
+import { FiCopy, FiEdit3 } from 'react-icons/fi'
 import { WhatsAppMediaUploadResponse, WhatsAppMediaUploadType } from '../api/api'
+import { toast } from 'react-toastify'
 
 interface MediaUploadFieldProps {
   mediaType: WhatsAppMediaUploadType
@@ -101,9 +102,23 @@ const MediaUploadField: React.FC<MediaUploadFieldProps> = ({ mediaType, mediaId,
             </div>
             <div>
               <label className="text-xs font-medium text-gray-600">{getMediaTypeLabel()} URL</label>
-              <p className="text-sm text-gray-900 mt-1 break-all max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                {mediaUrl || 'Not set'}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-gray-900 mt-1 break-all max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                  {mediaUrl || 'Not set'}
+                </p>
+                {/* Copy to clipboard */}
+                <Button
+                  type="button"
+                  variant="tertiary"
+                  onClick={() => {
+                    navigator.clipboard.writeText(mediaUrl)
+                    toast.success('Media URL copied to clipboard')
+                  }}
+                  className="text-xs px-2 py-1 flex items-center gap-1"
+                >
+                  <FiCopy className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

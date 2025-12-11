@@ -46,7 +46,9 @@ const Form: FC<Props> = ({ node }) => {
       !value.whatsapp_onboarding_dise_code &&
       !value.whatsapp_onboarding_course &&
       !value.whatsapp_onboarding_school_name &&
-      !value.campaign_id
+      !value.campaign_id &&
+      !value.current_level_score &&
+      !value.total_score
     ) {
       throw new Error('At least one field is required')
     }
@@ -55,6 +57,8 @@ const Form: FC<Props> = ({ node }) => {
 
   return (
     <NodeFormContainer initialValues={data} transFormNodeDataOrFail={transFormNodeDataOrFail} info={info}>
+      <SuggestionField name="current_level_score" as="input" label="Current Level Score" />
+      <SuggestionField name="total_score" as="input" label="Total Score" />
       <SuggestionField name="name" as="input" label="Name" />
       <SuggestionField name="age" as="input" label="Age" />
       <SuggestionField name="campaign_id" as="input" label="Campaign ID" />

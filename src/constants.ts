@@ -18,6 +18,7 @@ export const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL
 export const VARIABLE_NAMES = [
   'user.name',
   'user.current_level_id',
+  `user.max_level_id`,
   'user.phone_number',
   'user.age',
   'chat.input',

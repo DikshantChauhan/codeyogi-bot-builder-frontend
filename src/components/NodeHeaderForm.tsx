@@ -5,7 +5,7 @@ import SuggestionField from './Field'
 import MediaUploadField from './MediaUploadField'
 
 interface Props {
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+  setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => void
   header?: MessageHeader
 }
 

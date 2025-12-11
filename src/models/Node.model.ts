@@ -87,6 +87,9 @@ import WhatsappValidateDiseCodeForm from '../nodes/customs/whatsappValidateDiseC
 import WhatsappCtaUrlForm from '../nodes/customs/whatsappCtaUrl/Form'
 import WhatsappStickerForm from '../nodes/customs/whatsappSticker/Form'
 import { NodeProps } from '@xyflow/react'
+import { WHATSAPP_ASSIGNMENT_NODE_KEY, WhatsappAssignmentNodeType } from '../nodes/customs/whatsappAssignment/type'
+import WhatsappAssignmentNode from '../nodes/customs/whatsappAssignment/Node'
+import WhatsappAssignmentForm from '../nodes/customs/whatsappAssignment/Form'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & {})
 
@@ -126,6 +129,7 @@ export type AppNode =
       | WhatsappOnboardingLinkParserNodeType
       | WhatsappValidateDiseCodeNodeType
       | WhatsappCtaUrlNodeType
+      | WhatsappAssignmentNodeType
     ) & { nudge: SubFlowValue; validator: SubFlowValue; orientation?: NodeOrientation }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
@@ -171,4 +175,5 @@ export const nodesRegistry: Record<AppNodeKeys, NodeRegistryEntry<AppNodeKeys>> 
     Icon: GrValidate,
   },
   [WHATSAPP_CTA_URL_NODE_KEY]: { node: WhatsappCtaUrlNode, Form: WhatsappCtaUrlForm, color: 'bg-lime-500', Icon: IoIosLink },
+  [WHATSAPP_ASSIGNMENT_NODE_KEY]: { node: WhatsappAssignmentNode, Form: WhatsappAssignmentForm, color: 'bg-lime-500', Icon: IoIosLink },
 }
