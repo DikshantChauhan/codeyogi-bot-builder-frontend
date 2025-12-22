@@ -10,7 +10,7 @@ import Error from '../components/Error'
 import { edgeTypes } from '../models/Edge.model'
 import ShortcutsPopup from '../components/ShortcutsPopup'
 
-const FlowPage = () => {
+const FlowPage = memo(() => {
   const {
     nodes,
     edges,
@@ -59,7 +59,7 @@ const FlowPage = () => {
           onSelectionChange={onSelectionChange}
           onSelectionEnd={onSelectionEnd}
         >
-          <MenuBar position="top-right" />
+          <MenuBar />
           <ToolSidePanel />
           <Background color="white" />
           <MiniMap className="border border-gray-400" />
@@ -83,6 +83,6 @@ const FlowPage = () => {
       </div>
     </div>
   )
-}
+})
 
-export default memo(FlowPage)
+export default FlowPage

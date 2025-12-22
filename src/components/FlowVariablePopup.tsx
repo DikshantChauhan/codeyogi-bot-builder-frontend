@@ -1,0 +1,76 @@
+import { FC, memo, useCallback, useRef } from 'react'
+import Popup from './Popup'
+import Editor, { OnMount } from '@monaco-editor/react'
+
+interface Props {
+  campaignGlobalConstants: string[]
+  variablesFunctionBody?: string
+  className?: string
+  isOpen: boolean
+  onClose: () => void
+  onSave: (value: string) => void
+}
+
+const HEADER = `(global) => {
+  // you can define your own variables and can access global variables through global.userName
+  // write here`
+
+const FOOTER = `  return {
+    
+  }
+}`
+
+const        FlowVariablePopup: FC<Props> = memo(({ isOpen, onClose, variablesFunctionBody, onSave, className }) => {
+  // Normalize initial value: ensure it has the sandwich structure.
+  const getNormalizedValue = () => {
+    const val = variablesFunctionBody || ''
+    if (!val.trim()) return `${HEADER}\n\n${FOOTER}`
+
+    // If it looks like it already has the wrapper, use it.
+    // We use a loose check.
+    if (val.includes('(global) => {') && val.includes('return {')) {
+      return val
+    }
+
+    // Otherwise, wrap the existing content as the body.
+    // Strip braces if they exist to avoid double wrapping?
+    // Assuming legacy content is just the body logic or empty.
+    return `${HEADER}\n${val}\n${FOOTER}`
+  }
+
+  const initialValue = getNormalizedValue()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const editorRef = useRef<any>(null)
+
+  const handleEditorDidMount: OnMount = useCallback(
+    (editor, monacoInstance) => {
+      editorRef.current = editor
+
+      // Save command
+      editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyS, () => {
+        onSave(editor.getValue())
+      })
+    },
+    [onSave]
+  )
+
+  return (
+    <Popup isOpen={isOpen} onClose={onClose} size="3xl" className={className}>
+      <div onKeyDown={(e) => e.stopPropagation()}>
+        <Editor
+          height="80vh"
+          defaultLanguage="javascript"
+          defaultValue={initialValue}
+          onMount={handleEditorDidMount}
+          options={{
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+          }}
+        />
+      </div>
+    </Popup>
+  )
+})
+
+export default FlowVariablePopup

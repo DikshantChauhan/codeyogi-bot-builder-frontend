@@ -22,6 +22,7 @@ import {
   reconnectEdge,
   useReactFlow,
   OnNodesChange,
+  NodeTypes,
 } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
@@ -122,10 +123,10 @@ const useFlowPageData = () => {
     [selectedEdges, reconnectingEdge]
   )
 
-  const nodeTypes = useMemo(() => {
+  const nodeTypes: NodeTypes = useMemo(() => {
     return Object.entries(nodesRegistry).reduce((pre, [key, { node }]) => {
       return { ...pre, [key]: node }
-    }, {} as Record<string, React.NamedExoticComponent<any>>)
+    }, {})
   }, [])
 
   const onNodeClick = useCallback(

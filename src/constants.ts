@@ -29,3 +29,18 @@ export const VARIABLE_NAMES = [
   'user.onboarding_school_name',
   'user.onboarding_course',
 ] as const
+
+export const CAMPAIGN_GLOBAL_CONSTANTS = [
+  'userName',
+  'userCurrentLevelId',
+  'userMaxLevelId',
+  'userPhoneNumber',
+  'userAge',
+  'chatInput',
+  'userTotalScore',
+  'userCurrentLevelScore',
+  'userPromptInput',
+  'userOnboardingDiseCode',
+  'userOnboardingSchoolName',
+  'userOnboardingCourse',
+] as const
