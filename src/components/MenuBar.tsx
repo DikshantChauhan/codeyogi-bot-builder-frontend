@@ -42,27 +42,28 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
         },
       })
     } else {
-      updateFlow({ id: selectedFlow.id, data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type } })
+      updateFlow({
+        id: selectedFlow.id,
+        data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type, constantsFunction: selectedFlow.constantsFunction },
+      })
     }
 
     setIsMenuOpen(false)
   }, [selectedFlow, updateFlow, setFlow])
 
-  const handleVariableSave = useCallback(
+  const handleVariableFunctionSave = useCallback(
     (value: string) => {
       if (!selectedFlow) return
 
-      updateFlow({
-        id: selectedFlow.id,
-        data: {
-          data: selectedFlow.data,
-          name: selectedFlow.name,
-          type: selectedFlow.type,
+      toast.success('Variables changes saved to Flow')
+      setFlow({
+        flow: {
+          ...selectedFlow,
           constantsFunction: value,
         },
       })
     },
-    [selectedFlow, updateFlow]
+    [selectedFlow, setFlow]
   )
 
   return (
@@ -96,10 +97,12 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
 
         <FlowVariablePopup
           isOpen={isVariablePopupOpen}
-          onClose={() => setIsVariablePopupOpen(false)}
+          onClose={() => {
+            setIsVariablePopupOpen(false)
+          }}
           campaignGlobalConstants={[...CAMPAIGN_GLOBAL_CONSTANTS]}
-          variablesFunctionBody={selectedFlow?.constantsFunction}
-          onSave={handleVariableSave}
+          variablesFunction={selectedFlow?.constantsFunction}
+          onSave={handleVariableFunctionSave}
         />
       </div>
     </div>

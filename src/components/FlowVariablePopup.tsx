@@ -4,7 +4,7 @@ import Editor, { OnMount } from '@monaco-editor/react'
 
 interface Props {
   campaignGlobalConstants: string[]
-  variablesFunctionBody?: string
+  variablesFunction?: string
   className?: string
   isOpen: boolean
   onClose: () => void
@@ -20,10 +20,10 @@ const FOOTER = `  return {
   }
 }`
 
-const        FlowVariablePopup: FC<Props> = memo(({ isOpen, onClose, variablesFunctionBody, onSave, className }) => {
+const FlowVariablePopup: FC<Props> = memo(({ isOpen, onClose, variablesFunction, onSave, className }) => {
   // Normalize initial value: ensure it has the sandwich structure.
   const getNormalizedValue = () => {
-    const val = variablesFunctionBody || ''
+    const val = variablesFunction || ''
     if (!val.trim()) return `${HEADER}\n\n${FOOTER}`
 
     // If it looks like it already has the wrapper, use it.
@@ -56,7 +56,18 @@ const        FlowVariablePopup: FC<Props> = memo(({ isOpen, onClose, variablesFu
   )
 
   return (
-    <Popup isOpen={isOpen} onClose={onClose} size="3xl" className={className}>
+    <Popup
+      isOpen={isOpen}
+      onClose={() => {
+        const newEditorValue = editorRef.current?.getValue()
+        if (newEditorValue !== variablesFunction) {
+          onSave(editorRef.current?.getValue() || '')
+        }
+        onClose()
+      }}
+      size="3xl"
+      className={className}
+    >
       <div onKeyDown={(e) => e.stopPropagation()}>
         <Editor
           height="80vh"
