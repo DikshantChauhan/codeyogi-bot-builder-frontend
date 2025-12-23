@@ -1,8 +1,8 @@
 import { useFormikContext } from 'formik'
 import React, { useState, useRef, FC, memo } from 'react'
 import { MdClose } from 'react-icons/md'
-import { VARIABLE_NAMES } from '../constants'
 import { toast } from 'react-toastify'
+import { getFlowVariables } from '../utils'
 
 interface Props {
   name: string | { key: string; index: number; removeable?: boolean }
@@ -121,6 +121,8 @@ const SuggestionField: FC<Props> = ({
 
   const baseClassName = 'w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 
+  const variables = getFlowVariables()
+
   return (
     <div className="relative p-1" onBlur={() => setTimeout(() => setShowDropdown(false), 300)}>
       <div className="flex items-center justify-between mb-2">
@@ -161,7 +163,7 @@ const SuggestionField: FC<Props> = ({
 
       {showDropdown && !disableSuggestion && (
         <ul className="absolute border inset-x-0 shadow-md max-h-80 overflow-y-auto z-10 bg-gray-900">
-          {VARIABLE_NAMES.map((variable) => (
+          {variables.map((variable) => (
             <li
               key={variable}
               onClick={() => insertVariable(`\${${variable}}`)}

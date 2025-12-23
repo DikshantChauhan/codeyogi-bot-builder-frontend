@@ -3,8 +3,8 @@ import { IfElseNodeData, IfElseNodeType } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { FieldArray, FormikProps, useFormikContext } from 'formik'
 import Button from '../../../components/Button'
-import { VARIABLE_NAMES } from '../../../constants'
 import { MdAdd } from 'react-icons/md'
+import { getFlowVariables } from '../../../utils'
 
 interface SelectorProps {
   index: number
@@ -43,7 +43,7 @@ const VariableSelector: React.FC<SelectorProps & { name: 'variable' | 'value' }>
   return (
     <select onChange={handleChange} value={values.conditions[index][name]} className="w-full border rounded-md p-1">
       <option value="">Select</option>
-      {VARIABLE_NAMES.map((variable) => (
+      {getFlowVariables().map((variable) => (
         <option key={variable} value={variable}>
           {variable}
         </option>
