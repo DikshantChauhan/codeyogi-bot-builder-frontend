@@ -1,10 +1,10 @@
 import { memo } from 'react'
-import { IfElseNodeData, IfElseNodeType } from './type'
+import { IF_ELSE_NODE_KEY, IfElseNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { FieldArray, FormikProps, useFormikContext } from 'formik'
 import Button from '../../../components/Button'
 import { MdAdd } from 'react-icons/md'
-import { getFlowVariables } from '../../../utils'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
 interface SelectorProps {
   index: number
@@ -31,98 +31,25 @@ const ConditionSelector: React.FC<SelectorProps> = ({ index }) => {
   )
 }
 
-const VariableSelector: React.FC<SelectorProps & { name: 'variable' | 'value' }> = ({ index, name }) => {
+const ValueSelector: React.FC<SelectorProps & { name: 'lhs' | 'rhs' }> = ({ index, name }) => {
   const { values, setFieldValue } = useFormikContext<IfElseNodeData>()
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const newConditions = [...values.conditions]
     newConditions[index][name] = e.target.value
     setFieldValue('conditions', newConditions)
   }
 
-  return (
-    <select onChange={handleChange} value={values.conditions[index][name]} className="w-full border rounded-md p-1">
-      <option value="">Select</option>
-      {getFlowVariables().map((variable) => (
-        <option key={variable} value={variable}>
-          {variable}
-        </option>
-      ))}
-    </select>
-  )
+  return <input className="w-full border rounded-md p-1" value={values.conditions[index][name]} onChange={handleChange} />
 }
 
-const TypeSelector: React.FC<SelectorProps> = ({ index }) => {
-  const { values, setFieldValue } = useFormikContext<IfElseNodeData>()
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newConditions = [...values.conditions]
-    newConditions[index].type = e.target.value as IfElseNodeData['conditions'][number]['type']
-    setFieldValue('conditions', newConditions)
-  }
-  return (
-    <select onChange={handleChange} value={values.conditions[index].type} className="w-full border rounded-md p-1">
-      <option value="string">String</option>
-      <option value="number">Number</option>
-      <option value="boolean">Boolean</option>
-      <option value="variable">Variable</option>
-      <option value="null">Null</option>
-    </select>
-  )
-}
-
-const ValueSelector: React.FC<SelectorProps> = ({ index }) => {
-  const { values, setFieldValue } = useFormikContext<IfElseNodeData>()
-  const type = values.conditions[index].type
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const newConditions = [...values.conditions]
-    newConditions[index].value = e.target.value
-    setFieldValue('conditions', newConditions)
-  }
-
-  if (type === 'variable') {
-    return <VariableSelector index={index} name="value" />
-  }
-
-  if (type === 'string' || type === 'number') {
-    return (
-      <input
-        className="w-full border rounded-md p-1"
-        type={type === 'number' ? 'number' : 'text'}
-        value={values.conditions[index].value}
-        onChange={handleChange}
-      />
-    )
-  }
-
-  if (type === 'boolean') {
-    return (
-      <select onChange={handleChange} value={values.conditions[index].value} className="w-full border rounded-md p-1">
-        <option value="">Select</option>
-        <option value="true">True</option>
-        <option value="false">False</option>
-      </select>
-    )
-  }
-
-  if (type === 'null') {
-    return <></>
-  }
-}
-
-interface Props {
-  node?: IfElseNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof IF_ELSE_NODE_KEY>> = ({ node }) => {
   const data = node?.data
 
   const defaultCondition = {
-    variable: '',
+    lhs: '',
     condition: '==',
-    type: 'string',
-    value: '',
+    rhs: '',
   } as const
 
   const initialConditions = [...(data?.conditions || [defaultCondition])]
@@ -133,17 +60,6 @@ const Form: React.FC<Props> = ({ node }) => {
     //atleast one condition is required
     if (data.conditions.length === 0) {
       throw new Error('At least one condition is required')
-    }
-
-    //check if all conditions are valid
-    for (const condition of data.conditions) {
-      if (!condition.variable || !condition.condition || !condition.type) {
-        throw new Error('All conditions are required')
-      }
-
-      if (condition.type !== 'null' && !condition.value) {
-        throw new Error('Value is required for all non-null conditions')
-      }
     }
 
     return data
@@ -158,10 +74,9 @@ const Form: React.FC<Props> = ({ node }) => {
               <div key={index}>
                 <p className="text-sm font-medium mb-2 text-gray-500">{index === 0 ? 'If' : 'Else if'}</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <VariableSelector index={index} name="variable" />
+                  <ValueSelector index={index} name="lhs" />
                   <ConditionSelector index={index} />
-                  <TypeSelector index={index} />
-                  <ValueSelector index={index} />
+                  <ValueSelector index={index} name="rhs" />
                 </div>
               </div>
             ))}

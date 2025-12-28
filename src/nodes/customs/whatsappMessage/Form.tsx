@@ -1,14 +1,12 @@
 import { FC, memo, useMemo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
-import { WhatsappMessageNodeData, WhatsappMessageNodeType } from './type'
+import { WhatsappMessageNodeData } from './type'
 import SuggestionField from '../../../components/Field'
 import { Field } from 'formik'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
+import { WHATSAPP_MESSAGE_NODE_KEY } from './type'
 
-interface Props {
-  node?: WhatsappMessageNodeType
-}
-
-const WhatsappMessageForm: FC<Props> = ({ node }) => {
+const WhatsappMessageForm: FC<NodeRegistryFormProps<typeof WHATSAPP_MESSAGE_NODE_KEY>> = ({ node }) => {
   const data = node?.data
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappMessageNodeData> = (value) => {

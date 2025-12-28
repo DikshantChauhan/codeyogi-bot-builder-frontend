@@ -1,13 +1,10 @@
 import { memo, useMemo } from 'react'
-import { WhatsappAudioNodeData, WhatsappAudioNodeType } from './type'
+import { WHATSAPP_AUDIO_NODE_KEY, WhatsappAudioNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import SuggestionField from '../../../components/Field'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
-interface Props {
-  node?: WhatsappAudioNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_AUDIO_NODE_KEY>> = ({ node }) => {
   const data = node?.data
   const initialValues = useMemo(
     () => ({

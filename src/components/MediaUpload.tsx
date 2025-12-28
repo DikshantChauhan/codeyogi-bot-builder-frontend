@@ -31,15 +31,6 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Validate campaignId is provided
-  if (!campaignId) {
-    return (
-      <div className={`text-center py-8 text-gray-500 ${className}`}>
-        <p>Please select a campaign to upload media.</p>
-      </div>
-    )
-  }
-
   const getAcceptedMimeTypes = useMemo(() => {
     const mimeTypes: Record<WhatsAppMediaUploadType, string[]> = {
       image: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
@@ -170,6 +161,15 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  // Validate campaignId is provided
+  if (!campaignId) {
+    return (
+      <div className={`text-center py-8 text-gray-500 ${className}`}>
+        <p>Please select a campaign to upload media.</p>
+      </div>
+    )
   }
 
   return (

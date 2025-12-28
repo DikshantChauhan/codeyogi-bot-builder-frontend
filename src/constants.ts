@@ -15,17 +15,4 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL
 
-export const CAMPAIGN_GLOBAL_CONSTANTS = [
-  'userName',
-  'userCurrentLevelId',
-  'userMaxLevelId',
-  'userPhoneNumber',
-  'userAge',
-  'chatInput',
-  'userTotalScore',
-  'userCurrentLevelScore',
-  'userPromptInput',
-  'userOnboardingDiseCode',
-  'userOnboardingSchoolName',
-  'userOnboardingCourse',
-] as const
+export const ALL_SUPPORTED_LANGUAGES = ['english', 'hindi', 'hinglish']

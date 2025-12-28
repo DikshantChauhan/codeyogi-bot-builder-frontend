@@ -1,14 +1,11 @@
 import { memo, useMemo } from 'react'
-import { WhatsappImageNodeData, WhatsappImageNodeType } from './type'
+import { WHATSAPP_IMAGE_NODE_KEY, WhatsappImageNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import Field from '../../../components/Field'
 import MediaUploadField from '../../../components/MediaUploadField'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
-interface Props {
-  node?: WhatsappImageNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_IMAGE_NODE_KEY>> = ({ node }) => {
   const data = node?.data
 
   const initialValues: WhatsappImageNodeData = useMemo(

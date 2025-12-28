@@ -13,6 +13,7 @@ export type WhatsappUserUpdateNodeData = {
   campaign_id?: string
   current_level_score?: string
   total_score?: string
+  preference_language?: string
 }
 
 export type WhatsappUserUpdateNodeType = Node<WhatsappUserUpdateNodeData, typeof WHATSAPP_USER_UPDATE_NODE_KEY>

@@ -1,14 +1,14 @@
-import { NodeProps } from '@xyflow/react'
-import { WhatsappStickerNodeType } from './type'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { WHATSAPP_STICKER_NODE_KEY } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const WhatsappStickerNode: FC<NodeProps<WhatsappStickerNodeType>> = ({ id, data, selected }) => {
+const WhatsappStickerNode: FC<NodeRegistryNodeProps<typeof WHATSAPP_STICKER_NODE_KEY>> = (node) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-sticker" isSelected={!!selected}>
-      {data.url && (
+    <NodeCard nodeId={node.id} nodeType="whatsapp-sticker" isSelected={!!node.selected}>
+      {node.data.url && (
         <div className="w-24 h-24 mx-auto">
-          <img src={data.url} alt="Sticker" className="w-full h-full object-contain" />
+          <img src={node.data.url} alt="Sticker" className="w-full h-full object-contain" />
         </div>
       )}
     </NodeCard>

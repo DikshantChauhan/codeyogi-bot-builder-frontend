@@ -7,10 +7,11 @@ import { campaignActions } from '../store/slices/campaign.slice'
 import { connect } from 'react-redux'
 import { AppState } from '../store/store'
 import { campaignUpdateLoadingSelector, campaignUpdateErrorSelector, campaignDeleteLoadingSelector } from '../store/selectors/campaign.selector'
-import CampaignAddOrUpdatePopup, { CampaignAddOrUpdateFormData } from './CampaignAddOrUpdatePopup'
+import CampaignAddOrUpdatePopup from './CampaignAddOrUpdatePopup'
 import ConfirmationPopup from './ConfirmationPopup'
 import { FaBook } from 'react-icons/fa'
 import Loading from './Loading'
+import { CampaignUpdatePayload } from '../api/api'
 
 interface CampaignCardProps {
   campaign: NormalizedCampaign
@@ -41,7 +42,7 @@ const CampaignCard: FC<CampaignCardProps> = ({
   }, [])
 
   const handleUpdateCampaign = useCallback(
-    (data: CampaignAddOrUpdateFormData) => {
+    (data: CampaignUpdatePayload) => {
       campaignUpdateTry({ id: campaign.id, campaign: data })
     },
     [campaignUpdateTry, campaign]
@@ -94,7 +95,11 @@ const CampaignCard: FC<CampaignCardProps> = ({
           onSubmit={handleUpdateCampaign}
           loading={campaignUpdateLoading}
           error={campaignUpdateError}
-          initialData={campaign}
+          initialData={{
+            name: campaign.name,
+            allowed_nodes: campaign.allowed_nodes,
+            supported_languages: campaign.supported_languages || [],
+          }}
         />
       )}
       <ConfirmationPopup

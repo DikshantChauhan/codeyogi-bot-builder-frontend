@@ -1,14 +1,11 @@
 import { memo, useMemo } from 'react'
-import { WhatsappListNodeData, WhatsappListNodeType } from './type'
+import { WHATSAPP_LIST_NODE_KEY, WhatsappListNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import SuggestionField from '../../../components/Field'
 import ListField from '../../../components/ListField'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
-interface Props {
-  node?: WhatsappListNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_LIST_NODE_KEY>> = ({ node }) => {
   const data = node?.data
   const initialValues = useMemo(
     () => ({

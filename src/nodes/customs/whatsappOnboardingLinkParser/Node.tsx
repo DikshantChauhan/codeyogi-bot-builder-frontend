@@ -1,13 +1,13 @@
-import { NodeProps } from '@xyflow/react'
-import { WhatsappOnboardingLinkParserNodeType } from './type'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<WhatsappOnboardingLinkParserNodeType>> = ({ id, data, selected }) => {
-  const listOptions = (data.paths || []).map((item) => ['', item] as [string, string])
+const Node: FC<NodeRegistryNodeProps<typeof WHATSAPP_ONBOARDING_LINK_PARSER_NODE_KEY>> = (node) => {
+  const listOptions = (node.data.paths || []).map((item) => ['', item] as [string, string])
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-onboarding-link-parser" options={listOptions} isSelected={!!selected}>
-      <div>{data.link}</div>
+    <NodeCard nodeId={node.id} nodeType="whatsapp-onboarding-link-parser" options={listOptions} isSelected={!!node.selected}>
+      <div>{node.data.link}</div>
     </NodeCard>
   )
 }

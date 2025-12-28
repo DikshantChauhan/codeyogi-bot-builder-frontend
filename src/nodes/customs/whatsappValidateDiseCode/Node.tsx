@@ -1,14 +1,14 @@
-import { NodeProps } from '@xyflow/react'
-import { WhatsappValidateDiseCodeNodeType, WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY } from './type'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY } from './type'
 import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const Node: FC<NodeProps<WhatsappValidateDiseCodeNodeType>> = ({ id, data, selected }) => {
-  const options = useMemo(() => data.paths.map((value) => ['', value] as [string, string]), [])
+const Node: FC<NodeRegistryNodeProps<typeof WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY>> = (node) => {
+  const options = useMemo(() => node.data.paths.map((value) => ['', value] as [string, string]), [node.data.paths])
   return (
-    <NodeCard nodeId={id} nodeType={WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY} options={options} isSelected={!!selected}>
+    <NodeCard nodeId={node.id} nodeType={WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY} options={options} isSelected={!!node.selected}>
       <div className="mt-4">
-        <p>{data.dise_code}</p>
+        <p>{node.data.dise_code}</p>
       </div>
     </NodeCard>
   )

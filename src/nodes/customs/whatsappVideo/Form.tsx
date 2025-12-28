@@ -1,14 +1,11 @@
 import { memo, useMemo } from 'react'
-import { WhatsappVideoNodeData, WhatsappVideoNodeType } from './type'
+import { WHATSAPP_VIDEO_NODE_KEY, WhatsappVideoNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import { Field } from 'formik'
 import SuggestionField from '../../../components/Field'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
-interface Props {
-  node?: WhatsappVideoNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_VIDEO_NODE_KEY>> = ({ node }) => {
   const data = node?.data
   const initialValues: WhatsappVideoNodeData = useMemo(
     () => ({

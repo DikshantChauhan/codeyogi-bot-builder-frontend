@@ -1,14 +1,13 @@
 import { memo, useState } from 'react'
-import { WhatsappReactionNodeData, WhatsappReactionNodeType } from './type'
+import { WhatsappReactionNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 
-interface Props {
-  node?: WhatsappReactionNodeType
-}
+import { WHATSAPP_REACTION_NODE_KEY } from './type'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
 const COMMON_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏', '👏', '🔥', '🎉', '💯']
 
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_REACTION_NODE_KEY>> = ({ node }) => {
   const data = node?.data
   const [formData, setFormData] = useState({
     emoji: data?.emoji || '👍',

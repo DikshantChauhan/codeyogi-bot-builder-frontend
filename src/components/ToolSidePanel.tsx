@@ -36,12 +36,12 @@ const ToolSidePanel: React.FC<ToolSidePanelProps> = ({
     <Panel
       position="top-left"
       className={`bottom-0 bg-white z-10 shadow-md drop-shadow rounded-md space-x-2 border flex flex-col ${
-        isToolbarSidePannelExpanded ? 'w-80' : 'w-10'
+        isToolbarSidePannelExpanded ? 'w-1/4' : 'w-10'
       }`}
     >
       {isToolbarSidePannelExpanded ? (
         ToolForm ? (
-          <ToolForm node={selectedNode as any} />
+          <ToolForm node={selectedNode as AppNode & { type: AppNodeKeys }} />
         ) : (
           <ToolPicker />
         )

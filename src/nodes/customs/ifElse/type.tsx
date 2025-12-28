@@ -4,10 +4,9 @@ export const IF_ELSE_NODE_KEY = 'if-else'
 
 export type IfElseNodeData = {
   conditions: {
-    variable: string
+    lhs: string
     condition: '==' | '!=' | '>' | '<' | '>=' | '<='
-    type: 'string' | 'number' | 'boolean' | 'variable' | 'null'
-    value: string
+    rhs: string
   }[]
 }
 

@@ -5,17 +5,14 @@ import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
 import Loading from './Loading'
 import Error from './Error'
 import Button from './Button'
-
-export type CampaignAddOrUpdateFormData = {
-  allowed_nodes: AppNodeKeys[]
-  name: string
-}
+import { CampaignCreatePayload } from '../api/api'
+import { ALL_SUPPORTED_LANGUAGES } from '../constants'
 
 interface Props {
   isOpen: boolean
   onClose: () => void
-  initialData?: CampaignAddOrUpdateFormData
-  onSubmit: (values: CampaignAddOrUpdateFormData) => void
+  initialData?: CampaignCreatePayload
+  onSubmit: (values: CampaignCreatePayload) => void
   loading: boolean
   error: string | null
 }
@@ -23,6 +20,7 @@ interface Props {
 interface FormValues {
   name: string
   allowed_nodes: AppNodeKeys[]
+  supported_languages: string[]
 }
 
 const validationSchema = Yup.object({
@@ -33,7 +31,8 @@ const validationSchema = Yup.object({
 function CampaignAddOrUpdatePopup({ isOpen, onClose, initialData, onSubmit, loading, error }: Props) {
   const initialValues: FormValues = {
     name: initialData?.name || '',
-    allowed_nodes: initialData?.allowed_nodes || [],
+    allowed_nodes: (initialData?.allowed_nodes || []) as AppNodeKeys[],
+    supported_languages: initialData?.supported_languages || [],
   }
 
   const nodesOptions = useMemo(() => Object.keys(nodesRegistry), [])
@@ -61,6 +60,31 @@ function CampaignAddOrUpdatePopup({ isOpen, onClose, initialData, onSubmit, load
                     dark:text-white transition-colors"
                 />
                 {errors.name && touched.name && <div className="text-red-500 text-sm mt-2">{errors.name}</div>}
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">Supported Languages</label>
+                {ALL_SUPPORTED_LANGUAGES.map((lang) => (
+                  <label
+                    key={lang}
+                    className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600 
+                    rounded transition-colors cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={values.supported_languages.includes(lang)}
+                      onChange={(e) => {
+                        const newLanguages = e.target.checked
+                          ? [...values.supported_languages, lang]
+                          : values.supported_languages.filter((l) => l !== lang)
+                        setFieldValue('supported_languages', newLanguages)
+                      }}
+                      className="w-4 h-4 mr-3 text-blue-500 border-gray-300 rounded 
+                        focus:ring-blue-500 dark:border-gray-600"
+                    />
+                    <span className="dark:text-white">{lang}</span>
+                  </label>
+                ))}
               </div>
 
               <div>

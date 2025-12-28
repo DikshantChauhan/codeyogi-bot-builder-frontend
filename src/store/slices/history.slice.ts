@@ -21,6 +21,7 @@ const historySlice = createSlice({
         state.snapshots = state.snapshots.slice(0, state.currentSnapshotIndex! + 1)
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       state.snapshots.push(payload as any)
       state.currentSnapshotIndex = state.snapshots.length - 1
     },
@@ -32,8 +33,9 @@ const historySlice = createSlice({
       }
 
       state.snapshots.pop()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       state.snapshots.push(payload as any)
-      state.currentSnapshotIndex = state.snapshots.length - 1 
+      state.currentSnapshotIndex = state.snapshots.length - 1
     },
 
     undo: (state) => {

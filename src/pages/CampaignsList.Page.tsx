@@ -12,7 +12,7 @@ import {
 import { NormalizedCampaign } from '../models/Campaign.model'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
-import CampaignAddOrUpdatePopup, { CampaignAddOrUpdateFormData } from '../components/CampaignAddOrUpdatePopup'
+import CampaignAddOrUpdatePopup from '../components/CampaignAddOrUpdatePopup'
 import { campaignActions } from '../store/slices/campaign.slice'
 import CampaignCard from '../components/CampaignCard'
 import FlowAddPopup from '../components/FlowAddPopup'
@@ -20,7 +20,7 @@ import FlowAddPopup from '../components/FlowAddPopup'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_NUDGES_LIST } from '../constants'
 import Button from '../components/Button'
-import { AppNodeKeys } from '../models/Node.model'
+import { CampaignCreatePayload } from '../api/api'
 
 interface CampaignsListPageProps {
   normalizedCampaigns: NormalizedCampaign[]
@@ -45,8 +45,8 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
   const navigate = useNavigate()
 
   const handleCreateCampaign = useCallback(
-    (values: CampaignAddOrUpdateFormData) => {
-      campaignAddTry({ ...values, levels: [] as string[], allowed_nodes: values.allowed_nodes as AppNodeKeys[] })
+    (values: CampaignCreatePayload) => {
+      campaignAddTry(values)
     },
     [campaignAddTry]
   )

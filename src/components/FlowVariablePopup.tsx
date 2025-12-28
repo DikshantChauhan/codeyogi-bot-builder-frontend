@@ -40,7 +40,6 @@ const FlowVariablePopup: FC<Props> = memo(({ isOpen, onClose, variablesFunction,
 
   const initialValue = getNormalizedValue()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
   const [monaco, setMonaco] = useState<Monaco>(null)
 

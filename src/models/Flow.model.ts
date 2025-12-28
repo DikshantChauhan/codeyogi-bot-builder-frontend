@@ -11,7 +11,8 @@ export interface Flow extends Entity {
     nodes: AppNode[]
     edges: AppEdge[]
   }
-  constantsFunction?: string
+  custom_variable_function?: string
+  language_json?: string
   last_medias_updated_at_unix?: number
   created: string
   modified: string

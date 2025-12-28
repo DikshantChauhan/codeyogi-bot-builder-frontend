@@ -11,19 +11,23 @@ import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { Flow } from '../models/Flow.model'
 import { toast } from 'react-toastify'
 import { validateFlow } from '../utils'
-import { FaPlus } from 'react-icons/fa'
+import { FaLanguage, FaPlus } from 'react-icons/fa'
 import FlowVariablePopup from './FlowVariablePopup'
-import { CAMPAIGN_GLOBAL_CONSTANTS } from '../constants'
+import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
+import { NormalizedCampaign } from '../models/Campaign.model'
+import LangJsonPopup from './langJsonPopup'
 
 type Props = {
   updateFlow: typeof flowActions.flowUpdateTry
   selectedFlow: Flow | null
   setFlow: typeof flowActions.setFlow
+  selectedNormalizedCampaign: NormalizedCampaign | null
 }
 
-const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
+const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormalizedCampaign }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVariablePopupOpen, setIsVariablePopupOpen] = useState(false)
+  const [isLangJsonPopupOpen, setIsLangJsonPopupOpen] = useState(false)
 
   const handleSave = useCallback(() => {
     if (!selectedFlow) return
@@ -44,7 +48,13 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
     } else {
       updateFlow({
         id: selectedFlow.id,
-        data: { data: selectedFlow.data, name: selectedFlow.name, type: selectedFlow.type, constantsFunction: selectedFlow.constantsFunction },
+        data: {
+          data: selectedFlow.data,
+          name: selectedFlow.name,
+          type: selectedFlow.type,
+          custom_variable_function: selectedFlow.custom_variable_function,
+          language_json: selectedFlow.language_json,
+        },
       })
     }
 
@@ -59,7 +69,22 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
       setFlow({
         flow: {
           ...selectedFlow,
-          constantsFunction: value,
+          custom_variable_function: value,
+        },
+      })
+    },
+    [selectedFlow, setFlow]
+  )
+
+  const handleLangJsonSave = useCallback(
+    (value: string) => {
+      if (!selectedFlow) return
+
+      toast.success('Language changes saved to Flow')
+      setFlow({
+        flow: {
+          ...selectedFlow,
+          language_json: value,
         },
       })
     },
@@ -76,6 +101,12 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
               onClick={() => setIsVariablePopupOpen(!isVariablePopupOpen)}
             >
               <FaPlus className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              className="bg-white p-2 hover:bg-gray-100 rounded-md transition-colors"
+              onClick={() => setIsLangJsonPopupOpen(!isLangJsonPopupOpen)}
+            >
+              <FaLanguage className="w-5 h-5 text-gray-600" />
             </button>
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 bg-white rounded-md shadow-lg z-10 border">
@@ -100,9 +131,19 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
           onClose={() => {
             setIsVariablePopupOpen(false)
           }}
-          campaignGlobalConstants={[...CAMPAIGN_GLOBAL_CONSTANTS]}
-          variablesFunction={selectedFlow?.constantsFunction}
+          campaignGlobalConstants={selectedNormalizedCampaign?.constants || []}
+          variablesFunction={selectedFlow?.custom_variable_function}
           onSave={handleVariableFunctionSave}
+        />
+
+        <LangJsonPopup
+          isOpen={isLangJsonPopupOpen}
+          onClose={() => {
+            setIsLangJsonPopupOpen(false)
+          }}
+          langJson={selectedFlow?.language_json}
+          onSubmit={handleLangJsonSave}
+          supportedLanguages={selectedNormalizedCampaign?.supported_languages || []}
         />
       </div>
     </div>
@@ -111,6 +152,7 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
 
 const mapStateToProps = (state: AppState) => ({
   selectedFlow: selectedFlowSelector(state),
+  selectedNormalizedCampaign: selectedNormalizedCampaignSelector(state),
 })
 
 const mapDispatchToProps = {

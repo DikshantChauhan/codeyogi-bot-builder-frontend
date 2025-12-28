@@ -26,7 +26,14 @@ import {
 } from '@xyflow/react'
 import { AppNode, nodesRegistry } from '../models/Node.model'
 import { AppEdge } from '../models/Edge.model'
-import { cloneSelectionNodeData, getOffsetFromCentroid, getSourceHandleConnection, parseNodeSelectionString, sanitizeEdges } from '../utils'
+import {
+  cloneSelectionNodeData,
+  getOffsetFromCentroid,
+  getSourceHandleConnection,
+  parseLangJson,
+  parseNodeSelectionString,
+  sanitizeEdges,
+} from '../utils'
 import { uiActions } from '../store/slices/UI.slice'
 import { flowSelectionSelector, pannelClickedPositionSelector } from '../store/selectors/ui.selector'
 import { toast } from 'react-toastify'
@@ -121,6 +128,30 @@ const useFlowPageData = () => {
       return true
     },
     [selectedEdges, reconnectingEdge]
+  )
+
+  const getLangParsedNode = useCallback(
+    (node: AppNode) => {
+      const langVariablesMap = selectedFlow?.language_json
+      if (!node?.data || !langVariablesMap) return node
+
+      const data = JSON.stringify(node.data)
+      const langMap = parseLangJson(langVariablesMap)
+
+      const parsedData = data.replace(/\$\[(.*?)\]/g, (_, variable: string) => {
+        if (variable in langMap) {
+          const value = langMap[variable]
+          // value is now { lang_map: ..., collapsed: ... }
+          const langValues = value.lang_map
+          const firstLangValue = langValues[Object.keys(langValues)[0]]
+          return JSON.stringify(firstLangValue).slice(1, -1)
+        }
+        return JSON.stringify(variable).slice(1, -1)
+      })
+
+      return { ...node, data: JSON.parse(parsedData) }
+    },
+    [selectedFlow]
   )
 
   const nodeTypes: NodeTypes = useMemo(() => {
@@ -332,7 +363,7 @@ const useFlowPageData = () => {
   }, [selectedNodes, selectedEdges, selectedFlow, setFlow, undo, redo, dispatch, pannelClickedPosition, setSelectedNode, flowSelection, uiActions])
 
   return {
-    nodes: selectedFlow?.data.nodes || [],
+    nodes: selectedFlow?.data.nodes.map(getLangParsedNode) || [],
     edges: selectedFlow?.data.edges || [],
     selectedFlowLoading,
     selectedFlowError,

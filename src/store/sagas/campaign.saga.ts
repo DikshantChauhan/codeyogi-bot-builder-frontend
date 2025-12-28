@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { selectedNormalizedCampaignSelector } from '../selectors/campaign.selector'
 import { fetchLevelFlowSaga } from './flow.saga'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function* fetchCampaignsListSaga(_: PathMatch<string>): Generator {
   try {
     yield put(campaignActions.setCampaignsListFetching(true))

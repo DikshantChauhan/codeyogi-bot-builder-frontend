@@ -57,14 +57,12 @@ const HeaderForm: FC<Props> = ({ header, setFieldValue }) => {
               placeholder={`Enter audio media id`}
               as="input"
               label={`Audio Media ID`}
-              disableSuggestion
             />
             <SuggestionField
               name={`header.media.wa_media_url`}
               placeholder={`Enter audio media url`}
               as="input"
               label={`Audio Media URL`}
-              disableSuggestion
             />
           </div>
         </div>

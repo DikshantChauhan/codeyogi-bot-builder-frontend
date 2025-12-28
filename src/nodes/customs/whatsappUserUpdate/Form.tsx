@@ -48,7 +48,8 @@ const Form: FC<Props> = ({ node }) => {
       !value.whatsapp_onboarding_school_name &&
       !value.campaign_id &&
       !value.current_level_score &&
-      !value.total_score
+      !value.total_score &&
+      !value.preference_language
     ) {
       throw new Error('At least one field is required')
     }
@@ -61,6 +62,7 @@ const Form: FC<Props> = ({ node }) => {
       <SuggestionField name="total_score" as="input" label="Total Score" />
       <SuggestionField name="name" as="input" label="Name" />
       <SuggestionField name="age" as="input" label="Age" />
+      <SuggestionField name="preference_language" as="input" label="Preference Language" />
       <SuggestionField name="campaign_id" as="input" label="Campaign ID" />
       <SuggestionField name="level_id" as="input" label="Level ID" />
       <SuggestionField name="node_id" as="input" label="Node ID" />

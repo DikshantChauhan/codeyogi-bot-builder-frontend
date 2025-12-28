@@ -60,6 +60,7 @@ const campaignSlice = createSlice({
     },
 
     // Add Campaign
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     campaignAddTry: (_, __: PayloadAction<CampaignCreatePayload>) => undefined,
     campaignAddLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.campaignAddLoading = payload
@@ -69,6 +70,7 @@ const campaignSlice = createSlice({
     },
 
     // Update Campaign
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     campaignUpdateTry: (_, __: PayloadAction<{ id: string; campaign: CampaignUpdatePayload }>) => undefined,
     campaignUpdateLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.campaignUpdateLoading = payload
@@ -78,6 +80,7 @@ const campaignSlice = createSlice({
     },
 
     // Delete Campaign
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     campaignDeleteTry: (_, __: PayloadAction<string>) => undefined,
     campaignDeleteLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.campaignDeleteLoading = payload

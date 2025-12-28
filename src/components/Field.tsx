@@ -1,8 +1,14 @@
 import { useFormikContext } from 'formik'
-import React, { useState, useRef, FC, memo } from 'react'
+import React, { useState, useRef, FC, memo, useMemo } from 'react'
 import { MdClose } from 'react-icons/md'
 import { toast } from 'react-toastify'
-import { getFlowVariables } from '../utils'
+import { AppState } from '../store/store'
+import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
+import { selectedFlowSelector } from '../store/selectors/flow.selector'
+import { connect } from 'react-redux'
+import { NormalizedCampaign } from '../models/Campaign.model'
+import { Flow } from '../models/Flow.model'
+import { getCustomVariablesNameFromFunction, getVariablesFromLangJson } from '../utils'
 
 interface Props {
   name: string | { key: string; index: number; removeable?: boolean }
@@ -13,14 +19,18 @@ interface Props {
   label?: string
   characterLimit?: number
   disableSuggestion?: boolean
+  selectedCampaign: NormalizedCampaign | null
+  selectedFlow: Flow | null
 }
 
 // Helper function to get nested object value
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getNestedValue = (obj: any, path: string) => {
   return path.split('.').reduce((current, key) => current?.[key], obj)
 }
 
 // Helper function to set nested object value
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const setNestedValue = (obj: any, path: string, value: any) => {
   const keys = path.split('.')
   const lastKey = keys.pop()!
@@ -41,9 +51,13 @@ const SuggestionField: FC<Props> = ({
   label,
   characterLimit,
   disableSuggestion = false,
+  selectedCampaign,
+  selectedFlow,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { setFieldValue, values } = useFormikContext<{ [key: string]: any }>()
 
   const inputValue = (() => {
@@ -119,9 +133,19 @@ const SuggestionField: FC<Props> = ({
     setInputValue(e.target.value)
   }
 
-  const baseClassName = 'w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+  const customVariables = useMemo(() => {
+    const campaignConstants = selectedCampaign?.constants || []
+    const flowVariables = selectedFlow?.custom_variable_function ? getCustomVariablesNameFromFunction(selectedFlow.custom_variable_function) : []
+    const allConstants = [...flowVariables, ...campaignConstants]
+    return allConstants
+  }, [selectedCampaign, selectedFlow])
 
-  const variables = getFlowVariables()
+  const langVariables = useMemo(() => {
+    const langVariables = selectedFlow?.language_json ? getVariablesFromLangJson(selectedFlow.language_json) : []
+    return langVariables
+  }, [selectedFlow])
+
+  const baseClassName = 'w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 
   return (
     <div className="relative p-1" onBlur={() => setTimeout(() => setShowDropdown(false), 300)}>
@@ -162,20 +186,40 @@ const SuggestionField: FC<Props> = ({
       )}
 
       {showDropdown && !disableSuggestion && (
-        <ul className="absolute border inset-x-0 shadow-md max-h-80 overflow-y-auto z-10 bg-gray-900">
-          {variables.map((variable) => (
-            <li
-              key={variable}
-              onClick={() => insertVariable(`\${${variable}}`)}
-              className="p-2 cursor-pointer hover:bg-gray-800 text-white break-words"
-            >
-              {variable}
-            </li>
-          ))}
-        </ul>
+        <div>
+          <div className="absolute border inset-x-0 shadow-md max-h-96 overflow-y-auto z-10 bg-gray-900">
+            <ul className="flex flex-wrap gap-1">
+              {langVariables.map((variable) => (
+                <li
+                  key={variable}
+                  onClick={() => insertVariable(`$[${variable}]`)}
+                  className="p-2 cursor-pointer hover:bg-gray-800 bg-gray-600 rounded text-white break-words max-h-max"
+                >
+                  {variable}
+                </li>
+              ))}
+            </ul>
+            <ul className="flex flex-wrap gap-1 mt-1">
+              {customVariables.map((variable) => (
+                <li
+                  key={variable}
+                  onClick={() => insertVariable(`\${${variable}}`)}
+                  className="p-2 cursor-pointer hover:bg-gray-800 bg-gray-600 rounded text-white break-words max-h-max"
+                >
+                  {variable}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       )}
     </div>
   )
 }
 
-export default memo(SuggestionField)
+const mapStateToProps = (state: AppState) => ({
+  selectedCampaign: selectedNormalizedCampaignSelector(state),
+  selectedFlow: selectedFlowSelector(state),
+})
+
+export default connect(mapStateToProps)(memo(SuggestionField))

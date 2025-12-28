@@ -4,7 +4,6 @@ import { Flow } from './models/Flow.model'
 import { AppNode } from './models/Node.model'
 import { START_NODE_KEY } from './nodes/customs/start/type'
 import { END_NODE_KEY } from './nodes/customs/end/type'
-import { CAMPAIGN_GLOBAL_CONSTANTS, ROUTE_LEVEL_FLOW } from './constants'
 
 export const getRandomId = (length?: number) =>
   Math.random()
@@ -254,7 +253,7 @@ export function validateFlow(
   return null // ✅ All validations passed
 }
 
-const getCustomVariablesNameFromFunction = (variableFunction: string) => {
+export const getCustomVariablesNameFromFunction = (variableFunction: string) => {
   //Accept 'return {}' from the function
   const match = variableFunction.match(/return\s*\{([\s\S]*?)\}/)
 
@@ -270,41 +269,23 @@ const getCustomVariablesNameFromFunction = (variableFunction: string) => {
   return varsNames
 }
 
-const getFlowIdFromPathname = () => {
-  const pathname = window.location.pathname // "/campaign/123/flow/456"
+export const getVariablesFromLangJson = (langJson: string) => {
+  const data = JSON.parse(langJson)
+  const variables = Object.keys(data)
 
-  // ROUTE_LEVEL_FLOW() → "campaign/:campaignId/flow/:flowId"
-  const pattern = ROUTE_LEVEL_FLOW()
-
-  // convert pattern to regex:
-  // campaign/:campaignId/flow/:flowId  -->  campaign/([^/]+)/flow/([^/]+)
-  const regexPattern = pattern.replace(/:[^/]+/g, '([^/]+)')
-  const regex = new RegExp(`^${pattern.startsWith('/') ? '' : '/'}${regexPattern}$`)
-
-  const match = pathname.match(regex)
-
-  if (!match) return undefined
-
-  // match[2] = flowId
-  return match[2]
+  return variables
+}
+export interface LangJson {
+  [key: string]: {
+    lang_map: Record<string, string>
+    collapsed: boolean
+  }
 }
 
-export const getFlowVariables = () => {
-  const flowId = getFlowIdFromPathname()
-
-  if (!flowId) return []
-
-  const localFlow = getLocalFlow({ flowId })
-
-  if (!localFlow || !localFlow.constantsFunction) return []
-
-  const varsNames = getCustomVariablesNameFromFunction(localFlow.constantsFunction)
-
-  const combined = [...CAMPAIGN_GLOBAL_CONSTANTS, ...varsNames]
-
-  const unique = [...new Set(combined)]
-
-  const sorted = unique.sort()
-
-  return sorted
+export const parseLangJson = (langJson?: string) => {
+  try {
+    return JSON.parse(langJson || '{}') as LangJson
+  } catch (error) {
+    return {}
+  }
 }

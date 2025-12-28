@@ -60,6 +60,7 @@ const flowSlice = createSlice({
       const { flow, loading, error } = action.payload
       const flowId = flow.id
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       state.flowsById[flowId] = flow as any
       state.flowsLoading[flowId] = loading ?? state.flowsLoading[flowId]
       state.flowsError[flowId] = error ?? state.flowsError[flowId]
@@ -82,8 +83,10 @@ const flowSlice = createSlice({
     setFlowAddError: (state, action: PayloadAction<string | null>) => {
       state.flowAddError = action.payload
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     flowAddTry: (_, __: PayloadAction<Parameters<typeof createFlowAPI>[0]>) => undefined,
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     flowUpdateTry: (_, __: PayloadAction<Parameters<typeof updateFlowAPI>[0]>) => undefined,
     setFlowUpdateLoading: (state, action: PayloadAction<boolean>) => {
       state.flowUpdateLoading = action.payload
@@ -99,6 +102,7 @@ const flowSlice = createSlice({
       state.nudgeFlowsError = action.payload
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     flowDeleteTry: (_, __: PayloadAction<{ campaignId: string; flowId: string }>) => undefined,
     setFlowDeleteLoading: (state, action: PayloadAction<{ flowId: string; loading: boolean }>) => {
       const { flowId, loading } = action.payload

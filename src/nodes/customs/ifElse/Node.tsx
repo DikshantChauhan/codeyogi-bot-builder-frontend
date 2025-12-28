@@ -1,23 +1,23 @@
-import { NodeProps } from '@xyflow/react'
-import { IfElseNodeType } from './type'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { IF_ELSE_NODE_KEY } from './type'
 import { FC, memo, useMemo } from 'react'
 import NodeCard from '../../../components/NodeCard'
 
-const IfElseNode: FC<NodeProps<IfElseNodeType>> = ({ id, data, selected }) => {
+const IfElseNode: FC<NodeRegistryNodeProps<typeof IF_ELSE_NODE_KEY>> = (node) => {
   const optionsList = useMemo(
     () =>
       [
-        ...data.conditions.map(({ condition, value, variable, type }, index) => {
+        ...node.data.conditions.map(({ condition, lhs, rhs }, index) => {
           const label = index === 0 ? 'If' : `Else If`
-          const labelValue = `${variable} ${condition} ${type === 'null' ? type : value}`
+          const labelValue = `${lhs} ${condition} ${rhs}`
           return [label, labelValue]
         }),
         ['Else', 'else'],
       ] as [string, string][],
-    [data]
+    [node.data.conditions]
   )
 
-  return <NodeCard nodeId={id} nodeType="if-else" options={optionsList} isSelected={!!selected} />
+  return <NodeCard nodeId={node.id} nodeType="if-else" options={optionsList} isSelected={!!node.selected} />
 }
 
 export default memo(IfElseNode)

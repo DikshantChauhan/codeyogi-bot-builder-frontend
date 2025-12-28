@@ -1,14 +1,11 @@
 import { memo, useMemo } from 'react'
-import { WhatsappDocumentNodeData, WhatsappDocumentNodeType } from './type'
+import { WHATSAPP_DOCUMENT_NODE_KEY, WhatsappDocumentNodeData } from './type'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
 import Field from '../../../components/Field'
 import MediaUploadField from '../../../components/MediaUploadField'
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
-interface Props {
-  node?: WhatsappDocumentNodeType
-}
-
-const Form: React.FC<Props> = ({ node }) => {
+const Form: React.FC<NodeRegistryFormProps<typeof WHATSAPP_DOCUMENT_NODE_KEY>> = ({ node }) => {
   const data = node?.data
 
   const initialValues: WhatsappDocumentNodeData = useMemo(

@@ -1,14 +1,14 @@
-import { NodeProps } from '@xyflow/react'
-import { WhatsappMessageNodeType } from './type'
+import { WHATSAPP_MESSAGE_NODE_KEY } from './type'
 import { FC, memo } from 'react'
 import NodeCard from '../../../components/NodeCard'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
 
-const Node: FC<NodeProps<WhatsappMessageNodeType>> = ({ id, data, selected }) => {
+const Node: FC<NodeRegistryNodeProps<typeof WHATSAPP_MESSAGE_NODE_KEY>> = (node) => {
   return (
-    <NodeCard nodeId={id} nodeType="whatsapp-message" isSelected={!!selected}>
+    <NodeCard nodeId={node.id} nodeType="whatsapp-message" isSelected={!!node.selected}>
       <div>
-        <div>{data.text}</div>
-        {data.previewUrl && <div className="text-gray-500 mt-1">📎 URL preview enabled</div>}
+        <div>{node.data.text}</div>
+        {node.data.previewUrl && <div className="text-gray-500 mt-1">📎 URL preview enabled</div>}
       </div>
     </NodeCard>
   )

@@ -1,11 +1,8 @@
 import { FC, memo, useMemo } from 'react'
 import NodeFormContainer, { TransFormNodeDataOrFail } from '../../../components/NodeFormContainer'
-import { PromptNodeData, PromptNodeType } from './type'
+import { PROMPT_NODE_KEY, PromptNodeData } from './type'
 import { Field } from 'formik'
-
-interface Props {
-  node?: PromptNodeType
-}
+import { NodeRegistryFormProps } from '../../../models/Node.model'
 
 const info = `🔹 Prompt Node Behavior
 
@@ -16,7 +13,7 @@ const info = `🔹 Prompt Node Behavior
 - This prompted value is preserved and available until the flow reaches the next Prompt node.
 `
 
-const Form: FC<Props> = ({ node }) => {
+const Form: FC<NodeRegistryFormProps<typeof PROMPT_NODE_KEY>> = ({ node }) => {
   const initialValues = useMemo(() => {
     return {
       type: node?.data.type || 'text',

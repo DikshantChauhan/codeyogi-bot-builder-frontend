@@ -1,6 +1,6 @@
-import { NodeProps } from '@xyflow/react'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { DELAY_NODE_KEY } from './type'
 import { FC, memo } from 'react'
-import { DelayNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
 
 const formatDuration = (seconds: number): string => {
@@ -18,10 +18,10 @@ const formatDuration = (seconds: number): string => {
   return parts.join(' ')
 }
 
-const Node: FC<NodeProps<DelayNodeType>> = ({ id, data, selected }) => {
+const Node: FC<NodeRegistryNodeProps<typeof DELAY_NODE_KEY>> = (node) => {
   return (
-    <NodeCard nodeId={id} nodeType="delay" isSelected={!!selected}>
-      {formatDuration(data.delayInSecs)}
+    <NodeCard nodeId={node.id} nodeType="delay" isSelected={!!node.selected}>
+      {formatDuration(node.data.delayInSecs)}
     </NodeCard>
   )
 }

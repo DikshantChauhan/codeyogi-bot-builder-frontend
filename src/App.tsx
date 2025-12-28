@@ -17,7 +17,7 @@ function App({ changeLocation }: AppProps) {
 
   useEffect(() => {
     changeLocation(location)
-  }, [location])
+  }, [location, changeLocation])
 
   return (
     <div className="min-h-screen w-full bg-background">

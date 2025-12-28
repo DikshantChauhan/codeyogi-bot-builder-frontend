@@ -1,15 +1,15 @@
-import { NodeProps } from '@xyflow/react'
 import { FC, memo } from 'react'
-import { PromptNodeType } from './type'
 import NodeCard from '../../../components/NodeCard'
+import { NodeRegistryNodeProps } from '../../../models/Node.model'
+import { PROMPT_NODE_KEY } from './type'
 
-const Node: FC<NodeProps<PromptNodeType>> = ({ id, data, selected }) => {
+const Node: FC<NodeRegistryNodeProps<typeof PROMPT_NODE_KEY>> = (node) => {
   return (
-    <NodeCard nodeId={id} nodeType="prompt" isSelected={!!selected}>
+    <NodeCard nodeId={node.id} nodeType="prompt" isSelected={!!node.selected}>
       <div>
-        <p>Type: {data.type}</p>
-        {data.min !== undefined && <p>Min: {data.min}</p>}
-        {data.max !== undefined && <p>Max: {data.max}</p>}
+        <p>Type: {node.data.type}</p>
+        {node.data.min !== undefined && <p>Min: {node.data.min}</p>}
+        {node.data.max !== undefined && <p>Max: {node.data.max}</p>}
       </div>
     </NodeCard>
   )
