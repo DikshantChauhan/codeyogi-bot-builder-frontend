@@ -144,7 +144,7 @@ const useFlowPageData = () => {
           // value is now { lang_map: ..., collapsed: ... }
           const langValues = value.lang_map
           const firstLangValue = langValues[Object.keys(langValues)[0]]
-          return JSON.stringify(firstLangValue).slice(1, -1)
+          return firstLangValue ? JSON.stringify(firstLangValue).slice(1, -1) : ''
         }
         return JSON.stringify(variable).slice(1, -1)
       })
