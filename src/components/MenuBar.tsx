@@ -11,7 +11,7 @@ import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { Flow } from '../models/Flow.model'
 import { toast } from 'react-toastify'
 import { validateFlow } from '../utils'
-import { FaLanguage, FaPlus } from 'react-icons/fa'
+import { FaLanguage } from 'react-icons/fa'
 import FlowVariablePopup from './FlowVariablePopup'
 import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
 import { NormalizedCampaign } from '../models/Campaign.model'
@@ -96,12 +96,12 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
       <div className="relative">
         <Panel className="flex items-center gap-2" position="top-right">
           <div className="relative">
-            <button
+            {/* <button
               className="bg-white p-2 hover:bg-gray-100 rounded-md transition-colors"
               onClick={() => setIsVariablePopupOpen(!isVariablePopupOpen)}
             >
               <FaPlus className="w-5 h-5 text-gray-600" />
-            </button>
+            </button> */}
             <button
               className="bg-white p-2 hover:bg-gray-100 rounded-md transition-colors"
               onClick={() => setIsLangJsonPopupOpen(!isLangJsonPopupOpen)}

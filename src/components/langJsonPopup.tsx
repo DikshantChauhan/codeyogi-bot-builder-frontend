@@ -1,7 +1,8 @@
 import { FC, memo, useEffect, useMemo, useState } from 'react'
 import Popup from './Popup'
-import { FaPlus, FaTrash, FaChevronDown, FaChevronRight } from 'react-icons/fa'
+import { FaPlus, FaTrash, FaChevronDown, FaChevronRight, FaCopy } from 'react-icons/fa'
 import { LangJson, parseLangJson } from '../utils'
+import { toast } from 'react-toastify'
 
 interface Props {
   langJson?: string
@@ -86,6 +87,20 @@ const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit, support
     onSubmit(parseVariableItemsToLangJson(variables))
   }
 
+  const handleCopyJson = async () => {
+    await navigator.clipboard.writeText(parseVariableItemsToLangJson(variables))
+    toast.success('JSON copied to clipboard')
+  }
+
+  const handleReplaceJson = async () => {
+    const newJsonValue = await navigator.clipboard.readText()
+    const oldJsonValue = langJson
+    if (newJsonValue !== oldJsonValue) {
+      onSubmit(newJsonValue)
+    }
+    toast.success('JSON replaced')
+  }
+
   return (
     <Popup
       isOpen={isOpen}
@@ -103,12 +118,26 @@ const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit, support
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <h2 className="text-xl font-semibold text-gray-800">Language Variables</h2>
-          <button
-            onClick={handleAddVariable}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            <FaPlus /> Add Variable
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopyJson}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <FaCopy /> Copy json
+            </button>
+            <button
+              onClick={handleReplaceJson}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <FaCopy /> Replace with clipboard json
+            </button>
+            <button
+              onClick={handleAddVariable}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <FaPlus /> Add Variable
+            </button>
+          </div>
         </div>
 
         {/* Content */}
