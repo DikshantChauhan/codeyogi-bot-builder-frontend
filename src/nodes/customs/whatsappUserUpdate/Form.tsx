@@ -35,6 +35,9 @@ const Form: FC<Props> = ({ node }) => {
     campaign_id: undefined,
     whatsapp_onboarding_course: undefined,
     whatsapp_onboarding_school_name: undefined,
+    gender: undefined,
+    grade: undefined,
+    section: undefined,
   }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappUserUpdateNodeData> = (value) => {
@@ -49,7 +52,10 @@ const Form: FC<Props> = ({ node }) => {
       !value.campaign_id &&
       !value.current_level_score &&
       !value.total_score &&
-      !value.preference_language
+      !value.preference_language &&
+      !value.gender &&
+      !value.grade &&
+      !value.section
     ) {
       throw new Error('At least one field is required')
     }
@@ -69,6 +75,9 @@ const Form: FC<Props> = ({ node }) => {
       <SuggestionField name="whatsapp_onboarding_dise_code" as="input" label="Dise Code" />
       <SuggestionField name="whatsapp_onboarding_course" as="input" label="Course name" />
       <SuggestionField name="whatsapp_onboarding_school_name" as="input" label="School name" />
+      <SuggestionField name="gender" as="input" label="Gender" />
+      <SuggestionField name="grade" as="input" label="Grade" />
+      <SuggestionField name="section" as="input" label="Section" />
     </NodeFormContainer>
   )
 }
