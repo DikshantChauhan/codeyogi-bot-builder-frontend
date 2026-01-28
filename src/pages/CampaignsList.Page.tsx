@@ -15,6 +15,7 @@ import Error from '../components/Error'
 import CampaignAddOrUpdatePopup from '../components/CampaignAddOrUpdatePopup'
 import { campaignActions } from '../store/slices/campaign.slice'
 import CampaignCard from '../components/CampaignCard'
+import MetaPopup from '../components/MetaPopup'
 import FlowAddPopup from '../components/FlowAddPopup'
 
 import { useNavigate } from 'react-router-dom'
@@ -41,6 +42,7 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
 }) => {
   const [isCampaignAddPopupOpen, setIsCampaignAddPopupOpen] = useState(false)
   const [isNudgeAddPopupOpen, setIsNudgeAddPopupOpen] = useState(false)
+  const [isMetaPopupOpen, setIsMetaPopupOpen] = useState(false)
 
   const navigate = useNavigate()
 
@@ -65,6 +67,10 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Button variant="secondary" Icon={FiEye} onClick={() => setIsMetaPopupOpen(true)}>
+              View Metas
+            </Button>
+
             <Button variant="secondary" Icon={FiEye} onClick={() => navigate(ROUTE_NUDGES_LIST)}>
               View Nudges
             </Button>
@@ -110,6 +116,8 @@ const CampaignsListPage: FC<CampaignsListPageProps> = ({
       )}
 
       {isNudgeAddPopupOpen && <FlowAddPopup isOpen={isNudgeAddPopupOpen} onClose={() => setIsNudgeAddPopupOpen(false)} type="nudge" />}
+
+      {isMetaPopupOpen && <MetaPopup isOpen={isMetaPopupOpen} onClose={() => setIsMetaPopupOpen(false)} />}
     </main>
   )
 }

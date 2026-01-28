@@ -8,6 +8,7 @@ import { fetchCampaignAPI, fetchFlowAPI, fetchNudgeFlowsListAPI, createFlowAPI, 
 import { toast } from 'react-toastify'
 import { shouldUpdateFlow } from '../../utils'
 import { NormalizedCampaign } from '../../models/Campaign.model'
+import { fetchMetaSaga } from './meta.saga'
 
 export function* fetchLevelFlowSaga(
   match: Pick<PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>, 'params'>
@@ -53,6 +54,7 @@ export function* fetchNudgeFlowsListSaga(): Generator {
 export function* levelFlowPageSaga(match: PathMatch<typeof ROUTE_LEVEL_FLOW.dynamicKey | typeof ROUTE_CAMPAIGN_DETAILS.dynamicKey>): Generator {
   yield call(fetchLevelFlowSaga, match)
   yield call(fetchNudgeFlowsListSaga)
+  yield call(fetchMetaSaga)
 }
 
 function* flowAddSaga({ payload }: ReturnType<typeof flowActions.flowAddTry>): Generator {

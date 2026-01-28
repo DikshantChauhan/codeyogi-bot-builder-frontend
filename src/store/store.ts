@@ -11,9 +11,11 @@ import { watchLocationSaga } from './sagas/location.saga'
 import uiSlice from './slices/UI.slice'
 import { watchCampaignSaga } from './sagas/campaign.saga'
 import { watchFlowAddSaga } from './sagas/flow.saga'
+import metaSlice from './slices/meta.slice'
+import { watchMetaSaga } from './sagas/meta.saga'
 
 function* rootSaga() {
-  yield all([watchLocationSaga(), watchCampaignSaga(), watchFlowAddSaga()])
+  yield all([watchLocationSaga(), watchCampaignSaga(), watchFlowAddSaga(), watchMetaSaga()])
 }
 
 const rootReducer = combineReducers({
@@ -22,6 +24,7 @@ const rootReducer = combineReducers({
   [flowSlice.name]: flowSlice.reducer,
   [uiSlice.name]: uiSlice.reducer,
   [historySlice.name]: historySlice.reducer,
+  [metaSlice.name]: metaSlice.reducer,
 })
 
 const sagaMiddleware = createSagaMiddleware()

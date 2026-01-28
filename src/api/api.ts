@@ -3,6 +3,7 @@ import { ADMIN_API_BASE_URL, API_BASE_URL } from '../constants'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import { Flow } from '../models/Flow.model'
 import axios from 'axios'
+import { Meta } from '../models/Meta.model'
 
 export const fetchCampaignslistAPI = async (): Promise<NormalizedCampaign[]> => {
   const url = `${API_BASE_URL}/campaigns`
@@ -86,5 +87,28 @@ export interface WhatsAppMediaUploadResponse {
 export const uploadWhatsAppMediaAPI = async (payload: WhatsAppMediaUploadPayload): Promise<WhatsAppMediaUploadResponse> => {
   const url = `${ADMIN_API_BASE_URL}/flow/media`
   const response = await axios.post<WhatsAppMediaUploadResponse>(url, payload)
+  return response.data
+}
+
+export const createMetaAPI = async (data: { key_name: string; value: string }) => {
+  const url = `${API_BASE_URL}/meta`
+  const response = await axios.post<{ meta: Meta }>(url, data)
+  return response.data
+}
+
+export const updateMetaAPI = async (id: string, data: { key_name: string; value: string }) => {
+  const url = `${API_BASE_URL}/meta/${id}`
+  const response = await axios.put<{ meta: Meta }>(url, data)
+  return response.data
+}
+
+export const deleteMetaAPI = async (id: string) => {
+  const url = `${API_BASE_URL}/meta/${id}`
+  await axios.delete(url)
+}
+
+export const fetchMetaAPI = async (): Promise<Meta[]> => {
+  const url = `${API_BASE_URL}/meta/all`
+  const response = await axios.get<Meta[]>(url)
   return response.data
 }

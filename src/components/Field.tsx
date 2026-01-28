@@ -9,6 +9,8 @@ import { connect } from 'react-redux'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import { Flow } from '../models/Flow.model'
 import { getCustomVariablesNameFromFunction, getVariablesFromLangJson } from '../utils'
+import { selectMetaList } from '../store/selectors/meta.selector'
+import { Meta } from '../models/Meta.model'
 
 interface Props {
   name: string | { key: string; index: number; removeable?: boolean }
@@ -21,6 +23,7 @@ interface Props {
   disableSuggestion?: boolean
   selectedCampaign: NormalizedCampaign | null
   selectedFlow: Flow | null
+  metaList: Meta[]
 }
 
 // Helper function to get nested object value
@@ -53,6 +56,7 @@ const SuggestionField: FC<Props> = ({
   disableSuggestion = false,
   selectedCampaign,
   selectedFlow,
+  metaList,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
@@ -210,6 +214,17 @@ const SuggestionField: FC<Props> = ({
                 </li>
               ))}
             </ul>
+            <ul className="flex flex-wrap gap-1 mt-1">
+              {metaList.map((meta) => (
+                <li
+                  key={meta.key_name}
+                  onClick={() => insertVariable(`\${meta.key_name}`)}
+                  className="p-2 cursor-pointer hover:bg-gray-800 bg-gray-600 rounded text-white break-words max-h-max"
+                >
+                  {meta.key_name}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       )}
@@ -220,6 +235,7 @@ const SuggestionField: FC<Props> = ({
 const mapStateToProps = (state: AppState) => ({
   selectedCampaign: selectedNormalizedCampaignSelector(state),
   selectedFlow: selectedFlowSelector(state),
+  metaList: selectMetaList(state),
 })
 
 export default connect(mapStateToProps)(memo(SuggestionField))
