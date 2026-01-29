@@ -89,7 +89,7 @@ const MetaPopup: FC<MetaPopupProps> = ({
           {metaLoading && <Loading message="Loading metas..." />}
           {metaError && <Error message={metaError} />}
 
-          {!metaLoading && !metaError && (
+          {
             <div className="space-y-4">
               <div className="flex justify-end">
                 {!isAdding && (
@@ -148,7 +148,7 @@ const MetaPopup: FC<MetaPopupProps> = ({
                               initialValues={{ key_name: meta.key_name, value: meta.value }}
                               validationSchema={validationSchema}
                               onSubmit={(values) => {
-                                updateMeta({ id: meta.key_name, ...values })
+                                updateMeta(values)
                               }}
                             >
                               {({ isValid, dirty }) => (
@@ -216,7 +216,7 @@ const MetaPopup: FC<MetaPopupProps> = ({
                 </table>
               </div>
             </div>
-          )}
+          }
         </div>
       </div>
     </Popup>

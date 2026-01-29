@@ -1,15 +1,15 @@
-import { FC, memo, useEffect, useMemo, useState } from 'react'
+import { FC, memo, useEffect, useState } from 'react'
 import Popup from './Popup'
 import { FaPlus, FaTrash, FaChevronDown, FaChevronRight, FaCopy } from 'react-icons/fa'
 import { LangJson, parseLangJson } from '../utils'
 import { toast } from 'react-toastify'
+import { ALL_SUPPORTED_LANGUAGES } from '../constants'
 
 interface Props {
   langJson?: string
   isOpen: boolean
   onClose: () => void
   onSubmit: (langJson: string) => void
-  supportedLanguages: string[]
 }
 
 interface VariableItem {
@@ -29,7 +29,7 @@ const parseVariableItemsToLangJson = (variableItems: VariableItem[]): string => 
   return JSON.stringify(result)
 }
 
-const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit, supportedLanguages }) => {
+const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit }) => {
   const [variables, setVariables] = useState<VariableItem[]>([])
 
   // Initialize state from props
@@ -44,17 +44,6 @@ const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit, support
       setVariables(initialItems)
     }
   }, [langJson, isOpen])
-
-  // Derive all languages to display
-  const allLanguages = useMemo(() => {
-    const activeLanguages = new Set(supportedLanguages)
-    variables.forEach((v) => {
-      Object.keys(v.values).forEach((lang) => activeLanguages.add(lang))
-    })
-    // If no languages at all, default to 'en'
-    if (activeLanguages.size === 0) return ['en']
-    return Array.from(activeLanguages)
-  }, [supportedLanguages, variables])
 
   const handleAddVariable = () => {
     setVariables((prev) => [
@@ -186,7 +175,7 @@ const LangJsonPopup: FC<Props> = ({ langJson, isOpen, onClose, onSubmit, support
 
                     {/* Languages Values */}
                     <div className="flex flex-col gap-3 w-full">
-                      {allLanguages.map((lang) => (
+                      {ALL_SUPPORTED_LANGUAGES.map((lang) => (
                         <div key={lang}>
                           <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{lang}</label>
                           <textarea

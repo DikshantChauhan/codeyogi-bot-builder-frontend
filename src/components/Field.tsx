@@ -8,7 +8,7 @@ import { selectedFlowSelector } from '../store/selectors/flow.selector'
 import { connect } from 'react-redux'
 import { NormalizedCampaign } from '../models/Campaign.model'
 import { Flow } from '../models/Flow.model'
-import { getCustomVariablesNameFromFunction, getVariablesFromLangJson } from '../utils'
+import { getVariablesFromLangJson } from '../utils'
 import { selectMetaList } from '../store/selectors/meta.selector'
 import { Meta } from '../models/Meta.model'
 
@@ -139,10 +139,9 @@ const SuggestionField: FC<Props> = ({
 
   const customVariables = useMemo(() => {
     const campaignConstants = selectedCampaign?.constants || []
-    const flowVariables = selectedFlow?.custom_variable_function ? getCustomVariablesNameFromFunction(selectedFlow.custom_variable_function) : []
-    const allConstants = [...flowVariables, ...campaignConstants]
+    const allConstants = [...campaignConstants]
     return allConstants
-  }, [selectedCampaign, selectedFlow])
+  }, [selectedCampaign])
 
   const langVariables = useMemo(() => {
     const langVariables = selectedFlow?.language_json ? getVariablesFromLangJson(selectedFlow.language_json) : []
@@ -218,7 +217,7 @@ const SuggestionField: FC<Props> = ({
               {metaList.map((meta) => (
                 <li
                   key={meta.key_name}
-                  onClick={() => insertVariable(`\${meta.key_name}`)}
+                  onClick={() => insertVariable(`\${${meta.key_name}}`)}
                   className="p-2 cursor-pointer hover:bg-gray-800 bg-gray-600 rounded text-white break-words max-h-max"
                 >
                   {meta.key_name}

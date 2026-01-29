@@ -35,13 +35,13 @@ const metaSlice = createSlice({
       state.metaList.push(action.payload)
     },
     updateMeta: (state, action: PayloadAction<Meta>) => {
-      const index = state.metaList.findIndex((meta) => meta.id === action.payload.id)
+      const index = state.metaList.findIndex((meta) => meta.key_name === action.payload.key_name)
       if (index !== -1) {
         state.metaList[index] = action.payload
       }
     },
     removeMeta: (state, action: PayloadAction<string>) => {
-      state.metaList = state.metaList.filter((meta) => meta.id !== action.payload)
+      state.metaList = state.metaList.filter((meta) => meta.key_name !== action.payload)
     },
 
     setMetaLoading: (state, action: PayloadAction<boolean>) => {
@@ -70,7 +70,7 @@ const metaSlice = createSlice({
     createMetaTry: (_, __: PayloadAction<Parameters<typeof createMetaAPI>[0]>) => undefined,
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateMetaTry: (_, __: PayloadAction<{ id: string } & Parameters<typeof updateMetaAPI>[1]>) => undefined,
+    updateMetaTry: (_, __: PayloadAction<Parameters<typeof updateMetaAPI>[0]>) => undefined,
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     deleteMetaTry: (_, __: PayloadAction<Parameters<typeof deleteMetaAPI>[0]>) => undefined,

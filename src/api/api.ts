@@ -17,14 +17,14 @@ export const fetchCampaignAPI = async (campaignId: string) => {
   return response.data
 }
 
-export type CampaignCreatePayload = { name: string; allowed_nodes: string[]; supported_languages: string[] }
+export type CampaignCreatePayload = { name: string; allowed_nodes: string[] }
 export const createCampaignAPI = async (campaign: CampaignCreatePayload): Promise<NormalizedCampaign> => {
   const url = `${API_BASE_URL}/campaign`
   const response = await axios.post<NormalizedCampaign>(url, campaign)
   return response.data
 }
 
-export type CampaignUpdatePayload = { name?: string; allowed_nodes?: string[]; levels?: string[]; supported_languages?: string[] }
+export type CampaignUpdatePayload = { name?: string; allowed_nodes?: string[]; levels?: string[] }
 export const updateCampaignAPI = async (campaignId: string, campaign: CampaignUpdatePayload): Promise<NormalizedCampaign> => {
   const url = `${API_BASE_URL}/campaign/${campaignId}`
   const response = await axios.put<NormalizedCampaign>(url, { ...campaign })
@@ -96,14 +96,14 @@ export const createMetaAPI = async (data: { key_name: string; value: string }) =
   return response.data
 }
 
-export const updateMetaAPI = async (id: string, data: { key_name: string; value: string }) => {
-  const url = `${API_BASE_URL}/meta/${id}`
+export const updateMetaAPI = async (data: { key_name: string; value: string }) => {
+  const url = `${API_BASE_URL}/meta`
   const response = await axios.put<{ meta: Meta }>(url, data)
   return response.data
 }
 
-export const deleteMetaAPI = async (id: string) => {
-  const url = `${API_BASE_URL}/meta/${id}`
+export const deleteMetaAPI = async (key_name: string) => {
+  const url = `${API_BASE_URL}/meta/${key_name}`
   await axios.delete(url)
 }
 

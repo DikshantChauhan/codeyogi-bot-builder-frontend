@@ -253,22 +253,6 @@ export function validateFlow(
   return null // ✅ All validations passed
 }
 
-export const getCustomVariablesNameFromFunction = (variableFunction: string) => {
-  //Accept 'return {}' from the function
-  const match = variableFunction.match(/return\s*\{([\s\S]*?)\}/)
-
-  if (!match) {
-    throw new Error('Invalid function! Only define one return statement in the function. Must return an object in destructuring format.')
-  }
-
-  const varsNames = match[1]
-    .split(',')
-    .map((name) => name.trim())
-    .filter((name) => name !== '')
-
-  return varsNames
-}
-
 export const getVariablesFromLangJson = (langJson: string) => {
   const data = JSON.parse(langJson)
   const variables = Object.keys(data)

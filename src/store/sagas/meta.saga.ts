@@ -23,8 +23,8 @@ function* createMetaSaga({ payload }: ReturnType<typeof metaActions.createMetaTr
     yield put(metaActions.setMetaSaveLoading(true))
     yield put(metaActions.setMetaSaveError(null))
 
-    const response = (yield call(createMetaAPI, payload)) as { meta: Meta }
-    yield put(metaActions.addMeta(response.meta))
+    const response = (yield call(createMetaAPI, payload)) as Meta
+    yield put(metaActions.addMeta(response))
     toast.success('Meta created successfully')
   } catch (error) {
     yield put(metaActions.setMetaSaveError(String(error)))
@@ -35,13 +35,12 @@ function* createMetaSaga({ payload }: ReturnType<typeof metaActions.createMetaTr
 }
 
 function* updateMetaSaga({ payload }: ReturnType<typeof metaActions.updateMetaTry>): Generator {
-  const { id, ...data } = payload
   try {
     yield put(metaActions.setMetaSaveLoading(true))
     yield put(metaActions.setMetaSaveError(null))
 
-    const response = (yield call(updateMetaAPI, id, data)) as { meta: Meta }
-    yield put(metaActions.updateMeta(response.meta))
+    const response = (yield call(updateMetaAPI, payload)) as Meta
+    yield put(metaActions.updateMeta(response))
     toast.success('Meta updated successfully')
   } catch (error) {
     yield put(metaActions.setMetaSaveError(String(error)))

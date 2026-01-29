@@ -12,21 +12,16 @@ import { Flow } from '../models/Flow.model'
 import { toast } from 'react-toastify'
 import { validateFlow } from '../utils'
 import { FaLanguage } from 'react-icons/fa'
-import FlowVariablePopup from './FlowVariablePopup'
-import { selectedNormalizedCampaignSelector } from '../store/selectors/campaign.selector'
-import { NormalizedCampaign } from '../models/Campaign.model'
 import LangJsonPopup from './langJsonPopup'
 
 type Props = {
   updateFlow: typeof flowActions.flowUpdateTry
   selectedFlow: Flow | null
   setFlow: typeof flowActions.setFlow
-  selectedNormalizedCampaign: NormalizedCampaign | null
 }
 
-const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormalizedCampaign }) => {
+const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isVariablePopupOpen, setIsVariablePopupOpen] = useState(false)
   const [isLangJsonPopupOpen, setIsLangJsonPopupOpen] = useState(false)
 
   const handleSave = useCallback(() => {
@@ -52,7 +47,6 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
           data: selectedFlow.data,
           name: selectedFlow.name,
           type: selectedFlow.type,
-          custom_variable_function: selectedFlow.custom_variable_function,
           language_json: selectedFlow.language_json,
         },
       })
@@ -60,21 +54,6 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
 
     setIsMenuOpen(false)
   }, [selectedFlow, updateFlow, setFlow])
-
-  const handleVariableFunctionSave = useCallback(
-    (value: string) => {
-      if (!selectedFlow) return
-
-      toast.success('Variables changes saved to Flow')
-      setFlow({
-        flow: {
-          ...selectedFlow,
-          custom_variable_function: value,
-        },
-      })
-    },
-    [selectedFlow, setFlow]
-  )
 
   const handleLangJsonSave = useCallback(
     (value: string) => {
@@ -126,16 +105,6 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
           </button>
         </Panel>
 
-        <FlowVariablePopup
-          isOpen={isVariablePopupOpen}
-          onClose={() => {
-            setIsVariablePopupOpen(false)
-          }}
-          campaignGlobalConstants={selectedNormalizedCampaign?.constants || []}
-          variablesFunction={selectedFlow?.custom_variable_function}
-          onSave={handleVariableFunctionSave}
-        />
-
         <LangJsonPopup
           isOpen={isLangJsonPopupOpen}
           onClose={() => {
@@ -143,7 +112,6 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
           }}
           langJson={selectedFlow?.language_json}
           onSubmit={handleLangJsonSave}
-          supportedLanguages={selectedNormalizedCampaign?.supported_languages || []}
         />
       </div>
     </div>
@@ -152,7 +120,6 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow, selectedNormali
 
 const mapStateToProps = (state: AppState) => ({
   selectedFlow: selectedFlowSelector(state),
-  selectedNormalizedCampaign: selectedNormalizedCampaignSelector(state),
 })
 
 const mapDispatchToProps = {

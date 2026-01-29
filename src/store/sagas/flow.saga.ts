@@ -87,9 +87,12 @@ function* flowUpdateSaga({ payload }: ReturnType<typeof flowActions.flowUpdateTr
     if (shouldUpdateFlow(flow)) {
       yield put(flowActions.setFlow({ flow, error: null, loading: false }))
     }
+
+    toast.success('Flow updated successfully')
   } catch (error) {
     console.error(error)
     yield put(flowActions.setFlowUpdateError(String(error)))
+    toast.error(`Failed to update flow ${String(error)}`)
   } finally {
     yield put(flowActions.setFlowUpdateLoading(false))
   }

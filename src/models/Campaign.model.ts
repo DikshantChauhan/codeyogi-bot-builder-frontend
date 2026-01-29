@@ -6,7 +6,6 @@ export interface Campaign extends Entity {
   name: string
   allowed_nodes: AppNodeKeys[]
   levels: Flow[]
-  supported_languages?: string[]
   constants?: string[]
 }
 
