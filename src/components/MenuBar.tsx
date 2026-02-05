@@ -128,7 +128,15 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
           onSubmit={handleLangJsonSave}
         />
 
-        <FlowSavePopup isOpen={isSavePopupOpen} onClose={() => setIsSavePopupOpen(false)} onSave={handleSave} />
+        {selectedFlow && (
+          <FlowSavePopup
+            isOpen={isSavePopupOpen}
+            onClose={() => setIsSavePopupOpen(false)}
+            onSave={handleSave}
+            flowId={selectedFlow.id}
+            currentNodes={selectedFlow.data.nodes}
+          />
+        )}
       </div>
     </div>
   )
