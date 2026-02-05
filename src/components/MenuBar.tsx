@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import { validateFlow } from '../utils'
 import { FaLanguage } from 'react-icons/fa'
 import LangJsonPopup from './langJsonPopup'
+import FlowSavePopup from './FlowSavePopup'
 
 type Props = {
   updateFlow: typeof flowActions.flowUpdateTry
@@ -23,8 +24,9 @@ type Props = {
 const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLangJsonPopupOpen, setIsLangJsonPopupOpen] = useState(false)
+  const [isSavePopupOpen, setIsSavePopupOpen] = useState(false)
 
-  const handleSave = useCallback(() => {
+  const handleSaveClick = useCallback(() => {
     if (!selectedFlow) return
 
     const validationError = validateFlow(selectedFlow.data.nodes, selectedFlow.data.edges)
@@ -41,6 +43,16 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
         },
       })
     } else {
+      setIsSavePopupOpen(true)
+    }
+
+    setIsMenuOpen(false)
+  }, [selectedFlow, setFlow])
+
+  const handleSave = useCallback(
+    (forceUpdateMedias: boolean) => {
+      if (!selectedFlow) return
+
       updateFlow({
         id: selectedFlow.id,
         data: {
@@ -48,12 +60,14 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
           name: selectedFlow.name,
           type: selectedFlow.type,
           language_json: selectedFlow.language_json,
+          forceUpdateMedias,
         },
       })
-    }
 
-    setIsMenuOpen(false)
-  }, [selectedFlow, updateFlow, setFlow])
+      setIsSavePopupOpen(false)
+    },
+    [selectedFlow, updateFlow]
+  )
 
   const handleLangJsonSave = useCallback(
     (value: string) => {
@@ -93,7 +107,7 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
                   <BiHome className="w-5 h-5 mr-3" />
                   <span className="flex-grow">Home</span>
                 </Link>
-                <button onClick={handleSave} className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <button onClick={handleSaveClick} className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   <CiSaveDown2 className="w-5 h-5 mr-3" />
                   <span className="flex-grow">Save</span>
                 </button>
@@ -113,6 +127,8 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
           langJson={selectedFlow?.language_json}
           onSubmit={handleLangJsonSave}
         />
+
+        <FlowSavePopup isOpen={isSavePopupOpen} onClose={() => setIsSavePopupOpen(false)} onSave={handleSave} />
       </div>
     </div>
   )

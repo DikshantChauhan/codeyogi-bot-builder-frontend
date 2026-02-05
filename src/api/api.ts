@@ -49,8 +49,8 @@ export const createFlowAPI = async (data: { flow_data: FlowAddOrUpdateFormData; 
   return response.data
 }
 
-export const updateFlowAPI = async ({ id, data }: { id: string; data: FlowAddOrUpdateFormData }) => {
-  const url = `${ADMIN_API_BASE_URL}/flow/${id}`
+export const updateFlowAPI = async ({ id, data }: { id: string; data: FlowAddOrUpdateFormData & { forceUpdateMedias?: boolean } }) => {
+  const url = `${ADMIN_API_BASE_URL}/flow/${id}?force_update_medias=${data.forceUpdateMedias}`
   const response = await axios.put<Flow>(url, data)
   return response.data
 }
