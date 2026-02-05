@@ -8,9 +8,31 @@ import { flowDeleteLoadingSelector, flowsByIdsSelector } from '../store/selector
 import { connect } from 'react-redux'
 import { Flow } from '../models/Flow.model'
 import { flowActions } from '../store/slices/flow.slice'
-import { FiTrash2 } from 'react-icons/fi'
+import { FiTrash2, FiClock } from 'react-icons/fi'
 import ConfirmationPopup from './ConfirmationPopup'
 import Loading from './Loading'
+
+const MEDIA_EXPIRY_DAYS = 30
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+const getMediaExpiryInfo = (lastUpdatedMs?: number): { text: string; isExpired: boolean; isWarning: boolean } | null => {
+  if (!lastUpdatedMs) return null
+
+  const expiryMs = lastUpdatedMs + MEDIA_EXPIRY_DAYS * MS_PER_DAY
+  const remainingMs = expiryMs - Date.now()
+
+  if (remainingMs <= 0) {
+    return { text: 'Media expired', isExpired: true, isWarning: false }
+  }
+
+  const remainingDays = Math.ceil(remainingMs / MS_PER_DAY)
+
+  if (remainingDays <= 3) {
+    return { text: `${remainingDays}d left`, isExpired: false, isWarning: true }
+  }
+
+  return { text: `${remainingDays}d left`, isExpired: false, isWarning: false }
+}
 
 interface Props {
   campaignId: string
@@ -56,6 +78,20 @@ const ReorderableCampaignLevelsList = ({ campaignId, levelsIds, setLevelsIds, fl
               <div className="flex-1 flex flex-col items-start">
                 <h3 className="text-xl font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">Level {index + 1}</h3>
                 <p className="text-gray-500 text-sm mt-1">{flowsByIds[levelId]?.name}</p>
+                {(() => {
+                  const expiryInfo = getMediaExpiryInfo(flowsByIds[levelId]?.last_medias_updated_at_unix)
+                  if (!expiryInfo) return null
+                  return (
+                    <div
+                      className={`flex items-center gap-1 text-xs mt-1 ${
+                        expiryInfo.isExpired ? 'text-red-600' : expiryInfo.isWarning ? 'text-amber-600' : 'text-gray-400'
+                      }`}
+                    >
+                      <FiClock className="h-3 w-3" />
+                      <span>{expiryInfo.text}</span>
+                    </div>
+                  )
+                })()}
               </div>
               <div className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-50 group-hover:bg-indigo-100 transition-colors">
                 <span className="text-2xl font-semibold text-indigo-600">{index + 1}</span>
