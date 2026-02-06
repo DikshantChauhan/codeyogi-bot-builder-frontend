@@ -98,6 +98,7 @@ const CampaignCard: FC<CampaignCardProps> = ({
           initialData={{
             name: campaign.name,
             allowed_nodes: campaign.allowed_nodes,
+            type: campaign.type,
           }}
         />
       )}

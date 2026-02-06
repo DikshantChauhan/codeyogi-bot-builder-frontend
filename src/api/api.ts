@@ -1,6 +1,6 @@
 import { FlowAddOrUpdateFormData } from '../components/FlowAddPopup'
 import { ADMIN_API_BASE_URL, API_BASE_URL } from '../constants'
-import { NormalizedCampaign } from '../models/Campaign.model'
+import { CampaignType, NormalizedCampaign } from '../models/Campaign.model'
 import { Flow } from '../models/Flow.model'
 import axios from 'axios'
 import { Meta } from '../models/Meta.model'
@@ -17,7 +17,7 @@ export const fetchCampaignAPI = async (campaignId: string) => {
   return response.data
 }
 
-export type CampaignCreatePayload = { name: string; allowed_nodes: string[] }
+export type CampaignCreatePayload = { name: string; allowed_nodes: string[]; type: CampaignType }
 export const createCampaignAPI = async (campaign: CampaignCreatePayload): Promise<NormalizedCampaign> => {
   const url = `${API_BASE_URL}/campaign`
   const response = await axios.post<NormalizedCampaign>(url, campaign)

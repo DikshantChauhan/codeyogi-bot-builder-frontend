@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { AppNodeKeys, nodesRegistry } from '../models/Node.model'
+import { CampaignType } from '../models/Campaign.model'
 import Loading from './Loading'
 import Error from './Error'
 import Button from './Button'
@@ -19,17 +20,20 @@ interface Props {
 interface FormValues {
   name: string
   allowed_nodes: AppNodeKeys[]
+  type: CampaignType
 }
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
   allowed_nodes: Yup.array().of(Yup.string()).min(1, 'Select at least one node'),
+  type: Yup.string().oneOf(Object.values(CampaignType)).required('Type is required'),
 })
 
 function CampaignAddOrUpdatePopup({ isOpen, onClose, initialData, onSubmit, loading, error }: Props) {
   const initialValues: FormValues = {
     name: initialData?.name || '',
     allowed_nodes: (initialData?.allowed_nodes || []) as AppNodeKeys[],
+    type: initialData?.type || CampaignType.LEVEL_BASED,
   }
 
   const nodesOptions = useMemo(() => Object.keys(nodesRegistry), [])
@@ -88,6 +92,29 @@ function CampaignAddOrUpdatePopup({ isOpen, onClose, initialData, onSubmit, load
                   ))}
                 </div>
                 {errors.allowed_nodes && touched.allowed_nodes && <div className="text-red-500 text-sm mt-2">{errors.allowed_nodes}</div>}
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">Type</label>
+                <div className="flex gap-4">
+                  {Object.values(CampaignType).map((campaignType) => (
+                    <label
+                      key={campaignType}
+                      className="flex items-center p-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="type"
+                        value={campaignType}
+                        checked={values.type === campaignType}
+                        onChange={() => setFieldValue('type', campaignType)}
+                        className="w-4 h-4 mr-2 text-blue-500 border-gray-300 focus:ring-blue-500 dark:border-gray-600"
+                      />
+                      <span className="dark:text-white">{campaignType}</span>
+                    </label>
+                  ))}
+                </div>
+                {errors.type && touched.type && <div className="text-red-500 text-sm mt-2">{errors.type}</div>}
               </div>
 
               <div className="flex justify-end gap-3 mt-8">
