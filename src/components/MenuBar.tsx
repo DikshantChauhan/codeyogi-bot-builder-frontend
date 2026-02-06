@@ -50,7 +50,7 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
   }, [selectedFlow, setFlow])
 
   const handleSave = useCallback(
-    (forceUpdateMedias: boolean) => {
+    (updateMedias: boolean) => {
       if (!selectedFlow) return
 
       updateFlow({
@@ -60,7 +60,7 @@ const MenuBar: FC<Props> = ({ updateFlow, selectedFlow, setFlow }) => {
           name: selectedFlow.name,
           type: selectedFlow.type,
           language_json: selectedFlow.language_json,
-          forceUpdateMedias,
+          updateMedias,
         },
       })
 

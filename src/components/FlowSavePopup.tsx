@@ -12,7 +12,7 @@ interface RemovedNode {
 interface FlowSavePopupProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (forceUpdateMedias: boolean) => void
+  onSave: (updateMedias: boolean) => void
   flowId: string
   currentNodes: AppNode[]
   loading?: boolean
