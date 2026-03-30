@@ -55,7 +55,10 @@ import { WHATSAPP_VALIDATE_DISE_CODE_NODE_KEY, WhatsappValidateDiseCodeNodeType 
 import WhatsappValidateDiseCodeNode from '../nodes/customs/whatsappValidateDiseCode/Node'
 import { WHATSAPP_CTA_URL_NODE_KEY, WhatsappCtaUrlNodeType } from '../nodes/customs/whatsappCtaUrl/type'
 import WhatsappCtaUrlNode from '../nodes/customs/whatsappCtaUrl/Node'
+import { SYNC_PLATFORM_NODE_KEY, SyncPlatformNodeType } from '../nodes/customs/syncPlatform/type'
+import SyncPlatformNode from '../nodes/customs/syncPlatform/Node'
 import { GrValidate } from 'react-icons/gr'
+import { IoMdSync } from 'react-icons/io'
 import PromptForm from '../nodes/customs/prompt/Form'
 import WhatsappMessageForm from '../nodes/customs/whatsappMessage/Form'
 import IfElseForm from '../nodes/customs/ifElse/Form'
@@ -73,10 +76,8 @@ import WhatsappUserUpdateForm from '../nodes/customs/whatsappUserUpdate/Form'
 import WhatsappOnboardingLinkParserForm from '../nodes/customs/whatsappOnboardingLinkParser/Form'
 import WhatsappValidateDiseCodeForm from '../nodes/customs/whatsappValidateDiseCode/Form'
 import WhatsappCtaUrlForm from '../nodes/customs/whatsappCtaUrl/Form'
+import SyncPlatformForm from '../nodes/customs/syncPlatform/Form'
 import WhatsappStickerForm from '../nodes/customs/whatsappSticker/Form'
-import { WHATSAPP_ASSIGNMENT_NODE_KEY, WhatsappAssignmentNodeType } from '../nodes/customs/whatsappAssignment/type'
-import WhatsappAssignmentNode from '../nodes/customs/whatsappAssignment/Node'
-import WhatsappAssignmentForm from '../nodes/customs/whatsappAssignment/Form'
 
 export type SubFlowValue = 'inherit' | 'none' | (string & object)
 
@@ -93,28 +94,27 @@ export interface MessageHeader {
 
 export type NodeOrientation = 'vertical' | 'horizontal'
 
-export type AppNode =
-  | (
-      | IfElseNodeType
-      | PromptNodeType
-      | WhatsappMessageNodeType
-      | StartNodeType
-      | WhatsappAudioNodeType
-      | WhatsappDocumentNodeType
-      | WhatsappImageNodeType
-      | WhatsappListNodeType
-      | WhatsappButtonNodeType
-      | WhatsappVideoNodeType
-      | WhatsappReactionNodeType
-      | WhatsappStickerNodeType
-      | DelayNodeType
-      | EndNodeType
-      | WhatsappUserUpdateNodeType
-      | WhatsappOnboardingLinkParserNodeType
-      | WhatsappValidateDiseCodeNodeType
-      | WhatsappCtaUrlNodeType
-      | WhatsappAssignmentNodeType
-    ) & { nudge: SubFlowValue; validator: SubFlowValue; orientation?: NodeOrientation }
+export type AppNode = (
+  | IfElseNodeType
+  | PromptNodeType
+  | WhatsappMessageNodeType
+  | StartNodeType
+  | WhatsappAudioNodeType
+  | WhatsappDocumentNodeType
+  | WhatsappImageNodeType
+  | WhatsappListNodeType
+  | WhatsappButtonNodeType
+  | WhatsappVideoNodeType
+  | WhatsappReactionNodeType
+  | WhatsappStickerNodeType
+  | DelayNodeType
+  | EndNodeType
+  | WhatsappUserUpdateNodeType
+  | WhatsappOnboardingLinkParserNodeType
+  | WhatsappValidateDiseCodeNodeType
+  | WhatsappCtaUrlNodeType
+  | SyncPlatformNodeType
+) & { nudge: SubFlowValue; validator: SubFlowValue; orientation?: NodeOrientation }
 
 export type AppNodeKeys = Exclude<AppNode['type'], undefined>
 
@@ -241,10 +241,10 @@ export const nodesRegistry: Record<AppNodeKeys, NodeRegistryEntry<AppNodeKeys>> 
     color: 'bg-lime-500',
     Icon: IoIosLink,
   },
-  [WHATSAPP_ASSIGNMENT_NODE_KEY]: {
-    node: WhatsappAssignmentNode as NamedExoticComponent<NodeRegistryNodeProps<AppNodeKeys>>,
-    Form: WhatsappAssignmentForm as NamedExoticComponent<NodeRegistryFormProps<AppNodeKeys>>,
-    color: 'bg-lime-500',
-    Icon: IoIosLink,
+  [SYNC_PLATFORM_NODE_KEY]: {
+    node: SyncPlatformNode as NamedExoticComponent<NodeRegistryNodeProps<AppNodeKeys>>,
+    Form: SyncPlatformForm as NamedExoticComponent<NodeRegistryFormProps<AppNodeKeys>>,
+    color: 'bg-indigo-500',
+    Icon: IoMdSync,
   },
 }

@@ -17,7 +17,7 @@ const info = `
   Example:
     *District id: 123*
     *Dise code: 123*
-    *Course: Coding*
+    *Course: Science*
 
 🔹 Conditions
 - To select the **Student** path:
