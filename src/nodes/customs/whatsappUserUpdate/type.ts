@@ -17,6 +17,8 @@ export type WhatsappUserUpdateNodeData = {
   gender?: string
   grade?: string
   section?: string
+  stream?: string
+  institute_type?: string
 }
 
 export type WhatsappUserUpdateNodeType = Node<WhatsappUserUpdateNodeData, typeof WHATSAPP_USER_UPDATE_NODE_KEY>

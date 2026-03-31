@@ -38,6 +38,8 @@ const Form: FC<Props> = ({ node }) => {
     gender: undefined,
     grade: undefined,
     section: undefined,
+    stream: undefined,
+    institute_type: undefined,
   }
 
   const transFormNodeDataOrFail: TransFormNodeDataOrFail<WhatsappUserUpdateNodeData> = (value) => {
@@ -55,7 +57,9 @@ const Form: FC<Props> = ({ node }) => {
       !value.preference_language &&
       !value.gender &&
       !value.grade &&
-      !value.section
+      !value.section &&
+      !value.stream &&
+      !value.institute_type
     ) {
       throw new Error('At least one field is required')
     }
@@ -78,6 +82,8 @@ const Form: FC<Props> = ({ node }) => {
       <SuggestionField name="gender" as="input" label="Gender" />
       <SuggestionField name="grade" as="input" label="Grade" />
       <SuggestionField name="section" as="input" label="Section" />
+      <SuggestionField name="stream" as="input" label="Stream" />
+      <SuggestionField name="institute_type" as="input" label="Institute Type" />
     </NodeFormContainer>
   )
 }
