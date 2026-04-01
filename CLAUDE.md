@@ -33,10 +33,11 @@ All node types are registered in `src/models/Node.model.ts` via `nodesRegistry`,
 
 To add a new node type: create the three files, add the type to `AppNode`, and register in `nodesRegistry`.
 
-### Two API Base URLs
+### API Base URL
 
-- `VITE_API_BASE_URL` — campaign/meta CRUD (`src/api/api.ts`)
-- `VITE_ADMIN_API_BASE_URL` — flow management and media upload
+Single `VITE_API_BASE_URL` with two route prefixes (`src/api/api.ts`):
+- `/api/...` — campaign/meta CRUD
+- `/admin/...` — flow management and media upload
 
 All HTTP calls use axios directly (no wrapper/interceptor layer).
 
@@ -70,7 +71,7 @@ Tailwind CSS v3 with a dark theme. Custom color tokens defined in `tailwind.conf
 ## Environment Variables
 
 Required in `.env.development` (see `.env.example`):
-- `VITE_API_BASE_URL`, `VITE_ADMIN_API_BASE_URL` — API endpoints
+- `VITE_API_BASE_URL` — API base URL (routes via `/api/...` and `/admin/...` prefixes)
 - `VITE_API_S3_BUCKET_NAME`, `VITE_AWS_ACCESS_KEY_ID`, `VITE_AWS_SECRET_ACCESS_KEY` — S3 media upload
 
 ## Code Formatting
